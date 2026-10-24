@@ -1,0 +1,8 @@
+{
+  "appId": "com.ak3no.gametrack",
+  "appName": "GameTrack",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#07071a"
+  }
+}

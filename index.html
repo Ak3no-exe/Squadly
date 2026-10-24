@@ -268,6 +268,7 @@ html[data-mode=retro] .card,html[data-mode=retro] .tile{border-radius:6px}
     <button id="clk" aria-label="Cliquer">🎯</button>
     <p><b id="cc">0</b> clics</p></div>
 </section>
+<section id="t-logins"><h2>🕵️ Connexions</h2><small>Qui s'est connecté, quand et sur quel appareil (réservé à Matteo).</small><div class="row" style="margin:8px 0"><button class="btn alt sm" id="logr">Actualiser</button><button class="btn alt sm" id="logx">Vider</button></div><div id="logc"></div></section>
 <section id="t-shop"><h2>🛍️ Boutique</h2><div id="shopc"></div></section>
 <p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.0.0</p>
 </main>
@@ -278,6 +279,7 @@ html[data-mode=retro] .card,html[data-mode=retro] .tile{border-radius:6px}
   <button data-t="succes"><b><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M8 21h8M10 17h4"/></svg></b>Succès</button>
   <button data-t="top"><b><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V4M19 20v-6"/></svg></b>Top</button>
 <button data-t="shop"><b><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></b>Boutique</button>
+<button data-t="logins" id="navlog" style="display:none"><b><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></b>Connexions</button>
 </nav>
 
 <script>window.addEventListener("error",function(e){var a=document.getElementById("aerr");if(a)a.textContent="Erreur JS : "+e.message});window.addEventListener("unhandledrejection",function(e){var a=document.getElementById("aerr");if(a)a.textContent="Erreur : "+(e.reason&&e.reason.message||e.reason)});</script>
@@ -479,9 +481,10 @@ async function jbOp(m,path,body){
  const j=await jbFetch('GET');if(!j){cloudState='err';return undefined}
  const rec=j.record&&typeof j.record==='object'?j.record:{},users=rec.users&&typeof rec.users==='object'?rec.users:{};
  if(path==='/meta.json'){cloudState='ok';if(m==='GET')return rec.meta===undefined?null:rec.meta;if(m!=='PUT')return undefined;rec.meta=body;const w0=await jbFetch('PUT',rec);if(w0===undefined){cloudState='err';return undefined}return body}
- if(path==='/board.json'||path==='/clips.json'){const f=path.slice(1,-5);cloudState='ok';
+ if(path==='/board.json'||path==='/clips.json'||path==='/logins.json'){const f=path.slice(1,-5);cloudState='ok';
   if(m==='GET')return rec[f]===undefined?null:rec[f];
   if(m==='PATCH')rec[f]=Object.assign(rec[f]||{},body);else if(m==='PUT')rec[f]=body;else return undefined;
+  if(f==='logins'){const lk=Object.keys(rec[f]).sort();while(lk.length>200)delete rec[f][lk.shift()]}
   const w1=await jbFetch('PUT',rec);if(w1===undefined){cloudState='err';return undefined}return body}
  const mm=/^\/users(?:\/([^/]+?)(\/data)?)?\.json$/.exec(path);if(!mm){cloudState='err';return undefined}
  const k=mm[1];cloudState='ok';
@@ -2017,7 +2020,7 @@ let CC='#818cf8';
 function upd(){if(!U||!DB.users[U])return;const c=$('#coinb');if(c)c.textContent='🪙 '+bal();const e=S_().eq;if(e.badge||e.titre||e.clock)$('#who').textContent=(e.badge?e.badge+' ':'')+(e.titre||'Joueur : '+DB.users[U].name)+(e.clock?' · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'')}
 /* Effets de changement d'onglet */
 function tabFx(t){const e=S_().eq.tab;if(!e||!S_().own[e]||RM)return;if(e==='confettis'){confetti();return}const el=$('#t-'+t);if(!el)return;const c='tx-'+e;el.classList.remove(c);void el.offsetWidth;el.classList.add(c);setTimeout(()=>el.classList.remove(c),700)}
-const _sh=show;show=function(t){_sh(t);if(t==='shop')render();upd();tabFx(t)};
+const _sh=show;show=function(t){if(t==='logins'&&!isAdmin())t='home';_sh(t);if(t==='shop')render();if(t==='logins')renderLogs();upd();tabFx(t)};
 /* Effets spéciaux (canvas) */
 const fc=document.createElement('canvas');fc.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50';document.body.appendChild(fc);
 const rs=()=>{fc.width=innerWidth;fc.height=innerHeight};addEventListener('resize',rs);rs();
@@ -2059,7 +2062,15 @@ $('#shopc').onclick=e=>{const s=S_(),g=e.target.closest('[data-gift]');
  else apply(i);
  save();render();upd()};
 $('#coinb').onclick=()=>show('shop');
-const _st=start;start=function(){_st.apply(this,arguments);S_();applyTheme();upd();if(fxo().snow)kick();render()};
+const _st=start;start=function(){_st.apply(this,arguments);S_();applyTheme();upd();if(fxo().snow)kick();render();const nl=$('#navlog');if(nl)nl.style.display=isAdmin()?'':'none';logLogin()};
+/* Journal des connexions (admin) */
+const dev=()=>{const u=navigator.userAgent,o=/iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac/.test(u)?'Mac':/Linux/.test(u)?'Linux':'Appareil',b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox|FxiOS/.test(u)?'Firefox':/Chrome|CriOS/.test(u)?'Chrome':/Safari/.test(u)?'Safari':'';return o+(b?' · '+b:'')};
+function logLogin(){try{const n=Date.now(),k='gt_ll_'+U;if(n-(+localStorage.getItem(k)||0)<1800000)return;localStorage.setItem(k,n);const e={u:DB.users[U].name||U,t:n,d:dev()},id=n+'_'+Math.random().toString(36).slice(2,6);(DB.logins=DB.logins||{})[id]=e;const ks=Object.keys(DB.logins).sort();while(ks.length>100)delete DB.logins[ks.shift()];lsave();cloud('PATCH','/logins.json',{[id]:e})}catch(x){}}
+const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);if(m<1)return "à l'instant";if(m<60)return 'il y a '+m+' min';const h=Math.floor(m/60);if(h<24)return 'il y a '+h+' h';return 'il y a '+Math.floor(h/24)+' j'};
+async function renderLogs(){const box=$('#logc');if(!box)return;box.innerHTML='<div class="card mut">Chargement…</div>';const c=cloudBase()?await cloud('GET','/logins.json'):null,all=Object.assign({},DB.logins||{},c||{}),ks=Object.keys(all).sort().reverse().slice(0,60);
+ box.innerHTML=(cloudBase()?'':'<div class="card mut">Sauvegarde en ligne non reliée : seules les connexions de cet appareil sont listées.</div>')+(ks.length?ks.map(k=>{const e=all[k];return `<div class="card row"><div class="avatar" style="background:var(--ac)">${esc((e.u||'?')[0].toUpperCase())}</div><div class="grow"><b>${esc(e.u||'?')}</b><br><small>${ago(e.t)} · ${esc(e.d||'')}</small></div></div>`}).join(''):'<div class="card mut">Aucune connexion enregistrée pour le moment.</div>')}
+$('#logr').onclick=renderLogs;
+$('#logx').onclick=async()=>{if(!await ask('Vider tout l\'historique des connexions ?'))return;DB.logins={};lsave();await cloud('PUT','/logins.json',{});renderLogs()};
 setInterval(upd,1000);
 })();
 

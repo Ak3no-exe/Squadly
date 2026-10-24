@@ -133,6 +133,12 @@ nav button svg{width:26px;height:26px;display:block;margin:0 auto;stroke:current
 nav button.on{color:var(--ac2)}
 
 #t-shop .card{margin:10px 0}
+html.gradanim{background:linear-gradient(120deg,var(--bg),color-mix(in srgb,var(--ac) 24%,var(--bg)),color-mix(in srgb,var(--pk) 24%,var(--bg)),var(--bg));background-size:300% 300%;animation:gshift 16s ease infinite}
+html.gradanim body{background:transparent}
+@keyframes gshift{50%{background-position:100% 50%}}
+@media(prefers-reduced-motion:reduce){html.gradanim{animation:none}}
+html[data-dusk]::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:45;background:linear-gradient(rgba(251,146,60,.1),rgba(244,63,94,.08))}
+#navlog b{position:relative}#navlog.dot b::after{content:"";position:absolute;top:-2px;right:-5px;width:9px;height:9px;border-radius:50%;background:#f43f5e}
 html[data-mode=halloween]{--ac:#f97316!important;--ac2:#fb923c!important;--ac3:#c2410c!important;--g1:249,115,22!important;--pk:#a855f7!important;--g2:168,85,247!important}
 html[data-mode=halloween]:not([data-theme=light]){--bg:#120a1a!important}
 html[data-mode=noel]{--ac:#dc2626!important;--ac2:#f87171!important;--ac3:#991b1b!important;--g1:220,38,38!important;--pk:#16a34a!important;--g2:22,163,74!important}
@@ -156,6 +162,7 @@ html[data-mode=retro] body{font-family:ui-monospace,Menlo,Consolas,monospace}
 html[data-mode=retro] body::after{background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0 2px,transparent 2px 4px)}
 html[data-mode=retro] .card,html[data-mode=retro] .tile{border-radius:6px}
 </style>
+<style>.rx{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.rxb.on{background:rgba(var(--g1),.35);border-color:var(--ac2)}#chm{padding:2px}</style>
 </head>
 <body>
 <div id="toast" role="status"></div>
@@ -275,8 +282,10 @@ html[data-mode=retro] .card,html[data-mode=retro] .tile{border-radius:6px}
     <button id="clk" aria-label="Cliquer">🎯</button>
     <p><b id="cc">0</b> clics</p></div>
 </section>
-<section id="t-logins"><h2>🕵️ Connexions</h2><small>Qui s'est connecté, quand et sur quel appareil (réservé à Matteo).</small><div class="row" style="margin:8px 0"><button class="btn alt sm" id="logr">Actualiser</button><button class="btn alt sm" id="logx">Vider</button></div><div id="logc"></div><h2>👥 Gestion des joueurs</h2><div id="admu"></div></section>
+<section id="t-logins"><h2>🕵️ Connexions</h2><small>Qui s'est connecté, quand et sur quel appareil (réservé à Matteo).</small><div class="row" style="margin:8px 0"><button class="btn alt sm" id="logr">Actualiser</button><button class="btn alt sm" id="logx">Vider</button></div><div id="logc"></div><h2>🔧 Maintenance</h2><div id="admm"></div><h2>🎟️ Codes promo</h2><div id="admc"></div><h2>👥 Gestion des joueurs</h2><div id="admu"></div></section>
 <section id="t-shop"><h2>🛍️ Boutique</h2><div id="shopc"></div></section>
+<section id="t-chat"><h2>💬 Mur de messages</h2><div id="chm" style="max-height:55vh;overflow:auto"></div><form id="chf" class="card row" style="gap:8px"><input id="cht" class="grow" maxlength="200" placeholder="Écris un message…" autocomplete="off"><button class="btn sm">Envoyer</button></form><small id="chs" class="mut"></small></section>
+<section id="t-pass"><h2>🎟️ Pass de saison</h2><div id="pss"></div></section>
 <p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.0.0</p>
 </main>
 <nav>
@@ -488,7 +497,7 @@ async function jbOp(m,path,body){
  const j=await jbFetch('GET');if(!j){cloudState='err';return undefined}
  const rec=j.record&&typeof j.record==='object'?j.record:{},users=rec.users&&typeof rec.users==='object'?rec.users:{};
  if(path==='/meta.json'){cloudState='ok';if(m==='GET')return rec.meta===undefined?null:rec.meta;if(m!=='PUT')return undefined;rec.meta=body;const w0=await jbFetch('PUT',rec);if(w0===undefined){cloudState='err';return undefined}return body}
- if(path==='/board.json'||path==='/clips.json'||path==='/logins.json'){const f=path.slice(1,-5);cloudState='ok';
+ if(path==='/board.json'||path==='/clips.json'||path==='/logins.json'||path==='/cfg.json'){const f=path.slice(1,-5);cloudState='ok';
   if(m==='GET')return rec[f]===undefined?null:rec[f];
   if(m==='PATCH')rec[f]=Object.assign(rec[f]||{},body);else if(m==='PUT')rec[f]=body;else return undefined;
   if(f==='logins'){const lk=Object.keys(rec[f]).sort();while(lk.length>200)delete rec[f][lk.shift()]}
@@ -600,7 +609,7 @@ function clipStatus(){const e=$('#cloudst');if(!e)return;e.textContent=!cloudBas
 async function renderClips(){await loadClips();clipStatus();OU.forEach(x=>URL.revokeObjectURL(x));OU=[];
  const loc=(await vall()).filter(c=>c.by===U).map(c=>{const u=URL.createObjectURL(c.blob);OU.push(u);return Object.assign({},c,{loc:1,u})});
  const a=Object.values(CL).concat(loc).sort((x,y)=>y.at-x.at);
- $('#clips').innerHTML=a.length?a.map(c=>`<div class="card">${c.loc?`<video src="${c.u}" controls preload="metadata" playsinline style="width:100%;border-radius:10px"></video>`:clipEmbed(c.u)}<div class="row" style="margin-top:8px"><div class="grow"><b>${esc(c.t||'Clip')}</b>${c.loc?' <span class="pill">📱 Cet appareil</span>':''}<br><small>${c.g?esc(c.g)+' · ':''}par ${esc(c.n||c.by)} · ${new Date(c.at).toLocaleDateString('fr-FR')}</small></div>${c.by===U||isAdmin()&&!c.loc?`<button class="btn alt sm" data-cd="${esc(c.id)}" data-l="${c.loc?1:''}" aria-label="Supprimer">✕</button>`:''}</div></div>`).join(''):'<div class="card mut">Aucun clip pour le moment. Sois le premier !</div>';
+ $('#clips').innerHTML=a.length?a.map(c=>`<div class="card">${c.loc?`<video src="${c.u}" controls preload="metadata" playsinline style="width:100%;border-radius:10px"></video>`:clipEmbed(c.u)}<div class="row" style="margin-top:8px"><div class="grow"><b>${esc(c.t||'Clip')}</b>${c.loc?' <span class="pill">📱 Cet appareil</span>':''}<br><small>${c.g?esc(c.g)+' · ':''}par ${esc(c.n||c.by)} · ${new Date(c.at).toLocaleDateString('fr-FR')}</small></div>${c.by===U||isAdmin()&&!c.loc?`<button class="btn alt sm" data-cd="${esc(c.id)}" data-l="${c.loc?1:''}" aria-label="Supprimer">✕</button>`:''}</div>${c.loc?'':`<div class="rx" data-rx="${esc(c.id)}"></div>`}</div>`).join(''):'<div class="card mut">Aucun clip pour le moment. Sois le premier !</div>';
  $$('[data-cd]').forEach(b=>b.onclick=async()=>{if(!await ask('Supprimer ce clip ?'))return;const id=b.dataset.cd;if(b.dataset.l)await vdel(id);else{delete CL[id];DB.clips=CL;lsave();await clipOp(o=>{delete o[id]},o=>!o[id])}renderClips()})}
 $('#addClip').onsubmit=async e=>{e.preventDefault();const er=$('#cerr'),u=$('#cu').value.trim(),f=$('#cf').files[0];er.textContent='';let okc=true;
  if(!f&&!/^https?:\/\/\S+$/i.test(u)){er.textContent='Choisis une vidéo ou colle un lien.';return}
@@ -2010,7 +2019,7 @@ addEventListener('hashchange',()=>{if(U)route()});
 /* ===== Boutique (pièces) ===== */
 (function(){
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const S_=()=>{const s=S.shop=S.shop||{};s.own=s.own||{};s.eq=s.eq||{};s.eq.fx=s.eq.fx||{};s.spent=s.spent||0;s.gain=s.gain||0;return s};
+const S_=()=>{const s=S.shop=S.shop||{};s.own=s.own||{};s.eq=s.eq||{};s.eq.fx=s.eq.fx||{};s.spent=s.spent||0;s.gain=s.gain||0;s.wish=s.wish||{};s.red=s.red||{};return s};
 const bal=()=>score()+S_().gain-S_().spent;window.coinBal=bal;
 const PAL={or:['#d97706','#fbbf24','#b45309','217,119,6','#f43f5e','244,63,94'],neon:['#16a34a','#4ade80','#15803d','22,163,74','#e879f9','232,121,249'],sakura:['#db2777','#f9a8d4','#9d174d','219,39,119','#c4b5fd','196,181,253'],lave:['#dc2626','#f87171','#991b1b','220,38,38','#f59e0b','245,158,11'],glace:['#0284c7','#7dd3fc','#0369a1','2,132,199','#a5f3fc','165,243,252'],minuit:['#1d4ed8','#60a5fa','#1e3a8a','29,78,216','#a855f7','168,85,247']};
 const CAT=[
@@ -2023,17 +2032,21 @@ const CAT=[
 {id:'coins',t:'fx',e:'🪙',n:'Pluie de pièces',p:200,d:'Des pièces tombent du ciel'},
 {id:'t_leg',t:'ttl',e:'👑',n:'Légende',p:150,d:'Affiché comme titre sur ton accueil'},{id:'t_loot',t:'ttl',e:'💎',n:'Chasseur de loot',p:150,d:'Affiché comme titre sur ton accueil'},{id:'t_ghost',t:'ttl',e:'👻',n:'Fantôme',p:180,d:'Affiché comme titre sur ton accueil'},{id:'t_clic',t:'ttl',e:'⚡',n:'Roi des clics',p:200,d:'Affiché comme titre sur ton accueil'},
 {id:'f_or',t:'frame',e:'🟡',n:'Cadre or',p:120,d:'Contour doré autour de ton avatar'},{id:'f_neon',t:'frame',e:'🟣',n:'Cadre néon',p:150,d:'Contour violet et cyan'},{id:'f_rb',t:'frame',e:'🌈',n:'Cadre arc-en-ciel',p:250,d:'Contour animé qui change de couleur'},
-{id:'s_pop',t:'snd',e:'🫧',n:'Pop',p:60,d:'Bruit de bulle à chaque appui'},{id:'s_bip',t:'snd',e:'🎮',n:'Bip arcade',p:80,d:'Double bip rétro'},{id:'s_cri',t:'snd',e:'🔔',n:'Cristal',p:100,d:'Tintement cristallin'}];
+{id:'s_pop',t:'snd',e:'🫧',n:'Pop',p:60,d:'Bruit de bulle à chaque appui'},{id:'s_bip',t:'snd',e:'🎮',n:'Bip arcade',p:80,d:'Double bip rétro'},{id:'s_cri',t:'snd',e:'🔔',n:'Cristal',p:100,d:'Tintement cristallin'},
+{id:'grad',t:'fx',e:'🌅',n:'Fond dégradé animé',p:160,d:'Le fond change doucement de couleur'},
+{id:'autotheme',t:'feat',e:'🌗',n:'Thème selon l\'heure',p:120,d:'Clair le jour, sombre la nuit, teinte de coucher de soleil le soir'}];
+const PK=[{id:'pk_neon',e:'🧪',n:'Pack Néon',i:['neon','cyber','trail','s_bip']},{id:'pk_hiver',e:'⛄',n:'Pack Hiver',i:['noel','snow','glace','s_cri']},{id:'pk_roi',e:'👑',n:'Pack Roi',i:['t_leg','f_rb','or','confettis']},{id:'pk_trans',e:'🎞️',n:'Pack Transitions',i:['fondu','glisse','zoom','glitch','confettis']},{id:'pk_hallo',e:'🎃',n:'Pack Halloween',m:[9],d:.65,i:['halloween','t_ghost','f_neon','s_bip']},{id:'pk_fetes',e:'🎅',n:'Pack Fêtes',m:[10,11],d:.65,i:['noel','snow','coins','f_or']},{id:'pk_print',e:'🌸',n:'Pack Printemps',m:[2,3,4],d:.65,i:['sakura','fondu','s_pop','t_loot']},{id:'pk_ete',e:'🏖️',n:'Pack Été',m:[5,6,7],d:.65,i:['or','zoom','s_pop','f_or']}];
+const pkp=k=>Math.round(k.i.filter(x=>!S_().own[x]).reduce((a,x)=>a+CAT.find(c=>c.id===x).p,0)*(k.d||.75));
 const SEC=[['acc','🎨 Couleurs de thème'],['mode','🌗 Modes de thème'],['tab','✨ Effets de changement d\'onglet'],['fx','💥 Effets spéciaux'],['ttl','🏷️ Titres exclusifs'],['frame','🖼️ Cadres de profil'],['snd','🔊 Sons de clic'],['feat','🧩 Fonctionnalités spéciales']];
 const sync=()=>Object.keys(PAL).forEach(k=>{if(S_().own[k])ACC[k]=PAL[k]});
-const mode=()=>{const e=S_().eq,o=S_().own,r=document.documentElement;if(e.mode&&o[e.mode])r.dataset.mode=e.mode;else delete r.dataset.mode;if(e.frame&&o[e.frame])r.dataset.frame=e.frame;else delete r.dataset.frame};
+const mode=()=>{const e=S_().eq,o=S_().own,r=document.documentElement;if(e.mode&&o[e.mode])r.dataset.mode=e.mode;else delete r.dataset.mode;if(e.frame&&o[e.frame])r.dataset.frame=e.frame;else delete r.dataset.frame;r.classList.toggle('gradanim',!!(e.fx&&e.fx.grad&&o.grad))};
 const EXC=['mode','tab','ttl','frame','snd'];
 const _at=applyTheme;applyTheme=function(){sync();_at();mode();CC=(ACC[tget().acc]||ACC.indigo)[1]};
 let CC='#818cf8';
 function upd(){if(!U||!DB.users[U])return;const c=$('#coinb');if(c)c.textContent='🪙 '+bal();const e=S_().eq;if(e.badge||e.titre||e.clock)$('#who').textContent=(e.badge?e.badge+' ':'')+(e.titre||'Joueur : '+DB.users[U].name)+(e.clock?' · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'')}
 /* Effets de changement d'onglet */
 function tabFx(t){const e=S_().eq.tab;if(!e||!S_().own[e]||RM)return;if(e==='confettis'){confetti();return}const el=$('#t-'+t);if(!el)return;const c='tx-'+e;el.classList.remove(c);void el.offsetWidth;el.classList.add(c);setTimeout(()=>el.classList.remove(c),700)}
-const _sh=show;show=function(t){if(t==='logins'&&!isAdmin())t='home';_sh(t);if(U){const s=S_();qs();if(!s.q.tabs.includes(t)){s.q.tabs.push(t);save()}}if(t==='shop')render();if(t==='logins'){renderLogs();renderTools()}upd();tabFx(t)};
+const _sh=show;show=function(t){if(t==='logins'&&!isAdmin())t='home';_sh(t);if(U){const s=S_();qs();if(!s.q.tabs.includes(t)){s.q.tabs.push(t);save()}}if(t==='shop')render();if(t==='logins'){renderLogs();renderTools();renderCfg()}upd();tabFx(t)};
 /* Effets spéciaux (canvas) */
 const fc=document.createElement('canvas');fc.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50';document.body.appendChild(fc);
 const rs=()=>{fc.width=innerWidth;fc.height=innerHeight};addEventListener('resize',rs);rs();
@@ -2048,15 +2061,26 @@ function loop(){const c=fc.getContext('2d'),f=fxo();c.clearRect(0,0,fc.width,fc.
 addEventListener('pointermove',e=>{if(!fxo().trail||P.length>250)return;P.push({x:e.clientX,y:e.clientY,vx:Math.random()-.5,vy:Math.random()-.5,g:.02,l:28,t:28,s:3+Math.random()*3,c:CC});kick()});
 addEventListener('pointerdown',e=>{if(!fxo().spark)return;for(let i=0;i<16;i++){const a=Math.PI*2*i/16,v=2+Math.random()*3;P.push({x:e.clientX,y:e.clientY,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.08,l:34,t:34,s:2+Math.random()*2,c:i%2?CC:'#fde68a'})}kick()});
 /* Boutique */
-const lab=(i,o)=>{const s=S_();if(i.id==='coffre')return 'Ouvrir · '+i.p+' 🪙';if(!o)return i.p+' 🪙';
+const dl=()=>{const n=dn(),a=CAT.filter(x=>x.id!=='coffre'),d=a[(n*3)%a.length];let f=a[(n*7+5)%a.length];if(f===d)f=a[(n*7+6)%a.length];return{d,f,h0:6+(n*5)%15}};
+const flash=D=>{const H=new Date().getHours()+new Date().getMinutes()/60;return H>=D.h0&&H<D.h0+3};
+const prx=i=>{if(!i)return 0;if(S_().own[i.id])return i.p;const D=dl();return i.id===D.d.id?Math.round(i.p*.7):(i.id===D.f.id&&flash(D))?Math.round(i.p*.5):i.p};
+function dealsHtml(){const s=S_(),D=dl(),on=flash(D),f=D.f,H=D.h0;
+ const c=(i,tag,note,en)=>`<div class="card row"><div class="badge"${i.t==='acc'?` style="background:linear-gradient(135deg,${PAL[i.id][0]},${PAL[i.id][4]})"`:''}>${i.e||''}</div><div class="grow"><b>${i.n}</b> <span class="pill">${tag}</span><br><small>${note}</small></div><button class="btn sm${s.own[i.id]||!en?' alt':''}" data-id="${i.id}" ${s.own[i.id]||!en?'disabled':''}>${s.own[i.id]?'Possédé':en?prx(i)+' 🪙':'Bientôt'}</button></div>`;
+ const fh=on?"jusqu'à "+(H+3)+" h":new Date().getHours()<H?"à partir de "+H+" h":"revient demain";
+ return '<h2>🔥 Offres du jour</h2>'+c(D.d,'−30 %','Offre du jour · au lieu de '+D.d.p+' 🪙',true)+c(f,'⚡ −50 %','Solde flash '+fh+' · au lieu de '+f.p+' 🪙',on)}
+const lab=(i,o)=>{const s=S_();if(i.id==='coffre')return 'Ouvrir · '+i.p+' 🪙';if(!o){const P=prx(i);return P<i.p?P+' 🪙 🔥':i.p+' 🪙'}
  if(i.t==='acc')return tget().acc===i.id?'Équipé ✓':'Équiper';
  if(EXC.includes(i.t))return s.eq[i.t]===i.id?'Retirer':'Équiper';
  if(i.t==='fx')return s.eq.fx[i.id]?'Activé ✓':'Activer';
- return {x2:'Actif ✓',titre:'Modifier',badge:'Modifier',horloge:s.eq.clock?'Activée ✓':'Activer',fete:'🎉 Lancer'}[i.id]};
+ return {x2:'Actif ✓',titre:'Modifier',badge:'Modifier',horloge:s.eq.clock?'Activée ✓':'Activer',autotheme:s.eq.auto?'Activé ✓':'Activer',fete:'🎉 Lancer'}[i.id]};
 function render(){const s=S_(),box=$('#shopc');if(!box)return;const can=s.day!==new Date().toDateString(),g=gift(),ng=(25+Math.min(s.streak||1,6)*5)*(s.own.x2?2:1);
  let h=`<div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:700">${bal()} 🪙</div><small>Succès débloqués + cadeaux − achats</small></div><div class="card row"><div class="badge">🎁</div><div class="grow"><b>Cadeau du jour</b><br><small>🔥 Série de ${s.streak||1} jour(s) · ${can?'+'+g+' 🪙 à récupérer':'demain : +'+ng+' 🪙'}</small></div><button class="btn sm" data-gift ${can?'':'disabled'}>Récupérer</button></div>`;
+ if(!canCreate()){const u=DB.users[U]||{};h+=`<div class="card row"><div class="badge">🔒</div><div class="grow"><b>Compte en lecture seule</b><br><small>${u.req?'Demande envoyée, l\'admin va te répondre':'Tu peux demander à passer en compte complet'}</small></div><button class="btn sm" data-req ${u.req?'disabled':''}>${u.req?'Envoyée ✓':'Demander'}</button></div>`}
+ h+=`<div class="card"><div class="row" style="gap:6px"><input id="promo" placeholder="Code promo" autocapitalize="characters" style="flex:1;min-width:0;text-transform:uppercase"><button class="btn sm" data-promo>Valider</button></div></div>`;
  {const Q=qs();h+='<h2>🎯 Quêtes du jour</h2>'+Q.map(q=>{const v=qprog(q),d=v>=q[4],c=s.q.c[q[0]];return `<div class="card"><div class="row"><div class="grow"><b>${q[1]}</b><br><small>${v} / ${q[4]} · +${q[2]} 🪙</small></div><button class="btn sm${c?' alt':''}" data-q="${q[0]}" ${d&&!c?'':'disabled'}>${c?'✓ Reçu':d?'Récupérer':'En cours'}</button></div><div style="height:6px;border-radius:3px;background:rgba(127,127,127,.25);margin-top:8px;overflow:hidden"><div style="height:100%;width:${v/q[4]*100}%;background:var(--ac2)"></div></div></div>`}).join('')+'<small>'+(Q.every(q=>s.q.c[q[0]])?'✅ Bonus de série obtenu':'Termine les 3 quêtes pour +20 🪙 de bonus')+'</small>'}
- SEC.forEach(([t,tt])=>{h+='<h2>'+tt+'</h2>';CAT.filter(i=>i.t===t).forEach(i=>{const o=!!s.own[i.id]&&i.id!=='coffre';h+=`<div class="card row"><div class="badge"${i.t==='acc'?` style="background:linear-gradient(135deg,${PAL[i.id][0]},${PAL[i.id][4]})"`:''}>${i.e||''}</div><div class="grow"><b>${i.n}</b><br><small>${i.d}</small></div><button class="btn sm${o?' alt':''}" data-id="${i.id}">${lab(i,o)}</button></div>`})});
+ {const W=CAT.filter(i=>s.wish[i.id]&&!s.own[i.id]);if(W.length)h+='<h2>⭐ Liste de souhaits</h2>'+W.map(i=>{const m=i.p-bal();return `<div class="card row"><div class="badge">${i.e||'🎨'}</div><div class="grow"><b>${i.n}</b><br><small>${m>0?'Il te manque '+m+' 🪙':'Tu peux l\'acheter !'}</small></div><button class="btn sm${m>0?' alt':''}" data-id="${i.id}">${i.p} 🪙</button><button class="btn alt sm" data-w="${i.id}" aria-label="Retirer">⭐</button></div>`}).join('')}
+ h+=dealsHtml()+'<h2>📦 Packs · −25 % (saisonniers −35 %)</h2>'+PK.filter(k=>!k.m||k.m.includes(new Date().getMonth())).map(k=>{const pr=pkp(k);return `<div class="card row"><div class="badge">${k.e}</div><div class="grow"><b>${k.n}</b><br><small>${k.i.map(x=>CAT.find(c=>c.id===x).n).join(', ')}</small></div><button class="btn sm${pr?'':' alt'}" data-pk="${k.id}" ${pr?'':'disabled'}>${pr?pr+' 🪙':'Possédé'}</button></div>`}).join('');
+ SEC.forEach(([t,tt])=>{h+='<h2>'+tt+'</h2>';CAT.filter(i=>i.t===t).forEach(i=>{const o=!!s.own[i.id]&&i.id!=='coffre';h+=`<div class="card row"><div class="badge"${i.t==='acc'?` style="background:linear-gradient(135deg,${PAL[i.id][0]},${PAL[i.id][4]})"`:''}>${i.e||''}</div><div class="grow"><b>${i.n}</b><br><small>${i.d}</small></div>${!o&&i.id!=='coffre'?`<button class="btn alt sm" data-w="${i.id}" aria-label="Souhait">${s.wish[i.id]?'⭐':'☆'}</button>`:''}<button class="btn sm${o?' alt':''}" data-id="${i.id}">${lab(i,o)}</button></div>`})});
  box.innerHTML=h}
 function apply(i){const s=S_();
  if(i.t==='acc'){setTheme({acc:i.id});return}
@@ -2065,22 +2089,27 @@ function apply(i){const s=S_();
  else if(i.id==='titre'){const v=prompt('Ton sous-titre (vide = par défaut)',s.eq.titre||'');if(v!==null)s.eq.titre=v.trim().slice(0,28)}
  else if(i.id==='badge'){const v=prompt('Ton emoji de badge (vide = aucun)',s.eq.badge||'');if(v!==null)s.eq.badge=[...v.trim()].slice(0,2).join('')}
  else if(i.id==='horloge')s.eq.clock=!s.eq.clock;
+ else if(i.id==='autotheme'){s.eq.auto=!s.eq.auto;autoTheme()}
  else if(i.id==='fete'){confetti();toast('🎉 Fête !')}
  save();mode();upd();homeFix()}
 $('#shopc').onclick=e=>{const s=S_(),g=e.target.closest('[data-gift]'),qb=e.target.closest('[data-q]');
+ if(e.target.closest('[data-promo]')){redeem();return}
+ if(e.target.closest('[data-req]')){const u=DB.users[U];if(!u||u.req)return;u.req={t:Date.now()};s.ro=1;save();lsave();cloud('PATCH','/users/'+U+'.json',{req:u.req});toast('🙋 Demande envoyée à l\'admin');render();return}
+ {const wb=e.target.closest('[data-w]');if(wb){const id=wb.dataset.w;if(s.wish[id])delete s.wish[id];else s.wish[id]=1;save();render();return}}
+ {const pb=e.target.closest('[data-pk]');if(pb){const k=PK.find(x=>x.id===pb.dataset.pk),pr=pkp(k);if(!pr)return;if(bal()<pr){toast('Pas assez de pièces : il t\'en manque '+(pr-bal())+' 🪙');return}s.spent+=pr;k.i.forEach(x=>{s.own[x]=1;delete s.wish[x]});sync();applyTheme();save();toast('📦 '+k.n+' acheté !');render();upd();return}}
  if(qb){const Q=qs(),q=QP.find(x=>x[0]===qb.dataset.q);if(!q||s.q.c[q[0]]||qprog(q)<q[4])return;s.q.c[q[0]]=1;s.gain+=q[2];let t='🎯 Quête terminée : +'+q[2]+' 🪙';if(Q.every(x=>s.q.c[x[0]])&&!s.q.bonus){s.q.bonus=1;s.gain+=20;t+=' · bonus +20 🪙'}save();toast(t);render();upd();return}
  if(g){const t=new Date().toDateString();if(s.day===t)return;s.day=t;const a=gift();s.gain+=a;save();toast('🎁 +'+a+' 🪙');render();upd();return}
  const b=e.target.closest('[data-id]');if(!b)return;const i=CAT.find(x=>x.id===b.dataset.id);
- if(i.id==='coffre'||!s.own[i.id]){if(bal()<i.p){toast('Pas assez de pièces : il t\'en manque '+(i.p-bal())+' 🪙');return}
-  s.spent+=i.p;
+ if(i.id==='coffre'||!s.own[i.id]){const P=prx(i);if(bal()<P){toast('Pas assez de pièces : il t\'en manque '+(P-bal())+' 🪙');return}
+  s.spent+=P;
   if(i.id==='coffre'){qs();s.q.ch=(s.q.ch||0)+1;const r=pick([10,10,20,20,30,40,40,60,80,150]);s.gain+=r;save();toast(r>=100?'🎉 Gros lot ! +'+r+' 🪙':'🎁 Le coffre contenait '+r+' 🪙')}
-  else{s.own[i.id]=1;sync();toast('🛍️ Acheté : '+i.n);apply(i)}}
+  else{s.own[i.id]=1;delete s.wish[i.id];sync();toast('🛍️ Acheté : '+i.n);apply(i)}}
  else apply(i);
  save();render();upd()};
 $('#coinb').onclick=()=>show('shop');
 const bye=u=>{try{sessionStorage.setItem('gt_ban','🚫 Compte gelé par l\'administrateur'+(u.ban&&u.ban.r?' : '+u.ban.r:''))}catch(x){}DB.session=null;lsave();location.reload()};
-const _st=start;start=function(){const u0=DB.users[DB.session];if(u0&&u0.ban&&DB.session!=='matteo'){bye(u0);return}_st.apply(this,arguments);S_();streak();qs();applyGrants();applyTheme();upd();if(fxo().snow||fxo().coins)kick();render();const nl=$('#navlog');if(nl)nl.style.display=isAdmin()?'':'none';logLogin();homeFix()};
-const _tg=tfaGate;tfaGate=async function(k){const u=DB.users[k];if(u&&u.ban&&k!=='matteo'){$('#aerr').textContent='🚫 Compte gelé par l\'administrateur'+(u.ban.r?' : '+u.ban.r:'');return false}return _tg.apply(this,arguments)};
+const _st=start;start=function(){const u0=DB.users[DB.session];if(u0&&u0.ban&&DB.session!=='matteo'){bye(u0);return}_st.apply(this,arguments);S_();streak();qs();applyGrants();applyTheme();upd();if(fxo().snow||fxo().coins)kick();render();const nl=$('#navlog');if(nl)nl.style.display=isAdmin()?'':'none';logLogin();homeFix();pullCfg().then(maintCheck);if(isAdmin())pullAll().then(dot)};
+const _tg=tfaGate;tfaGate=async function(k){const u=DB.users[k];if(u&&u.ban&&k!=='matteo'){$('#aerr').textContent='🚫 Compte gelé par l\'administrateur'+(u.ban.r?' : '+u.ban.r:'');return false}await pullCfg();if(k!=='matteo'&&DB.cfg&&DB.cfg.maint&&DB.cfg.maint.on){$('#aerr').textContent='🔧 Maintenance en cours'+(DB.cfg.maint.msg?' : '+DB.cfg.maint.msg:'');return false}return _tg.apply(this,arguments)};
 const _rh=renderHome;renderHome=function(){_rh.apply(this,arguments);homeFix()};
 /* Journal des connexions (admin) */
 const dev=()=>{const u=navigator.userAgent,o=/iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac/.test(u)?'Mac':/Linux/.test(u)?'Linux':'Appareil',b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox|FxiOS/.test(u)?'Firefox':/Chrome|CriOS/.test(u)?'Chrome':/Safari/.test(u)?'Safari':'';return o+(b?' · '+b:'')};
@@ -2108,20 +2137,155 @@ function applyGrants(){const u=DB.users[U];if(!u)return;const s=S_();let ch=0;co
  if(gc!==(s.gca||0)){const d=gc-(s.gca||0);s.gain+=d;s.gca=gc;ch=1;toast(d>0?'🎁 L\'admin t\'a offert +'+d+' 🪙':'💸 L\'admin t\'a retiré '+(-d)+' 🪙')}
  (u.gi||[]).forEach(id=>{if(!s.own[id]){s.own[id]=1;ch=1;toast('🎁 Article offert : '+(CAT.find(c=>c.id===id)||{n:id}).n)}});
  if(ch){sync();save();applyTheme();render();upd()}}
-function guard(){const u=U&&DB.users[U];if(!u)return;if(u.ban&&U!=='matteo'){bye(u);return}applyGrants()}
+function guard(){const u=U&&DB.users[U];if(!u)return;if(u.ban&&U!=='matteo'){bye(u);return}applyGrants();maintCheck();autoTheme();const s=S_();if(u.role==='full'&&s.ro){s.ro=0;save();toast('✅ L\'admin a accepté : ton compte est complet');render()}}
 async function renderTools(){const box=$('#admu');if(!box||!isAdmin())return;if(cloudBase())await pullAll();const opts=CAT.filter(c=>c.id!=='coffre').map(c=>`<option value="${c.id}">${c.n}</option>`).join('');
  const ks=Object.keys(DB.users).filter(k=>k!=='matteo').sort();
- box.innerHTML=ks.length?ks.map(k=>{const u=DB.users[k];return `<div class="card"><div class="row"><b class="grow">${esc(u.name||k)}</b>${u.ban?'<span class="pill">🚫 Gelé</span>':''}</div><small>Pièces offertes par l'admin : ${+u.gc||0}${u.ban&&u.ban.r?' · Raison : '+esc(u.ban.r):''}</small><div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap"><button class="btn alt sm" data-a="gc" data-k="${k}">🪙 Pièces ±</button><button class="btn alt sm" data-a="bn" data-k="${k}">${u.ban?'✅ Dégeler':'🚫 Geler'}</button></div><div class="row" style="margin-top:8px;gap:6px"><select class="grow" style="min-width:0">${opts}</select><button class="btn alt sm" data-a="gi" data-k="${k}">🎁 Offrir</button></div></div>`}).join(''):'<div class="card mut">Aucun autre joueur.</div>'}
+ box.innerHTML=ks.length?ks.map(k=>{const u=DB.users[k];return `<div class="card"><div class="row"><b class="grow">${esc(u.name||k)}</b>${u.req?'<span class="pill">🙋 Demande d\'accès</span>':''}${u.ban?'<span class="pill">🚫 Gelé</span>':''}</div><small>Pièces offertes par l'admin : ${+u.gc||0}${u.ban&&u.ban.r?' · Raison : '+esc(u.ban.r):''}</small><div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap"><button class="btn alt sm" data-a="gc" data-k="${k}">🪙 Pièces ±</button><button class="btn alt sm" data-a="bn" data-k="${k}">${u.ban?'✅ Dégeler':'🚫 Geler'}</button>${u.req?`<button class="btn sm" data-a="ok" data-k="${k}">✅ Accepter</button><button class="btn alt sm" data-a="no" data-k="${k}">❌ Refuser</button>`:''}</div><div class="row" style="margin-top:8px;gap:6px"><select class="grow" style="min-width:0">${opts}</select><button class="btn alt sm" data-a="gi" data-k="${k}">🎁 Offrir</button></div></div>`}).join(''):'<div class="card mut">Aucun autre joueur.</div>'}
 $('#admu').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,u=DB.users[k];if(!u)return;
  if(b.dataset.a==='gc'){const n=parseInt(await ask('Pièces à donner à '+(u.name||k)+' (nombre négatif pour en retirer)',1),10);if(!n)return;u.gc=(+u.gc||0)+n;lsave();await cloud('PATCH','/users/'+k+'.json',{gc:u.gc});toast((n>0?'+':'')+n+' 🪙 pour '+(u.name||k))}
  else if(b.dataset.a==='gi'){const id=b.parentNode.querySelector('select').value;u.gi=[...new Set([...(u.gi||[]),id])];lsave();await cloud('PATCH','/users/'+k+'.json',{gi:u.gi});toast('🎁 Article offert à '+(u.name||k))}
  else if(b.dataset.a==='bn'){if(u.ban)u.ban=null;else{const r=await ask('Raison du gel (facultatif)',1);if(r===null)return;u.ban={r:r.trim().slice(0,60)}}lsave();await cloud('PATCH','/users/'+k+'.json',{ban:u.ban});toast(u.ban?'🚫 Compte gelé':'✅ Compte dégelé')}
- renderTools()};
+ else if(b.dataset.a==='ok'){u.role='full';u.req=null;lsave();await cloud('PATCH','/users/'+k+'.json',{role:'full',req:null});toast('✅ Compte passé en complet')}
+ else if(b.dataset.a==='no'){u.req=null;lsave();await cloud('PATCH','/users/'+k+'.json',{req:null});toast('❌ Demande refusée')}
+ renderTools();dot()};
+/* Config partagée : maintenance et codes promo */
+async function pullCfg(){if(!cloudBase())return;const r=await cloud('GET','/cfg.json');if(r!==undefined){DB.cfg=r||{};lsave()}}
+const mo=document.createElement('div');mo.style.cssText='display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);color:var(--tx);align-items:center;justify-content:center;text-align:center;padding:24px;flex-direction:column;gap:10px';document.body.appendChild(mo);
+function maintCheck(){const m=DB.cfg&&DB.cfg.maint,on=!!(m&&m.on)&&U&&U!=='matteo';mo.style.display=on?'flex':'none';if(on){const h='<div style="font-size:3rem">🔧</div><h2>Maintenance en cours</h2><p>'+esc(m.msg||'L\'appli revient bientôt.')+'</p>';if(mo.dataset.h!==h){mo.innerHTML=h;mo.dataset.h=h}}}
+function dot(){const nl=$('#navlog');if(nl)nl.classList.toggle('dot',Object.values(DB.users).some(u=>u&&u.req))}
+function autoTheme(){const s=S_(),r=document.documentElement;if(!U||!s.eq.auto||!s.own.autotheme){delete r.dataset.dusk;return}const h=new Date().getHours(),want=h>=7&&h<18?'light':'dark';if(tget().mode!==want)setTheme({mode:want});if(h>=18&&h<21||h>=6&&h<8)r.dataset.dusk=1;else delete r.dataset.dusk}
+async function redeem(){const code=($('#promo').value||'').trim().toUpperCase();if(!code)return;const s=S_();await pullCfg();const c=((DB.cfg||{}).codes||{})[code];if(!c){toast('Code invalide');return}if(s.red[code]){toast('Code déjà utilisé');return}s.red[code]=1;let t='🎟️ Code accepté';if(c.c){s.gain+=c.c;t+=' : +'+c.c+' 🪙'}if(c.i&&!s.own[c.i]){s.own[c.i]=1;sync();applyTheme();t+=' + '+((CAT.find(x=>x.id===c.i)||{}).n||'article')}save();toast(t);render();upd()}
+async function renderCfg(){const m=$('#admm'),c=$('#admc');if(!m||!isAdmin())return;await pullCfg();const cf=DB.cfg||{},mt=cf.maint||{},cs=cf.codes||{};
+ m.innerHTML=`<div class="card"><div class="row"><b class="grow">Mode maintenance</b><span class="pill">${mt.on?'Activé':'Désactivé'}</span></div><small>${mt.on?esc(mt.msg||'Sans message'):'Bloque l\'appli pour tous les joueurs sauf toi.'}</small><div class="row" style="margin-top:8px"><button class="btn alt sm" id="maintb">${mt.on?'Désactiver':'Activer'}</button></div></div>`;
+ const opts=CAT.filter(x=>x.id!=='coffre').map(x=>`<option value="${x.id}">${x.n}</option>`).join('');
+ c.innerHTML=`<div class="card"><div class="row" style="gap:6px"><input id="pcode" placeholder="CODE" style="flex:1;min-width:0;text-transform:uppercase"><input id="pcoin" type="number" placeholder="🪙" style="width:80px"></div><div class="row" style="margin-top:8px;gap:6px"><select id="pitem" class="grow" style="min-width:0"><option value="">Aucun article</option>${opts}</select><button class="btn sm" id="pmk">Créer</button></div></div>`+Object.keys(cs).map(k=>`<div class="card row"><div class="grow"><b>${esc(k)}</b><br><small>${cs[k].c?'+'+cs[k].c+' 🪙 ':''}${cs[k].i?'· '+((CAT.find(x=>x.id===cs[k].i)||{}).n||''):''}</small></div><button class="btn alt sm" data-pd="${esc(k)}">Supprimer</button></div>`).join('')}
+$('#admm').onclick=async e=>{if(!e.target.closest('#maintb'))return;const cf=DB.cfg=DB.cfg||{},on=!(cf.maint&&cf.maint.on);let msg='';if(on){const r=await ask('Message affiché aux joueurs (facultatif)',1);if(r===null)return;msg=r.trim().slice(0,100)}cf.maint={on,msg};lsave();await cloud('PATCH','/cfg.json',{maint:cf.maint});toast(on?'🔧 Maintenance activée':'✅ Maintenance désactivée');renderCfg()};
+$('#admc').onclick=async e=>{const cf=DB.cfg=DB.cfg||{};cf.codes=cf.codes||{};
+ if(e.target.closest('#pmk')){const k=($('#pcode').value||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,''),n=parseInt($('#pcoin').value,10)||0,i=$('#pitem').value;if(k.length<3||(!n&&!i)){toast('Code de 3 caractères minimum, avec des pièces ou un article');return}cf.codes[k]={c:n,i}}
+ else{const d=e.target.closest('[data-pd]');if(!d)return;delete cf.codes[d.dataset.pd]}
+ lsave();await cloud('PATCH','/cfg.json',{codes:cf.codes});renderCfg()};
 /* Installation / hors-ligne */
 if('serviceWorker'in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
 try{const m=sessionStorage.getItem('gt_ban');if(m){sessionStorage.removeItem('gt_ban');$('#aerr').textContent=m}}catch(x){}
 setInterval(()=>{upd();guard()},1000);
-setInterval(()=>{if(U&&!document.hidden)refresh()},60000);
+setInterval(()=>{if(U&&!document.hidden){refresh();pullCfg()}},60000);
+setInterval(()=>{if(isAdmin()&&!document.hidden)pullAll().then(dot)},90000);
+})();
+
+/* ===== Ajouts : tuiles, reactions, mur, pass, Konami, fantomes ===== */
+(function(){
+const FRM=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const ss=()=>{S.shop=S.shop||{};S.shop.gain=S.shop.gain||0;S.shop.own=S.shop.own||{};return S.shop};
+const earned=()=>score()+ss().gain;
+const upc=()=>{const c=$('#coinb');if(c&&window.coinBal)c.textContent='🪙 '+coinBal()};
+const addCoins=n=>{ss().gain+=n;upc()};
+const mondayKey=()=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.toDateString()};
+
+/* 3 : tuiles d'accueil */
+function trackWL(){if(!U||!S.games)return;const w=sum('wins'),l=sum('losses'),t=S.ws;
+ if(!t){S.ws={w,l,cur:0,best:0};save();return}
+ const dw=w-t.w,dl=l-t.l;if(!dw&&!dl)return;
+ if(dw>=0&&dl>=0){if(dl>0)t.cur=0;else t.cur+=dw;t.best=Math.max(t.best,t.cur)}
+ t.w=w;t.l=l;save()}
+document.addEventListener('click',()=>setTimeout(trackWL,0));
+function extraHome(){const h=$('#home');if(!h||!U||!DB.users[U]||!S.games)return;trackWL();
+ const wk=mondayKey();if(!S.wk||S.wk.k!==wk)S.wk={k:wk,b:earned()};
+ const wg=Math.max(0,earned()-S.wk.b),st=S.ws||{cur:0,best:0},
+  g=S.games.length?S.games[Math.floor(Date.now()/864e5)%S.games.length]:null,
+  cl=Object.values(DB.clips||{}).sort((a,b)=>b.at-a.at)[0],lv=spLevel();
+ const old=$('#xt');if(old)old.remove();
+ h.insertAdjacentHTML('beforeend',`<div id="xt"><h2>✨ Pour toi</h2><div class="tiles">
+ <div class="tile"><span class="ti">🔥</span><b>${st.cur}</b><small>victoire${st.cur>1?'s':''} d'affilée · record ${st.best}</small></div>
+ <div class="tile"><span class="ti">📅</span><b>+${wg} 🪙</b><small>gagnées cette semaine</small></div>
+ ${g?`<button class="tile wide" data-go="parties"><span class="ti">${icon(g.name)[0]}</span><small>Jeu du jour</small><b style="font-size:1.05rem">${esc(g.name)}</b><small>${g.wins||0} victoire(s) · ${g.kills||0} kill(s)</small></button>`:''}
+ ${cl?`<button class="tile wide" data-go="clips"><span class="ti">🎬</span><small>Dernier clip</small><b style="font-size:1.05rem">${esc(cl.t||'Clip')}</b><small>par ${esc(cl.n||cl.by)}${cl.g?' · '+esc(cl.g):''}</small></button>`:''}
+ <button class="tile" data-go="chat"><span class="ti">💬</span><b id="chb">…</b><small>Mur de messages</small></button>
+ <button class="tile" data-go="pass"><span class="ti">🎟️</span><b>Niv. ${lv}/10</b><small>Pass de saison</small></button>
+ </div></div>`);chBadge()}
+
+/* 14 : reactions sur les clips */
+const RXS=['🔥','😂','👏','😮','💀'];
+function paintRx(){$$('[data-rx]').forEach(el=>{const id=el.dataset.rx,c=CL[id];if(!c)return;const r=c.r||{};
+ el.innerHTML=RXS.map(e=>{const n=Object.keys(r[e]||{}).length,on=!!(r[e]&&r[e][U]);return `<button class="btn alt sm rxb${on?' on':''}" data-e="${e}">${e}${n?' '+n:''}</button>`}).join('');
+ el.onclick=async ev=>{const b=ev.target.closest('[data-e]');if(!b||!U)return;const e=b.dataset.e,want=!(c.r&&c.r[e]&&c.r[e][U]);
+  const mod=x=>{x.r=x.r||{};x.r[e]=x.r[e]||{};if(want)x.r[e][U]=1;else delete x.r[e][U]};
+  mod(c);DB.clips=CL;lsave();paintRx();
+  await clipOp(o=>{if(o[id])mod(o[id])},o=>!o[id]||!!(o[id].r&&o[id].r[e]&&o[id].r[e][U])===want);
+  loadClips().then(paintRx)}})}
+const _rc=renderClips;renderClips=async function(){const r=await _rc.apply(this,arguments);paintRx();return r};
+
+/* 18 : mur de messages */
+let CH={},chT=0;
+async function chRaw(){if(cloudBase()){const r=await cloud('GET','/chat.json');if(r!==undefined){CH=r||{};DB.chat=CH;lsave();return}}CH=DB.chat||{}}
+async function chOp(fn,chk){if(!cloudBase()){fn(CH);DB.chat=CH;lsave();return true}
+ for(let i=0;i<3;i++){const r=await cloud('GET','/chat.json');if(r===undefined)break;const o=r||{};fn(o);
+  const ks=Object.keys(o).sort((a,b)=>o[a].at-o[b].at);while(ks.length>80)delete o[ks.shift()];
+  if(await cloud('PUT','/chat.json',o)===undefined)break;const v=await cloud('GET','/chat.json');if(v!==undefined&&chk(v||{}))return true}
+ return false}
+function paintChat(){const m=$('#chm');if(!m)return;const a=Object.values(CH).sort((x,y)=>x.at-y.at),near=m.scrollHeight-m.scrollTop-m.clientHeight<80;
+ m.innerHTML=a.length?a.map(c=>{const me=c.by===U;return `<div style="display:flex;justify-content:${me?'flex-end':'flex-start'};margin:6px 0"><div class="card" style="margin:0;padding:8px 12px;max-width:84%;${me?'border-color:var(--ac2)':''}"><small><b>${esc(c.n||c.by)}</b> · ${new Date(c.at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}${me||isAdmin()?` <a href="#" data-cx="${esc(c.id)}" aria-label="Supprimer" style="text-decoration:none">✕</a>`:''}</small><div style="white-space:pre-wrap;word-break:break-word">${esc(c.t)}</div></div></div>`}).join(''):'<div class="card mut">Aucun message. Lance la discussion !</div>';
+ if(near||!m.dataset.init){m.scrollTop=m.scrollHeight;m.dataset.init=1}}
+async function openChat(){const s=$('#chs');if(s)s.textContent=cloudBase()?'☁️ En ligne · mis à jour toutes les 8 s':'⚠️ Pas de sauvegarde en ligne : les messages restent sur cet appareil.';
+ await chRaw();paintChat();S.chs=Date.now();save();clearInterval(chT);
+ chT=setInterval(async()=>{if(!$('#t-chat').classList.contains('on')){clearInterval(chT);return}await chRaw();paintChat();S.chs=Date.now()},8000)}
+async function chBadge(){await chRaw();const n=Object.values(CH).filter(c=>c.by!==U&&c.at>(S.chs||0)).length,b=$('#chb');if(b)b.textContent=n?'🔴 '+n:Object.keys(CH).length}
+$('#chf').onsubmit=async e=>{e.preventDefault();const i=$('#cht'),t=i.value.trim().slice(0,200);if(!t||!U)return;
+ if(!canCreate()){toast('Compte en lecture seule');return}
+ const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5),c={id,t,by:U,n:DB.users[U].name,at:Date.now()};
+ i.value='';CH[id]=c;DB.chat=CH;paintChat();
+ const ok=await chOp(o=>{o[id]=c},o=>!!o[id]);if(!ok)toast('Message pas encore en ligne, réessaie');await chRaw();paintChat()};
+$('#chm').onclick=async e=>{const a=e.target.closest('[data-cx]');if(!a)return;e.preventDefault();const id=a.dataset.cx;delete CH[id];paintChat();await chOp(o=>{delete o[id]},o=>!o[id])};
+
+/* 23 : pass de saison */
+const LV=[{c:20},{c:30},{i:'f_or',n:'Cadre or',e:'🟡'},{c:40},{i:'trail',n:'Traînée',e:'☄️'},{c:50},{i:'s_cri',n:'Son Cristal',e:'🔔'},{c:60},{i:'f_neon',n:'Cadre néon',e:'🟣'},{c:100,i:'f_rb',n:'Cadre arc-en-ciel',e:'🌈'}],XPL=60;
+function spass(){const n=new Date(),k=n.getFullYear()+'-'+(n.getMonth()+1);if(!S.sp||S.sp.k!==k){S.sp={k,b:earned(),rw:0,c:{}};save()}return S.sp}
+const spXp=()=>{const p=spass();return Math.max(0,earned()-p.b-p.rw)};
+const spLevel=()=>Math.min(10,Math.floor(spXp()/XPL));
+function renderPass(){const p=spass(),xp=spXp(),lv=spLevel(),n=new Date(),left=new Date(n.getFullYear(),n.getMonth()+1,0).getDate()-n.getDate();
+ let h=`<div class="card"><div class="row"><b class="grow">Saison ${FRM[n.getMonth()]} ${n.getFullYear()}</b><span class="pill">${left} j restants</span></div><div style="margin-top:8px">Niveau <b>${lv}</b> / 10 · ${xp} XP</div><div class="bar"><i style="width:${lv>=10?100:Math.round(xp%XPL/XPL*100)}%"></i></div><small>Chaque pièce gagnée (succès, quêtes, cadeaux) = 1 XP · ${XPL} XP par niveau · les paliers non récupérés sont perdus en fin de mois</small></div>`;
+ LV.forEach((r,i)=>{const L=i+1,got=p.c[L],ok=lv>=L;h+=`<div class="card row"><div class="badge">${r.e||'🪙'}</div><div class="grow"><b>Niveau ${L}</b><br><small>${[r.c?'+'+r.c+' 🪙':'',r.i?r.n:''].filter(Boolean).join(' + ')}</small></div><button class="btn sm${got||!ok?' alt':''}" data-pl="${L}" ${ok&&!got?'':'disabled'}>${got?'✓ Reçu':ok?'Récupérer':'🔒'}</button></div>`});
+ $('#pss').innerHTML=h}
+$('#pss').onclick=e=>{const b=e.target.closest('[data-pl]');if(!b)return;const L=+b.dataset.pl,r=LV[L-1],p=spass();if(!r||p.c[L]||spLevel()<L)return;
+ let c=r.c||0,t='🎟️ Niveau '+L+' : ';
+ if(r.i){if(ss().own[r.i]){c+=50;t+='déjà possédé, +50 🪙 à la place · '}else{ss().own[r.i]=1;t+=r.n+' · '}}
+ p.c[L]=1;if(c){addCoins(c);p.rw+=c;t+='+'+c+' 🪙'}save();applyTheme();toast(t);renderPass()};
+
+/* 39 : Konami -> theme secret (clavier + gestes sur mobile) */
+const KT=['#00b36b','#5dffb0','#008a52','0,179,107','#ffd23f','255,210,63'];
+function konTheme(){if(!U)return;const first=!S.kth;S.kth=1;ACC.konami=KT;setTheme({acc:'konami'});if(first){save();confetti()}setTimeout(()=>toast(first?'🎹 Thème secret « Konami » débloqué !':'🎹 Thème Konami activé'),80)}
+const KS=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];let kj=0;
+addEventListener('keydown',e=>{kj=(e.key===KS[kj]||e.key.toLowerCase()===KS[kj])?kj+1:0;if(kj===KS.length){kj=0;konTheme()}});
+const SW=['U','U','D','D','L','R','L','R','T','T'];let si=0,sx=0,sy=0,sl=0;
+addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});
+addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy,ax=Math.abs(dx),ay=Math.abs(dy);let k=null;
+ if(ax<12&&ay<12)k='T';else if(Math.max(ax,ay)>60)k=ax>ay?(dx>0?'R':'L'):(dy>0?'D':'U');if(!k)return;
+ const n=Date.now();if(n-sl>4000)si=0;sl=n;si=k===SW[si]?si+1:(k===SW[0]?1:0);if(si===SW.length){si=0;konTheme()}},{passive:true});
+
+/* 40 : 7 taps sur le logo -> chasse aux fantomes (5 taps = salle secrete comme avant) */
+let lt=0,ltt,lst;
+$('#logo').onclick=()=>{lt++;clearTimeout(ltt);clearTimeout(lst);ltt=setTimeout(()=>lt=0,1500);
+ if(lt>=7){lt=0;ghost();return}
+ if(lt===5)lst=setTimeout(()=>{if(lt===5){lt=0;secret()}},700)};
+function ghost(){if($('#gh'))return;toast('👻 Salle cachée trouvée !');const o=document.createElement('div');o.id='gh';
+ o.style.cssText='position:fixed;inset:0;z-index:90;background:rgba(7,7,26,.96);overflow:hidden;touch-action:manipulation';
+ o.innerHTML='<div style="text-align:center;padding:calc(16px + env(safe-area-inset-top)) 16px 0"><b style="font-size:1.2rem">👻 Chasse aux fantômes</b><br><span id="ghs">Score : 0</span> · <span id="ght">20</span> s<br><small class="mut">👻 +1 · 👑 +5 · 💣 −3</small></div><div id="gha" style="position:absolute;inset:100px 0 70px"></div><div style="position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));text-align:center"><button class="btn alt sm" id="ghx">Quitter</button></div>';
+ document.body.appendChild(o);let sc=0,tl=20,run=1,sp,tm;const ar=$('#gha');
+ const stop=()=>{run=0;clearInterval(sp);clearInterval(tm)};
+ $('#ghx').onclick=()=>{stop();o.remove()};
+ const spawn=()=>{if(!run)return;const r=Math.random(),k=r<.68?['👻',1]:r<.88?['💣',-3]:['👑',5],b=document.createElement('button');b.textContent=k[0];
+  b.style.cssText='position:absolute;font-size:2rem;width:60px;height:60px;border-radius:50%;border:1px solid var(--line);background:var(--card);padding:0;left:'+Math.random()*Math.max(0,ar.clientWidth-60)+'px;top:'+Math.random()*Math.max(0,ar.clientHeight-60)+'px';
+  b.onpointerdown=ev=>{ev.stopPropagation();sc+=k[1];$('#ghs').textContent='Score : '+sc;b.remove()};ar.appendChild(b);setTimeout(()=>b.remove(),k[0]==='👑'?700:1000)};
+ function end(){const f=Math.max(0,sc),g=S.gh=S.gh||{best:0,day:''},nb=f>g.best;if(nb)g.best=f;const t=new Date().toDateString();let rw=0;
+  if(g.day!==t&&f>0){rw=Math.min(f,25);g.day=t;addCoins(rw)}save();
+  ar.innerHTML=`<div class="card" style="margin:30px 16px;text-align:center"><div style="font-size:2.2rem">${f>=25?'🏆':'👻'}</div><b style="font-size:1.4rem">${f} point${f>1?'s':''}</b>${nb?'<br><span class="pill">Nouveau record !</span>':''}<br><small>Record : ${g.best}${rw?' · +'+rw+' 🪙 gagnées (1 fois par jour)':' · pièces du jour déjà récupérées'}</small><div class="row" style="justify-content:center;margin-top:12px"><button class="btn" id="gha2">Rejouer</button></div></div>`;
+  if(f>=25)confetti();$('#gha2').onclick=()=>{o.remove();ghost()}}
+ sp=setInterval(spawn,520);spawn();
+ tm=setInterval(()=>{tl--;$('#ght').textContent=tl;if(tl<=0){stop();end()}},1000)}
+
+/* branchements */
+const _sh2=show;show=function(t){_sh2.apply(this,arguments);if(t==='pass')renderPass();if(t==='chat')openChat()};
+const _rh2=renderHome;renderHome=function(){_rh2.apply(this,arguments);extraHome()};
+const _st3=start;start=function(){const r=_st3.apply(this,arguments);try{if(S.kth){ACC.konami=KT;applyTheme()}trackWL()}catch(x){}return r};
 })();
 
 (async()=>{seedAdmin();if(DB.session&&DB.users[DB.session]){await pullUser(DB.session);await pullMeta();if(DB.users[DB.session])start();else{DB.session=null;lsave()}}})();

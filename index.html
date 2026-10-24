@@ -88,6 +88,16 @@ button.tile{cursor:pointer}button.tile:active{transform:scale(.97)}
 .dr{position:absolute;left:0;top:0;bottom:0;width:min(92%,420px);background:var(--panel);border-right:1px solid var(--line);padding:18px;padding-top:calc(18px + env(safe-area-inset-top));overflow:auto;text-align:left}
 .dr h2{margin:18px 0 6px}
 @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+.gtb{margin:12px 0;display:grid;gap:8px}.gtb .sr{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gtb .gcount{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.8rem;color:var(--mut)}
+#tuto{z-index:85;background:var(--ovbg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#tuto .box{max-width:420px;max-height:calc(100% - 20px);overflow:auto;text-align:center;touch-action:pan-y}
+.tdots{display:flex;gap:6px;justify-content:center}.tdots i{width:8px;height:8px;border-radius:8px;background:rgba(129,140,248,.3);transition:width .25s,background .25s}.tdots i.on{width:22px;background:var(--ac2)}
+.tbig{width:76px;height:76px;margin:0 auto 12px;border-radius:22px;display:grid;place-items:center;font-size:2.4rem;background:linear-gradient(135deg,var(--ac),var(--pk));box-shadow:0 0 26px rgba(var(--g1),.55)}
+#tuto h3{margin:0 0 8px;font-size:1.25rem}#tuto ul{list-style:none;margin:12px 0 0;padding:0;text-align:left;display:grid;gap:8px}
+#tuto li{background:var(--inp);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:.88rem;line-height:1.45}
+#tuto .tb{display:flex;gap:8px;margin-top:16px}#tuto .tb .btn{flex:1}
+.tin{animation:tin .25s ease-out}@keyframes tin{from{opacity:0;transform:translateX(14px)}}
+@media (prefers-reduced-motion:reduce){.tin{animation:none}.tdots i{transition:none}}
 </style>
 <style id="bn">
 :root{--line:rgba(var(--g1),.3);--hdr:#0d0d17;--base:#0f0e1b}
@@ -290,6 +300,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
   <div class="row"><button class="btn alt sm" id="sxt" type="button">Tester</button><small id="sxn" class="mut"></small></div>
   <h2>🔔 Notifications</h2><div id="ntl"></div>
   <h2>📝 Nouveautés</h2><button class="btn alt" id="chlg" type="button">Journal des modifs</button>
+  <h2>🎓 Tutoriel</h2><button class="btn alt" id="tutoBtn" type="button">Revoir le tutoriel</button>
   <h2>🕵️ Code secret</h2><form id="codeF" autocomplete="off"><input id="cdi" placeholder="Entre un code…" aria-label="Code secret" autocapitalize="off"><div id="cder" class="err"></div><button class="btn" type="submit">Valider</button></form>
   <h2>Mon mot de passe</h2><form id="pwF" autocomplete="off"><input id="po" type="password" placeholder="Mot de passe actuel" aria-label="Mot de passe actuel"><div style="height:8px"></div><input id="pn" type="password" placeholder="Nouveau mot de passe (4 min.)" aria-label="Nouveau mot de passe"><div id="perr" class="err"></div><button class="btn" type="submit">Changer mon mot de passe</button></form>
   <h2>🔐 Double authentification</h2><small id="tfs"></small><div class="row" style="margin-top:8px"><button class="btn" id="tfb" type="button">Activer la 2FA</button><button class="btn alt" id="tfb2" type="button" style="display:none">Nouvelle clé</button></div>
@@ -304,6 +315,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 </aside></div>
 <div id="dlg" class="ov" style="z-index:95;background:rgba(7,7,26,.8)"><div class="box card"><b id="dm"></b><input id="di" style="margin-top:10px"><div class="row" style="margin-top:12px"><button class="btn" id="dok">OK</button><button class="btn alt" id="dno">Annuler</button></div></div></div>
 <div id="fx" class="ov"></div>
+<div id="tuto" class="ov" role="dialog" aria-modal="true" aria-label="Tutoriel de bienvenue"><div class="box card"></div></div>
 
 <div id="auth" class="ov show"><div class="box card">
   <h2 style="margin-top:0">🎮 GameTrack</h2>
@@ -348,6 +360,12 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
     <datalist id="known"></datalist>
     <button class="btn" type="submit">Ajouter</button>
   </form>
+  <div id="gtb" class="gtb" style="display:none">
+    <input id="gq" type="search" placeholder="Rechercher un jeu ou un rang" aria-label="Rechercher un jeu ou un rang" autocomplete="off">
+    <div class="sr"><select id="gs" aria-label="Trier les jeux"><option value="add">Ordre d’ajout</option><option value="addr">Derniers ajoutés</option><option value="name">Nom A → Z</option><option value="wr">Taux de victoire</option><option value="kills">Kills</option><option value="wins">Victoires</option><option value="played">Parties jouées</option></select>
+    <select id="gf" aria-label="Filtrer les jeux"><option value="all">Tous les jeux</option><option value="rank">Avec un rang</option><option value="norank">Sans rang</option><option value="pos">Taux ≥ 50 %</option><option value="neg">Taux &lt; 50 %</option><option value="new">Jamais joués</option></select></div>
+    <div class="gcount"><span id="gcount" aria-live="polite"></span><button class="btn alt sm" id="greset" type="button" style="display:none">Réinitialiser</button></div>
+  </div>
   <div id="games"></div>
 </section>
 <section id="t-clips">
@@ -464,6 +482,7 @@ function start(){
  S.ctr.visits++;save();$('#auth').classList.remove('show');$('#who').textContent='Joueur : '+DB.users[U].name;$('#burger').style.display='';if(S.pref){try{localStorage.setItem('gt_theme',JSON.stringify(S.pref))}catch(e){}}applyTheme();
  renderAcc();renderGames();renderAch();$('#cc').textContent=S.ctr.clicks;check();renderHome();
  route();
+ if(!S.tuto)setTimeout(()=>{if(window.openTuto&&U&&!S.tuto)openTuto()},700);
  if(Math.random()<.07)setTimeout(()=>toast('📢 Rappel : bois de l\'eau, gamer.'),1800);
 }
 
@@ -553,10 +572,29 @@ $('#mp').onkeydown=e=>{if(e.key==='Enter')$('#mok').click()};
 
 /* Jeux */
 function wr(g){const t=(+g.wins||0)+(+g.losses||0);return t?Math.round((g.wins/t)*100):null}
+/* Recherche, tri et filtres des jeux */
+const GF={q:'',s:'add',f:'all'},nz=s=>String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''),pl=g=>(+g.wins||0)+(+g.losses||0);
+function gList(){const q=nz(GF.q);
+ const L=S.games.map((g,i)=>({g,i})).filter(({g})=>{
+  if(q&&!nz(g.name).includes(q)&&!nz(g.rank).includes(q))return false;
+  const r=wr(g);
+  return GF.f==='rank'?!!g.rank:GF.f==='norank'?!g.rank:GF.f==='pos'?r!==null&&r>=50:GF.f==='neg'?r!==null&&r<50:GF.f==='new'?pl(g)===0:true});
+ const by={addr:(a,b)=>b.i-a.i,name:(a,b)=>a.g.name.localeCompare(b.g.name,'fr',{sensitivity:'base'}),
+  wr:(a,b)=>(wr(b.g)??-1)-(wr(a.g)??-1),kills:(a,b)=>(+b.g.kills||0)-(+a.g.kills||0),wins:(a,b)=>(+b.g.wins||0)-(+a.g.wins||0),played:(a,b)=>pl(b.g)-pl(a.g)};
+ if(by[GF.s])L.sort((a,b)=>by[GF.s](a,b)||a.i-b.i);return L}
+function gReset(draw){GF.q='';GF.s='add';GF.f='all';$('#gq').value='';$('#gs').value='add';$('#gf').value='all';if(draw!==false)renderGames()}
+$('#gq').oninput=e=>{GF.q=e.target.value;renderGames()};
+$('#gs').onchange=e=>{GF.s=e.target.value;renderGames()};
+$('#gf').onchange=e=>{GF.f=e.target.value;renderGames()};
+$('#greset').onclick=()=>gReset();
 function renderGames(){
+ if(S.games.length<2&&(GF.q||GF.s!=='add'||GF.f!=='all'))gReset(false);
+ $('#gtb').style.display=S.games.length>1?'':'none';
  $('#known').innerHTML=Object.keys(ICONS).map(k=>`<option value="${k}">`).join('');
  if(!S.games.length){$('#games').innerHTML='<div class="card mut">Aucun jeu pour le moment. Ajoute-en un avec le champ ci-dessus.</div>';return}
- $('#games').innerHTML=S.games.map((g,i)=>{const [e,c]=icon(g.name),r=wr(g);return `<div class="card"><div class="row"><div class="badge" style="background:${c}">${e}</div><div class="grow"><b>${esc(g.name)}</b><br><small>${g.rank?'Rang : '+esc(g.rank):'Rang non renseigné'}</small></div><button class="btn alt sm" data-d="${i}" aria-label="Supprimer ${esc(g.name)}">✕</button></div>
+ const L=gList();$('#gcount').textContent=L.length+' / '+S.games.length+' jeux';$('#greset').style.display=(GF.q||GF.s!=='add'||GF.f!=='all')?'':'none';
+ if(!L.length){$('#games').innerHTML='<div class="card mut">Aucun jeu ne correspond. Change la recherche ou le filtre.</div>';return}
+ $('#games').innerHTML=L.map(({g,i})=>{const [e,c]=icon(g.name),r=wr(g);return `<div class="card"><div class="row"><div class="badge" style="background:${c}">${e}</div><div class="grow"><b>${esc(g.name)}</b><br><small>${g.rank?'Rang : '+esc(g.rank):'Rang non renseigné'}</small></div><button class="btn alt sm" data-d="${i}" aria-label="Supprimer ${esc(g.name)}">✕</button></div>
 <div class="grid"><div><label>Kills</label><input type="number" min="0" data-i="${i}" data-k="kills" value="${g.kills||0}"></div><div><label>Victoires</label><input type="number" min="0" data-i="${i}" data-k="wins" value="${g.wins||0}"></div><div><label>Défaites</label><input type="number" min="0" data-i="${i}" data-k="losses" value="${g.losses||0}"></div></div>
 <div style="margin-top:8px"><label class="mut" style="font-size:.72rem">Rang</label><input data-i="${i}" data-k="rank" placeholder="Ex. Diamant 2" value="${esc(g.rank||'')}"></div>
 <div class="stat"><span>🎯 ${g.kills||0} kills</span><span style="color:var(--ok)">✔ ${g.wins||0}</span><span style="color:var(--ko)">✖ ${g.losses||0}</span><b>Taux de victoire : ${r===null?'—':r+' %'}</b></div>
@@ -2854,6 +2892,37 @@ const _rh=renderHome;
 renderHome=function(){const r=_rh.apply(this,arguments);try{card()}catch(e){}return r};
 document.addEventListener('visibilitychange',()=>{if(document.hidden||!U)return;try{const was=S.shop&&S.shop.last;bump();if(S.shop&&S.shop.last!==was&&$('#t-home').classList.contains('on'))renderHome()}catch(e){}});
 try{if(U&&$('#t-home').classList.contains('on'))card()}catch(e){}
+})();
+</script>
+<script>
+/* ===== Écran de bienvenue + tutoriel ===== */
+(function(){
+const P=[
+ ['👋',()=>'Bienvenue, '+esc((DB.users[U]&&DB.users[U].name)||'joueur')+' !','GameTrack garde toutes tes stats de jeux au même endroit, avec des pièces, des succès et des défis.',['Ce guide prend moins d’une minute.','Tu peux le revoir quand tu veux : ☰ Paramètres → Tutoriel.']],
+ ['🧭','Se repérer','La barre du bas regroupe tout en 5 onglets.',['<b>Accueil</b> : ta flamme de série et un résumé de ton activité.','<b>Jeux</b> : tes jeux, tes stats et tes comptes Riot, Epic et Xbox.','<b>Social</b> : clips, messages, classement et profil.','<b>Récompenses</b> : succès, pass de saison, boutique et roue de la chance.','<b>Cartes</b> : vitrine, boosters et échanges.']],
+ ['🕹️','Ajouter tes jeux','Dans l’onglet Jeux, tape le nom d’un jeu puis appuie sur Ajouter.',['Les jeux connus (Valorant, Fortnite…) affichent leur icône automatiquement.','Renseigne tes kills, victoires, défaites et ton rang : le taux de victoire se calcule tout seul.','Le sous-onglet Comptes donne des liens directs vers Riot Games, Epic Games et Xbox.']],
+ ['🔎','Retrouver un jeu','Dès que tu as 2 jeux, une barre d’outils apparaît au-dessus de la liste.',['<b>Recherche</b> : par nom de jeu ou par rang, sans tenir compte des accents.','<b>Tri</b> : ordre d’ajout, derniers ajoutés, nom, taux de victoire, kills, victoires ou parties jouées.','<b>Filtres</b> : avec ou sans rang, taux au-dessus ou en dessous de 50 %, jeux jamais joués.','Le compteur indique combien de jeux sont affichés, et « Réinitialiser » remet tout à zéro.']],
+ ['🏆','Débloquer des succès','Récompenses → Succès.',['Ils se débloquent automatiquement quand tu joues avec l’appli : ajouter des jeux, enregistrer des victoires, explorer…','Chaque succès te fait gagner des pièces 🪙.','Les succès verrouillés restent grisés : à toi de deviner comment les obtenir.']],
+ ['🪙','Pièces et boutique','Les pièces sont la monnaie de GameTrack.',['Tu en gagnes avec les succès, les quêtes du jour et les bonus comme la roue de la chance.','Dépense-les dans la boutique : couleurs et modes de thème, effets, packs…','Le pass de saison ajoute des paliers de récompenses à atteindre.']],
+ ['🔥','Quêtes et série','Reviens chaque jour pour garder ta flamme allumée.',['Chaque jour qui suit un jour de connexion allonge ta série ; un jour manqué la remet à 1.','La flamme change d’aspect tous les 10 jours, jusqu’à la Flamme légendaire à 100 jours.','Les quêtes du jour se trouvent dans la boutique : termine-les pour récupérer des pièces.']],
+ ['👥','Social et cartes','Joue avec les autres joueurs de l’appli.',['<b>Clips</b> : partage tes moments forts.','<b>Messages</b> : le mur de discussion.','<b>Classement</b> : compare-toi aux autres.','<b>Échanges</b> : propose ou accepte des cartes, avec la vitrine et les boosters.']],
+ ['⚙️','Réglages','Le bouton ☰ en haut ouvre les paramètres.',['Thème clair ou sombre, couleur, sons et vibrations.','Notifications : choisis lesquelles tu veux et à quelle heure.','Mot de passe et double authentification pour protéger ton compte.','Ta progression est sauvegardée en ligne : tu retrouves tout sur tes autres appareils.']],
+ ['🕵️','Et ce n’est pas fini…','Des pages cachées et des farces se planquent dans l’appli.',['Aucun indice ici. Touche, explore, essaie des choses.','Tu peux aussi tester des codes secrets dans les paramètres.','Bon jeu !']]];
+const o=$('#tuto'),box=o.querySelector('.box');let i=0,tx=0;
+function draw(){const [e,t,p,l]=P[i],last=i===P.length-1;
+ box.innerHTML=`<div class="row" style="flex-wrap:nowrap;margin-bottom:14px"><div class="tdots grow" aria-hidden="true">${P.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div><button class="btn alt sm" data-a="x" type="button" aria-label="Fermer le tutoriel">✕</button></div>
+ <div class="tin"><div class="tbig" aria-hidden="true">${e}</div><h3>${typeof t==='function'?t():t}</h3><p class="mut" style="margin:0">${p}</p><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+ <div class="tb">${i?'<button class="btn alt" data-a="p" type="button">Précédent</button>':''}<button class="btn" data-a="n" type="button">${last?'C’est parti 🚀':'Suivant'}</button></div>
+ <small class="mut" style="display:block;margin-top:10px">Étape ${i+1} sur ${P.length}</small>`;
+ box.scrollTop=0;const b=box.querySelector('[data-a=n]');if(b)b.focus({preventScroll:true})}
+function close(done){o.classList.remove('show');document.removeEventListener('keydown',key);if(S&&!S.tuto){S.tuto=1;save()}if(done===true&&window.confetti)confetti()}
+function go(d){if(d>0&&i===P.length-1)return close(true);i=Math.max(0,Math.min(P.length-1,i+d));draw()}
+function key(e){if(e.key==='Escape')close();else if(e.key==='ArrowRight')go(1);else if(e.key==='ArrowLeft')go(-1)}
+box.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;a==='x'?close():go(a==='n'?1:-1)});
+box.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX},{passive:true});
+box.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>60)go(d<0?1:-1)},{passive:true});
+window.openTuto=function(){i=0;o.classList.add('show');document.addEventListener('keydown',key);draw()};
+$('#tutoBtn').onclick=()=>{$('#drawer').classList.remove('show');openTuto()};
 })();
 </script>
 </body>

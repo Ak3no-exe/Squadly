@@ -90,39 +90,47 @@ button.tile{cursor:pointer}button.tile:active{transform:scale(.97)}
 @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
 </style>
 <style id="bn">
-:root{--bg:#0a0a12;--card:linear-gradient(150deg,#2b1f55,#1a1335 72%);--line:rgba(139,92,246,.3);--blue:#3b82f6;--mut:#a3a3c8}
-body::before{background:radial-gradient(55% 28% at 85% 0,rgba(124,58,237,.22),transparent 70%);animation:none;inset:0}
+:root{--line:rgba(var(--g1),.3);--hdr:#0d0d17;--base:#0f0e1b}
+@supports (color:color-mix(in srgb,red,blue)){html:not([data-theme=light]){--bg:color-mix(in srgb,var(--ac) 10%,#06060b);--panel:color-mix(in srgb,var(--ac) 12%,#08080f);--hdr:color-mix(in srgb,var(--ac) 12%,#07070d);--base:color-mix(in srgb,var(--ac) 14%,#0a0a12)}}
+html[data-theme=light]{--bg:#f3f4ff;--hdr:#fff;--base:#fff;--line:rgba(var(--g1),.25)}
+body::before{inset:0;animation:none;background:radial-gradient(60% 30% at 85% 0,rgba(var(--g1),.28),transparent 70%),radial-gradient(50% 25% at 0 100%,rgba(var(--g2),.14),transparent 70%)}
 body::after{display:none}
-header{max-width:none;margin:0;padding:12px 16px;background:#0d0d17;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+header{max-width:none;margin:0;padding:12px 16px;background:var(--hdr);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
 header>*{max-width:none}
-#logo{width:38px;height:38px;border-radius:11px;font-size:20px;box-shadow:0 0 16px rgba(79,70,229,.5)}
-header h1{font-size:1.2rem;background:none;-webkit-text-fill-color:#60a5fa;color:#60a5fa}
+header h1{font-size:1.2rem;background:none;-webkit-text-fill-color:var(--ac2);color:var(--ac2)}
 header p{font-size:.72rem}
 #out{border-radius:20px}
 main{padding:12px 16px}
-.card,.tile{position:relative;overflow:hidden;border-radius:26px;border:1px solid var(--line);background:var(--card);padding:16px;box-shadow:0 10px 30px -18px rgba(0,0,0,.8)}
-.card::after,.tile::after{content:"";position:absolute;right:-45px;top:-45px;width:130px;height:130px;border-radius:50%;background:rgba(99,102,241,.14);pointer-events:none}
+#logo{position:relative;overflow:hidden;width:40px;height:40px;border-radius:13px;background:none;box-shadow:0 0 18px rgba(var(--g1),.6);display:grid;place-items:center}
+#logo::before{content:"";position:absolute;inset:-60%;background:conic-gradient(var(--ac2),var(--pk),var(--ac),var(--ac2));animation:lspin 5s linear infinite}
+#logo::after{content:"";position:absolute;inset:2px;border-radius:11px;background:radial-gradient(circle at 30% 20%,rgba(var(--g1),.55),var(--hdr) 75%)}
+#logo svg,.hi svg{position:relative;z-index:1;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#logo svg{width:24px;height:24px;filter:drop-shadow(0 0 4px var(--ac2))}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.card,.tile{position:relative;overflow:hidden;border-radius:26px;border:1px solid var(--line);background:linear-gradient(150deg,rgba(var(--g1),.34),rgba(var(--g1),.09) 78%),var(--base);padding:16px;box-shadow:0 10px 30px -18px rgba(0,0,0,.8)}
+.card::after,.tile::after{content:"";position:absolute;right:-45px;top:-45px;width:130px;height:130px;border-radius:50%;background:rgba(var(--g1),.16);pointer-events:none}
 .tiles{gap:12px}
-.tile .ti{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:rgba(129,140,248,.2);font-size:1.3rem;margin-bottom:6px}
+.tile .ti{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:rgba(var(--g1),.26);font-size:1.3rem;margin-bottom:6px}
 .tile b{font-size:1.5rem}
-.tile.wide .ti{margin-bottom:8px}
-.hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:18px;border-radius:28px;border:0;background:linear-gradient(120deg,#6d28d9,#a21caf 60%,#d946ef);box-shadow:0 14px 40px -14px rgba(168,85,247,.7)}
+.hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:18px;border-radius:28px;border:0;background:linear-gradient(120deg,var(--ac3),var(--ac) 55%,var(--pk));box-shadow:0 14px 40px -14px rgba(var(--g1),.8)}
 .hero::after{content:"";position:absolute;right:-40px;top:-30px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.12)}
-.hero .hi{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);flex:none;position:relative;z-index:1}
+.hero .hi{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);flex:none;position:relative;z-index:1}
+.hi svg{width:30px;height:30px}
 .hero>div:last-child{position:relative;z-index:1}
-.hero h2{margin:0;font-size:1.35rem}.hero p{margin:2px 0 0;opacity:.92;font-size:.9rem}
-.btn{border-radius:14px;background:linear-gradient(135deg,#4f46e5,#7c3aed)}
-.btn.alt{background:rgba(129,140,248,.1)}
+.hero h2{margin:0;font-size:1.35rem;color:#fff}.hero p{margin:2px 0 0;opacity:.92;font-size:.9rem;color:#fff}
+.btn.alt{background:rgba(var(--g1),.12)}
 input,select{border-radius:14px;padding:11px 12px}
-.pill{background:rgba(59,130,246,.18);color:#60a5fa}
-nav{background:#0d0d17;border-top:1px solid var(--line);-webkit-backdrop-filter:none;backdrop-filter:none;padding:6px 2px calc(6px + env(safe-area-inset-bottom))}
-nav button{background:none!important;color:#a3a3c8;font-size:.72rem;padding:6px 2px}
+.pill{background:rgba(var(--g1),.22);color:var(--ac2)}
+.tabs button.on{background:rgba(var(--g1),.25)}
+.bar{background:rgba(var(--g1),.2)}
+.ach .badge{background:rgba(var(--g1),.2)}
+.slot{background:linear-gradient(180deg,rgba(var(--g1),.4),var(--base))}
+.reel{background:linear-gradient(180deg,var(--base),rgba(var(--g1),.4) 50%,var(--base))}
+nav{background:var(--hdr);border-top:1px solid var(--line);-webkit-backdrop-filter:none;backdrop-filter:none;padding:6px 2px calc(6px + env(safe-area-inset-bottom))}
+nav button{background:none!important;color:var(--mut);font-size:.72rem;padding:6px 2px}
 nav button b{font-size:0;line-height:0;margin-bottom:4px}
 nav button svg{width:26px;height:26px;display:block;margin:0 auto;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-nav button.on{color:var(--blue)}
-html[data-theme=light]{--card:#fff;--bg:#f3f4ff}
-html[data-theme=light] header,html[data-theme=light] nav{background:#fff}
-html[data-theme=light] .hero h2,html[data-theme=light] .hero p{color:#fff}
+nav button.on{color:var(--ac2)}
 </style>
 </head>
 <body>
@@ -170,7 +178,7 @@ html[data-theme=light] .hero h2,html[data-theme=light] .hero p{color:#fff}
 
 <header>
   <button class="btn alt sm" id="burger" aria-label="Paramètres" style="display:none;font-size:1.2rem">☰</button>
-  <div id="logo" role="button" aria-label="Logo">🎮</div>
+  <div id="logo" role="button" aria-label="Logo"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7.5 10.5v4M5.5 12.5h4"/><circle cx="15.5" cy="11.5" r=".9"/><circle cx="18" cy="13.5" r=".9"/></svg></div>
   <div class="grow" style="flex:1"><h1>GameTrack</h1><p id="who">Suivi de jeux vidéo</p></div>
   <button class="btn alt sm" id="out">Déconnexion</button>
 </header>
@@ -611,7 +619,7 @@ async function clipTile(){try{await loadClips();const l=(await vall()).filter(c=
 function renderHome(){if(!U||!DB.users[U])return;setTimeout(homeBoard,0);setTimeout(clipTile,0);
  const g=S.games,k=sum('kills'),w=sum('wins'),t=tot(),pc=score(),ti=titleOf(pc),got=ACH.filter(a=>S.ach[a[0]]).length,nx=ACH.find(a=>!S.ach[a[0]]&&!a[5]),
  best=g.slice().sort((a,b)=>(b.wins||0)-(a.wins||0))[0],nc=Object.keys(DB.clips||{}).length,h=new Date().getHours();
- $('#home').innerHTML=`<div class="hero"><div class="hi">🎮</div><div><h2>${h<5||h>=18?'Bonsoir':'Bonjour'} ${esc(DB.users[U].name)}</h2><p>${ti} · ${pc} 🪙</p></div></div>
+ $('#home').innerHTML=`<div class="hero"><div class="hi">${$('#logo').innerHTML}</div><div><h2>${h<5||h>=18?'Bonsoir':'Bonjour'} ${esc(DB.users[U].name)}</h2><p>${ti} · ${pc} 🪙</p></div></div>
  <div class="card" id="hb"></div>
  <div class="tiles">
   <button class="tile" data-go="parties"><span class="ti">🎮</span><b>${g.length}</b><small>jeu${g.length>1?'x':''} suivi${g.length>1?'s':''}</small></button>

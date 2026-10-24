@@ -296,6 +296,7 @@ $('#authForm').onsubmit=async e=>{e.preventDefault();
 $('#out').onclick=()=>{try{localStorage.removeItem('gt_ap')}catch(x){}DB.session=null;save();location.reload()};
 function start(){
  U=DB.session;S=normS(DB.users[U].data);
+ if(String(DB.users[U].name||U).trim().toLowerCase()==='matteo')ACH.forEach(a=>{S.ach[a[0]]=1});
  S.ctr.visits++;save();$('#auth').classList.remove('show');$('#who').textContent='Joueur : '+DB.users[U].name;$('#burger').style.display='';if(S.pref){try{localStorage.setItem('gt_theme',JSON.stringify(S.pref))}catch(e){}}applyTheme();
  renderAcc();renderGames();renderAch();$('#cc').textContent=S.ctr.clicks;check();renderHome();
  route();

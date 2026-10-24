@@ -643,7 +643,7 @@ async function clipTile(){try{await loadClips();const l=(await vall()).filter(c=
 function renderHome(){if(!U||!DB.users[U])return;setTimeout(homeBoard,0);setTimeout(clipTile,0);
  const g=S.games,k=sum('kills'),w=sum('wins'),t=tot(),pc=score(),ti=titleOf(pc),got=ACH.filter(a=>S.ach[a[0]]).length,nx=ACH.find(a=>!S.ach[a[0]]&&!a[5]),
  best=g.slice().sort((a,b)=>(b.wins||0)-(a.wins||0))[0],nc=Object.keys(DB.clips||{}).length,h=new Date().getHours();
- $('#home').innerHTML=`<div class="hero"><div class="hi">${$('#logo').innerHTML}</div><div><h2>${h<5||h>=18?'Bonsoir':'Bonjour'} ${esc(DB.users[U].name)}</h2><p>${ti} · ${pc} 🪙</p></div></div>
+ $('#home').innerHTML=`<div class="hero"><div class="hi">${$('#logo').innerHTML}</div><div><h2>${h<5||h>=18?'Bonsoir':'Bonjour'} ${esc(DB.users[U].name)}</h2><p>${ti} · ${window.coinBal?coinBal():pc} 🪙</p></div></div>
  <div class="card" id="hb"></div>
  <div class="tiles">
   <button class="tile" data-go="parties"><span class="ti">🎮</span><b>${g.length}</b><small>jeu${g.length>1?'x':''} suivi${g.length>1?'s':''}</small></button>
@@ -2004,7 +2004,7 @@ addEventListener('hashchange',()=>{if(U)route()});
 (function(){
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const S_=()=>{const s=S.shop=S.shop||{};s.own=s.own||{};s.eq=s.eq||{};s.eq.fx=s.eq.fx||{};s.spent=s.spent||0;s.gain=s.gain||0;return s};
-const bal=()=>score()+S_().gain-S_().spent;
+const bal=()=>score()+S_().gain-S_().spent;window.coinBal=bal;
 const PAL={or:['#d97706','#fbbf24','#b45309','217,119,6','#f43f5e','244,63,94'],neon:['#16a34a','#4ade80','#15803d','22,163,74','#e879f9','232,121,249'],sakura:['#db2777','#f9a8d4','#9d174d','219,39,119','#c4b5fd','196,181,253'],lave:['#dc2626','#f87171','#991b1b','220,38,38','#f59e0b','245,158,11'],glace:['#0284c7','#7dd3fc','#0369a1','2,132,199','#a5f3fc','165,243,252'],minuit:['#1d4ed8','#60a5fa','#1e3a8a','29,78,216','#a855f7','168,85,247']};
 const CAT=[
 {id:'or',t:'acc',n:'Or',p:80,d:'Doré et chaleureux'},{id:'neon',t:'acc',n:'Néon',p:80,d:'Vert fluo et rose électrique'},{id:'sakura',t:'acc',n:'Sakura',p:80,d:'Rose cerisier et lavande'},{id:'lave',t:'acc',n:'Lave',p:100,d:'Rouge volcan et orange'},{id:'glace',t:'acc',n:'Glace',p:100,d:'Bleu polaire'},{id:'minuit',t:'acc',n:'Minuit',p:120,d:'Bleu nuit et violet'},

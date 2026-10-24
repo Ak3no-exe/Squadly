@@ -235,11 +235,47 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 .sxs[aria-checked=true]::after{transform:translateX(22px)}
 #sxv{padding:0;accent-color:var(--ac2)}
 #burger{position:relative}
-.nw::after{content:"";position:absolute;top:3px;right:3px;width:10px;height:10px;border-radius:50%;background:var(--pk);box-shadow:0 0 8px var(--pk)}
+.hasnew::after{content:"";position:absolute;top:3px;right:3px;width:10px;height:10px;border-radius:50%;background:var(--pk);box-shadow:0 0 8px var(--pk)}
 .chl{border-left:3px solid var(--ac2)}.chl h3{margin:0 0 2px;font-size:1rem}.chl ul{margin:8px 0 0;padding-left:18px}.chl li{margin:4px 0;font-size:.9rem}
 .chl .pill{margin-left:6px}
 </style>
 <style>.ntq{display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap}.ntq span{flex:1;min-width:110px}.ntq input{width:auto}.nts{margin:2px 0 6px}</style>
+<style>
+.stk .sn{font-size:2rem;font-weight:800;line-height:1}.stk details{margin-top:10px}.stk summary{cursor:pointer;color:var(--mut);font-size:.85rem}.stk .tl{display:flex;justify-content:space-between;gap:8px;font-size:.82rem;padding:5px 0;border-bottom:1px solid var(--line)}.stk .tl.cur{color:var(--tx);font-weight:700}.stk .tl:not(.ok){color:var(--mut)}
+.fb{position:relative;width:96px;height:116px;flex:none;display:grid;place-items:center}
+.fs{width:78px;height:94px;overflow:visible;transform-origin:50% 100%;filter:drop-shadow(0 0 12px rgba(var(--gl),.7))}
+.fo{fill:var(--c1)}.fi{fill:var(--c2);transform-box:fill-box;transform-origin:50% 100%}
+.fa{display:none;position:absolute}
+.fp{display:none;position:absolute;width:6px;height:6px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px var(--c1);left:44px;bottom:30px}
+.fp.b{left:36px;animation-delay:.7s;--dx:-8px}.fp.c{left:52px;animation-delay:1.3s;--dx:10px}
+@keyframes flk{0%,100%{transform:scale(1,1)}25%{transform:scale(.97,1.05)}50%{transform:scale(1.03,.97)}75%{transform:scale(.98,1.04)}}
+@keyframes sway{0%,100%{transform:rotate(-4deg) skewX(-3deg)}50%{transform:rotate(4deg) skewX(3deg)}}
+@keyframes glw{0%,100%{filter:drop-shadow(0 0 8px rgba(var(--gl),.5))}50%{filter:drop-shadow(0 0 26px rgba(var(--gl),.95))}}
+@keyframes rise{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,6px),-72px) scale(.2);opacity:0}}
+@keyframes orb{to{transform:rotate(360deg)}}
+@keyframes hue{from{filter:hue-rotate(0deg) drop-shadow(0 0 12px rgba(var(--gl),.7))}to{filter:hue-rotate(360deg) drop-shadow(0 0 12px rgba(var(--gl),.7))}}
+@keyframes twk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1.3)}}
+@keyframes neo{0%,100%{filter:brightness(1) drop-shadow(0 0 6px rgba(var(--gl),.6))}50%{filter:brightness(1.35) drop-shadow(0 0 22px rgba(var(--gl),1))}}
+@keyframes shm{0%,100%{filter:hue-rotate(-14deg) brightness(1) drop-shadow(0 0 10px rgba(var(--gl),.7))}50%{filter:hue-rotate(14deg) brightness(1.25) drop-shadow(0 0 16px rgba(var(--gl),.9))}}
+.sf0 .fs{animation:flk 1.6s ease-in-out infinite}
+.sf1 .fs{animation:flk 1.1s ease-in-out infinite,sway 2.4s ease-in-out infinite}
+.sf2 .fs{animation:flk 1s ease-in-out infinite}
+.sf3 .fs{animation:flk .9s ease-in-out infinite,glw 1.8s ease-in-out infinite}
+.sf4 .fs{animation:sway 2s ease-in-out infinite}
+.sf5 .fs{animation:flk 1.3s ease-in-out infinite,shm 2.6s ease-in-out infinite}
+.sf6 .fs{animation:flk 1.2s ease-in-out infinite}
+.sf7 .fs{animation:flk 1.4s ease-in-out infinite,neo 1.2s ease-in-out infinite}
+.sf8 .fs{animation:flk 1.2s ease-in-out infinite,glw 2s ease-in-out infinite}
+.sf9 .fs{animation:flk 1.2s ease-in-out infinite,hue 4s linear infinite}
+.sf10 .fs{animation:flk 1s ease-in-out infinite,hue 6s linear infinite}
+.sf2 .fp,.sf3 .fp,.sf10 .fp{display:block;animation:rise 2s ease-out infinite}
+.sf6 .fa{display:block;inset:6px;animation:orb 3s linear infinite}
+.sf6 .fa::before,.sf6 .fa::after{content:"";position:absolute;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--c2);box-shadow:0 0 10px var(--c1)}
+.sf6 .fa::before{top:0}.sf6 .fa::after{bottom:0}
+.sf8 .fp{display:block;animation:twk 1.2s ease-in-out infinite;bottom:auto;top:20px;left:10px}
+.sf8 .fp.b{left:auto;right:10px;top:44px;animation-delay:.4s}.sf8 .fp.c{left:24px;top:84px;animation-delay:.8s}
+.sf10 .fa{display:block;inset:-2px;border-radius:50%;background:conic-gradient(#f43f5e,#f59e0b,#eab308,#22c55e,#06b6d4,#6366f1,#d946ef,#f43f5e);-webkit-mask:radial-gradient(circle,transparent 58%,#000 60%,#000 66%,transparent 68%);mask:radial-gradient(circle,transparent 58%,#000 60%,#000 66%,transparent 68%);animation:orb 6s linear infinite;opacity:.9}
+</style>
 </head>
 <body>
 <div id="toast" role="status"></div>
@@ -376,7 +412,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 <section id="t-roue"><h2>🎡 Roue de la chance</h2><div id="rwl"></div></section>
 <section id="t-trade"><h2>🔄 Échanges</h2><div id="trc"></div></section>
 <section id="t-modifs"><button class="btn alt sm" data-go="home">← Accueil</button><h2>📝 Journal des modifs</h2><div id="mdf"></div></section>
-<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.2.0</p>
+<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.0</p>
 <p style="text-align:center;margin:6px 0 0"><button class="btn alt sm" data-go="modifs">📝 Journal des modifs</button></p>
 </main>
 <nav>
@@ -587,7 +623,7 @@ async function jbOp(m,path,body){
  const j=await jbFetch('GET');if(!j){cloudState='err';return undefined}
  const rec=j.record&&typeof j.record==='object'?j.record:{},users=rec.users&&typeof rec.users==='object'?rec.users:{};
  if(path==='/meta.json'){cloudState='ok';if(m==='GET')return rec.meta===undefined?null:rec.meta;if(m!=='PUT')return undefined;rec.meta=body;const w0=await jbFetch('PUT',rec);if(w0===undefined){cloudState='err';return undefined}return body}
- if(path==='/board.json'||path==='/clips.json'||path==='/logins.json'||path==='/cfg.json'){const f=path.slice(1,-5);cloudState='ok';
+ if(path==='/board.json'||path==='/clips.json'||path==='/logins.json'||path==='/cfg.json'||path==='/chat.json'||path==='/trades.json'){const f=path.slice(1,-5);cloudState='ok';
   if(m==='GET')return rec[f]===undefined?null:rec[f];
   if(m==='PATCH')rec[f]=Object.assign(rec[f]||{},body);else if(m==='PUT')rec[f]=body;else return undefined;
   if(f==='logins'){const lk=Object.keys(rec[f]).sort();while(lk.length>200)delete rec[f][lk.shift()]}
@@ -597,7 +633,7 @@ async function jbOp(m,path,body){
  if(m==='GET')return k?(users[k]===undefined?null:users[k]):(Object.keys(users).length?users:null);
  if(!k)return undefined;
  if(m==='PUT')users[k]=body;
- else if(m==='PATCH'){if(!users[k])return null;if(mm[2])users[k].data=Object.assign(users[k].data||{},body);else Object.assign(users[k],body)}
+ else if(m==='PATCH'){if(!users[k])return null;if(mm[2]){if(users[k].rst&&(body.rst||0)!==users[k].rst){window.gtRst=k;return undefined}users[k].data=Object.assign(users[k].data||{},body)}else Object.assign(users[k],body)}
  else if(m==='DELETE')delete users[k];
  else return undefined;
  rec.users=users;const w=await jbFetch('PUT',rec);if(w===undefined){cloudState='err';return undefined}
@@ -622,7 +658,7 @@ function renderAdmin(){if(!canCreate())return;
  {const c=cfgv();if(document.activeElement!==$('#cbin')&&document.activeElement!==$('#ckey')){$('#cbin').value=c.bin;$('#ckey').value=c.key}}
  $('#ulist').innerHTML=Object.keys(DB.users).sort().map(k=>{const u=DB.users[k],d=k===U?S:normS(u.data),a=d.acc;
   const accs=Object.keys(a).filter(i=>a[i]&&a[i].pseudo).map(i=>`<div class="row" style="margin-top:6px"><small class="grow">${PN[i]||esc(i)} : ${esc(a[i].pseudo)}</small><button class="btn alt sm" data-rm="${k}|${i}">Retirer</button></div>`).join('');
-  return `<div class="card"><div class="row"><div class="avatar" style="background:#4f46e5">${esc((u.name||k)[0].toUpperCase())}</div><div class="grow"><b>${esc(u.name||k)}</b>${k==='matteo'?' <span class="pill">Admin</span>':u.role==='full'?' <span class="pill">Complet</span>':' <span class="pill">Lecture seule</span>'}<br><small>${u.totp?'🔐 2FA active':'🔓 sans 2FA'} · ${d.games.length} jeu(x) · ${Object.keys(d.ach).length} succès</small></div></div>${accs||'<small>Aucun compte connecté</small>'}${pwl(k)}<div class="row" style="margin-top:10px">${k==='matteo'?'':`<button class="btn alt sm" data-pw="${k}">Changer mdp</button><button class="btn alt sm" data-vp="${k}">Voir mdp</button><button class="btn alt sm" data-rl="${k}">${u.role==='full'?'Passer en lecture seule':'Passer en complet'}</button><button class="btn alt sm" data-tf="${k}">${u.totp?'Désactiver 2FA':'Activer 2FA'}</button><button class="btn alt sm" data-del="${k}">Supprimer</button>`}</div></div>`}).join('');
+  return `<div class="card"><div class="row"><div class="avatar" style="background:#4f46e5">${esc((u.name||k)[0].toUpperCase())}</div><div class="grow"><b>${esc(u.name||k)}</b>${k==='matteo'?' <span class="pill">Admin</span>':u.role==='full'?' <span class="pill">Complet</span>':' <span class="pill">Lecture seule</span>'}<br><small>${u.totp?'🔐 2FA active':'🔓 sans 2FA'} · ${d.games.length} jeu(x) · ${Object.keys(d.ach).length} succès</small></div></div>${accs||'<small>Aucun compte connecté</small>'}${pwl(k)}<div class="row" style="margin-top:10px">${k==='matteo'?'':`<button class="btn alt sm" data-pw="${k}">Changer mdp</button><button class="btn alt sm" data-vp="${k}">Voir mdp</button><button class="btn alt sm" data-rl="${k}">${u.role==='full'?'Passer en lecture seule':'Passer en complet'}</button><button class="btn alt sm" data-tf="${k}">${u.totp?'Désactiver 2FA':'Activer 2FA'}</button><button class="btn alt sm" data-rs="${k}">Réinitialiser la progression</button><button class="btn alt sm" data-del="${k}">Supprimer</button>`}</div></div>`}).join('');
  $$('#ulist [data-pw]').forEach(b=>b.onclick=async()=>{const k=b.dataset.pw,v=await ask('Nouveau mot de passe pour '+(DB.users[k].name||k)+' (4 caractères minimum)',1);if(!v||v.length<4){if(v!==null)toast('4 caractères minimum');return}await setPass(k,v);delete PWC[k];toast('Mot de passe modifié');renderAdmin()});
  $$('#ulist [data-vp]').forEach(b=>b.onclick=()=>revealPw([b.dataset.vp]));
  $$('#ulist [data-rl]').forEach(b=>b.onclick=async()=>{const k=b.dataset.rl,u=DB.users[k];u.role=u.role==='full'?'ro':'full';lsave();await cloud('PATCH','/users/'+k+'.json',{role:u.role});renderAdmin()});
@@ -630,6 +666,14 @@ function renderAdmin(){if(!canCreate())return;
   if(u.totp){if(!await ask('Désactiver la double authentification de '+nm+' ?'))return;u.totp=null;lsave();await cloud('PATCH','/users/'+k+'.json',{totp:null});toast('2FA désactivée pour '+nm)}
   else{if(!(window.crypto&&crypto.subtle)){toast('Navigateur trop ancien pour la 2FA');return}u.totp=newSecret();lsave();await cloud('PATCH','/users/'+k+'.json',{totp:u.totp});tfBox({title:'Double authentification de '+nm,msg:'Donne cette clé à '+esc(nm)+' : il doit l\'ajouter dans une appli d\'authentification. Ensuite, un code à 6 chiffres lui sera demandé à chaque connexion.',secret:u.totp,user:nm})}
   renderAdmin()});
+ $$('#ulist [data-rs]').forEach(b=>b.onclick=async()=>{const k=b.dataset.rs,u=DB.users[k];if(!u||k==='matteo')return;const nm=u.name||k;
+  if(!await ask('Réinitialiser la progression de '+nm+' ? Jeux, succès, pièces, cartes, pass et séries seront remis à zéro. Ses comptes liés, son profil et son thème sont gardés. Impossible à annuler.'))return;
+  const old=normS(u.data),ts=Date.now(),d=Object.assign(base(),{acc:old.acc,pref:old.pref,pf:old.pf,rst:ts});
+  u.data=d;u.rst=ts;lsave();
+  const ok=await cloud('PUT','/users/'+k+'.json',u);
+  if(cloudBase()){const bd=await cloud('GET','/board.json');if(bd&&bd[k]){bd[k]={n:bd[k].n||nm,p:0,a:0,pf:old.pf||null,cn:0,cf:[]};await cloud('PUT','/board.json',bd)}
+   const tr=await cloud('GET','/trades.json');if(tr){let ch=0;Object.keys(tr).forEach(i=>{if(tr[i]&&tr[i].from===k){delete tr[i];ch=1}});if(ch)await cloud('PUT','/trades.json',tr)}}
+  toast(cloudBase()&&ok===undefined?'Réinitialisé sur cet appareil seulement : sauvegarde en ligne injoignable':'Progression de '+nm+' réinitialisée');renderAdmin()});
  $$('#ulist [data-del]').forEach(b=>b.onclick=async()=>{const k=b.dataset.del;if(!await ask('Supprimer le compte '+(DB.users[k].name||k)+' ?'))return;delete DB.users[k];lsave();await cloud('DELETE','/users/'+k+'.json');{const bd=await cloud('GET','/board.json');if(bd){delete bd[k];await cloud('PUT','/board.json',bd)}}toast('Compte supprimé');renderAdmin()});
  $$('#ulist [data-rm]').forEach(b=>b.onclick=async()=>{const [k,i]=b.dataset.rm.split('|');if(k===U){delete S.acc[i];save();renderAcc()}else{const d=normS(DB.users[k].data);delete d.acc[i];DB.users[k].data=d;lsave();await cloud('PUT','/users/'+k+'.json',DB.users[k])}renderAdmin()})}
 $('#newU').onsubmit=async e=>{e.preventDefault();const er=$('#nerr');er.textContent='';
@@ -2341,7 +2385,6 @@ async function openChat(){const s=$('#chs');if(s)s.textContent=cloudBase()?'☁�
  chT=setInterval(async()=>{if(!$('#t-chat').classList.contains('on')){clearInterval(chT);return}await chRaw();paintChat();S.chs=Date.now()},8000)}
 async function chBadge(){await chRaw();const n=Object.values(CH).filter(c=>c.by!==U&&c.at>(S.chs||0)).length,b=$('#chb');if(b)b.textContent=n?'🔴 '+n:Object.keys(CH).length}
 $('#chf').onsubmit=async e=>{e.preventDefault();const i=$('#cht'),t=i.value.trim().slice(0,200);if(!t||!U)return;
- if(!canCreate()){toast('Compte en lecture seule');return}
  const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5),c={id,t,by:U,n:DB.users[U].name,at:Date.now()};
  i.value='';CH[id]=c;DB.chat=CH;paintChat();
  const ok=await chOp(o=>{o[id]=c},o=>!!o[id]);if(!ok)toast('Message pas encore en ligne, réessaie');await chRaw();paintChat()};
@@ -2615,8 +2658,17 @@ const _st5=start;start=function(){const r=_st5.apply(this,arguments);
 <script>
 /* ===== Sons, vibrations et journal des modifs ===== */
 (function(){
-const VER='1.2.0';
+const VER='1.3.0';
 const LOG=[
+ {v:'1.3.0',d:'25 octobre 2026',t:[
+  'Série de connexion : +1 chaque jour, affichée sur l’accueil avec une flamme.',
+  'La flamme change d’aspect et d’animation tous les 10 jours (11 paliers, jusqu’à 100 jours).',
+  'Une célébration s’affiche quand tu passes un nouveau palier.']},
+ {v:'1.2.2',d:'25 octobre 2026',t:[
+  'L’admin peut réinitialiser la progression d’un compte depuis ⚙️ Paramètres, dans la liste des comptes.']},
+ {v:'1.2.1',d:'25 octobre 2026',t:[
+  'Tous les comptes, y compris en lecture seule, peuvent écrire sur le mur de messages.',
+  'Le mur et les échanges sont maintenant partagés en ligne entre les appareils.']},
  {v:'1.2.0',d:'25 octobre 2026',t:[
   'Notifications : rappels de la roue, de la série et rappel quotidien à l’heure de ton choix.',
   'Alertes pour les nouveaux messages, les échanges et les clips, avec heures de silence.',
@@ -2665,7 +2717,7 @@ sync();
 
 /* journal */
 function seen(){try{return localStorage.getItem(KV)===VER}catch(e){return true}}
-function dot(){const b=$('#burger');if(b)b.classList.toggle('nw',!seen());const c=$('#chlg');if(c)c.textContent=(seen()?'':'🔴 ')+'Journal des modifs'}
+function dot(){const b=$('#burger');if(b)b.classList.toggle('hasnew',!seen());const c=$('#chlg');if(c)c.textContent=(seen()?'':'🔴 ')+'Journal des modifs'}
 function render(){$('#mdf').innerHTML=LOG.map(l=>`<div class="card chl"><h3>v${esc(l.v)}${l.v===VER?'<span class="pill">actuelle</span>':''}</h3>${l.d?`<small>${esc(l.d)}</small>`:''}<ul>${l.t.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}
 const _show=show;
 show=function(t){const r=_show.apply(this,arguments);if(t==='modifs'){render();try{localStorage.setItem(KV,VER)}catch(e){}dot()}return r};
@@ -2753,6 +2805,55 @@ $('#ntl').addEventListener('click',async e=>{
 $('#ntl').addEventListener('change',async e=>{const i=e.target.closest('[data-nt]');if(!i||!/^\d\d:\d\d$/.test(i.value))return;const o=get();o[i.dataset.nt]=i.value;put(o);await resched()});
 $('#burger').addEventListener('click',ui);
 ui();
+})();
+</script>
+<script>
+/* Réinitialisation de progression par l'admin : l'appareil du joueur reprend les données remises à zéro */
+(function(){
+const _flush=flush;
+flush=async function(){const r=await _flush.apply(this,arguments);
+ if(window.gtRst&&window.gtRst===U){window.gtRst=0;
+  try{if(await pullUser(U)&&DB.users[U]){S=normS(DB.users[U].data);lastPush=JSON.stringify(DB.users[U].data);renderAcc();renderGames();renderAch();renderHome();$('#cc').textContent=S.ctr.clicks;pushBoard();toast('🔄 Ta progression a été réinitialisée par l’admin')}}catch(e){}}
+ return r};
+})();
+</script>
+<script>
+/* ===== Flamme de série par paliers ===== */
+(function(){
+const T=[
+ ['Braise','#f59e0b','#fde68a','245,158,11'],
+ ['Flamme','#f97316','#fde047','249,115,22'],
+ ['Feu de camp','#ef4444','#fdba74','239,68,68'],
+ ['Brasier','#b91c1c','#fb923c','220,38,38'],
+ ['Flamme bleue','#2563eb','#93c5fd','59,130,246'],
+ ['Feu glacé','#06b6d4','#ecfeff','34,211,238'],
+ ['Flamme violette','#7c3aed','#e9d5ff','139,92,246'],
+ ['Flamme néon','#ec4899','#fbcfe8','236,72,153'],
+ ['Flamme dorée','#eab308','#fffbeb','250,204,21'],
+ ['Flamme prisme','#f43f5e','#fde68a','244,63,94'],
+ ['Flamme légendaire','#f8fafc','#fef08a','255,255,255']];
+const td=()=>new Date().toDateString();
+const tier=n=>Math.min(10,Math.floor(n/10));
+const th=t=>t?t*10:1;
+const OUT='M50 6C54 26 80 40 80 74C80 98 66 114 50 114C34 114 20 98 20 74C20 56 30 48 36 32C40 44 44 50 46 54C48 40 46 22 50 6Z';
+const INN='M50 56C54 68 66 76 66 92C66 104 59 112 50 112C41 112 34 104 34 92C34 82 42 76 44 68C46 74 48 78 50 56Z';
+function flame(t){const x=T[t];return `<div class="fb sf${t}" style="--c1:${x[1]};--c2:${x[2]};--gl:${x[3]}"><i class="fa"></i><svg class="fs" viewBox="0 0 100 120" aria-hidden="true"><path class="fo" d="${OUT}"/><path class="fi" d="${INN}"/></svg><i class="fp"></i><i class="fp b"></i><i class="fp c"></i></div>`}
+/* jour suivant si l'appli est restée ouverte après minuit */
+function bump(){const sh=S&&S.shop;if(!sh||!sh.last||sh.last===td())return;const Y=new Date(Date.now()-864e5).toDateString();sh.streak=sh.last===Y?(sh.streak||0)+1:1;sh.last=td();save()}
+function card(){const box=$('#home');if(!box||!U||!DB.users[U]||!S)return;const old=$('#stk');if(old)old.remove();
+ const sh=S.shop||(S.shop={}),n=Math.max(1,sh.streak||1),t=tier(n),nx=t<10?T[t+1][0]:'',left=t<10?(t+1)*10-n:0,
+  from=th(t),to=t<10?(t+1)*10:from,pct=t<10?Math.round((n-(t?t*10:0))/(to-(t?t*10:0))*100):100,
+  best=Math.max(sh.sbest||0,n);
+ let dirty=false;if(best!==sh.sbest){sh.sbest=best;dirty=true}
+ if(sh.tier===undefined||t<sh.tier){sh.tier=t;dirty=true}else if(t>sh.tier){sh.tier=t;dirty=true;setTimeout(()=>{confetti();toast('🔥 Nouveau palier : '+T[t][0]+' !')},600)}
+ if(dirty)save();
+ const html=`<div class="card stk" id="stk"><div class="row" style="gap:14px;flex-wrap:nowrap">${flame(t)}<div class="grow"><span class="sn">${n}</span> <span>jour${n>1?'s':''} de suite</span><br><small>${T[t][0]} · record ${best} j</small><div class="bar"><i style="width:${pct}%"></i></div><small>${t<10?'Prochain palier dans '+left+' jour'+(left>1?'s':'')+' : '+nx:'Palier maximum atteint'}</small></div></div>
+ <details><summary>Voir les paliers</summary>${T.map((x,i)=>`<div class="tl ${n>=th(i)?'ok':''} ${i===t?'cur':''}"><span>${n>=th(i)?'✅':'🔒'} ${x[0]}</span><span>${th(i)} j</span></div>`).join('')}</details></div>`;
+ const hero=$('#home .hero');if(hero)hero.insertAdjacentHTML('afterend',html);else box.insertAdjacentHTML('afterbegin',html)}
+const _rh=renderHome;
+renderHome=function(){const r=_rh.apply(this,arguments);try{card()}catch(e){}return r};
+document.addEventListener('visibilitychange',()=>{if(document.hidden||!U)return;try{const was=S.shop&&S.shop.last;bump();if(S.shop&&S.shop.last!==was&&$('#t-home').classList.contains('on'))renderHome()}catch(e){}});
+try{if(U&&$('#t-home').classList.contains('on'))card()}catch(e){}
 })();
 </script>
 </body>

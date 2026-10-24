@@ -239,6 +239,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 .chl{border-left:3px solid var(--ac2)}.chl h3{margin:0 0 2px;font-size:1rem}.chl ul{margin:8px 0 0;padding-left:18px}.chl li{margin:4px 0;font-size:.9rem}
 .chl .pill{margin-left:6px}
 </style>
+<style>.ntq{display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap}.ntq span{flex:1;min-width:110px}.ntq input{width:auto}.nts{margin:2px 0 6px}</style>
 </head>
 <body>
 <div id="toast" role="status"></div>
@@ -251,6 +252,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
   <div class="sx"><span>Vibrations</span><button class="sxs" id="sxv2" role="switch" aria-checked="true" aria-label="Activer les vibrations"></button></div>
   <div class="sx"><span>Volume</span><input id="sxv" type="range" min="0" max="100" value="50" aria-label="Volume des sons"></div>
   <div class="row"><button class="btn alt sm" id="sxt" type="button">Tester</button><small id="sxn" class="mut"></small></div>
+  <h2>🔔 Notifications</h2><div id="ntl"></div>
   <h2>📝 Nouveautés</h2><button class="btn alt" id="chlg" type="button">Journal des modifs</button>
   <h2>🕵️ Code secret</h2><form id="codeF" autocomplete="off"><input id="cdi" placeholder="Entre un code…" aria-label="Code secret" autocapitalize="off"><div id="cder" class="err"></div><button class="btn" type="submit">Valider</button></form>
   <h2>Mon mot de passe</h2><form id="pwF" autocomplete="off"><input id="po" type="password" placeholder="Mot de passe actuel" aria-label="Mot de passe actuel"><div style="height:8px"></div><input id="pn" type="password" placeholder="Nouveau mot de passe (4 min.)" aria-label="Nouveau mot de passe"><div id="perr" class="err"></div><button class="btn" type="submit">Changer mon mot de passe</button></form>
@@ -374,7 +376,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 <section id="t-roue"><h2>🎡 Roue de la chance</h2><div id="rwl"></div></section>
 <section id="t-trade"><h2>🔄 Échanges</h2><div id="trc"></div></section>
 <section id="t-modifs"><button class="btn alt sm" data-go="home">← Accueil</button><h2>📝 Journal des modifs</h2><div id="mdf"></div></section>
-<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.1.0</p>
+<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.2.0</p>
 <p style="text-align:center;margin:6px 0 0"><button class="btn alt sm" data-go="modifs">📝 Journal des modifs</button></p>
 </main>
 <nav>
@@ -2613,8 +2615,12 @@ const _st5=start;start=function(){const r=_st5.apply(this,arguments);
 <script>
 /* ===== Sons, vibrations et journal des modifs ===== */
 (function(){
-const VER='1.1.0';
+const VER='1.2.0';
 const LOG=[
+ {v:'1.2.0',d:'25 octobre 2026',t:[
+  'Notifications : rappels de la roue, de la série et rappel quotidien à l’heure de ton choix.',
+  'Alertes pour les nouveaux messages, les échanges et les clips, avec heures de silence.',
+  'Réglages dans ⚙️ Paramètres, section 🔔 Notifications.']},
  {v:'1.1.0',d:'25 octobre 2026',t:[
   'Sons et vibrations : réglables dans ⚙️ Paramètres (sons, vibrations, volume, bouton Tester).',
   'Sons sur les boutons, les notifications, les succès et les confettis.',
@@ -2665,6 +2671,88 @@ const _show=show;
 show=function(t){const r=_show.apply(this,arguments);if(t==='modifs'){render();try{localStorage.setItem(KV,VER)}catch(e){}dot()}return r};
 $('#chlg').onclick=()=>{$('#drawer').classList.remove('show');show('modifs')};
 dot();
+})();
+</script>
+<script>
+/* ===== Notifications ===== */
+(function(){
+const K='gt_nt',KL='gt_ntl',EVERY=90000;
+const DEF={on:0,roue:1,serie:1,daily:0,dt:'19:00',msg:1,ech:1,clip:1,qs:'23:00',qe:'08:00'};
+const get=()=>{let o={};try{o=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}return Object.assign({},DEF,o)};
+const put=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(e){}};
+const getL=()=>{let o={};try{o=JSON.parse(localStorage.getItem(KL)||'{}')||{}}catch(e){}return Object.assign({m:0,e:0,c:0,seen:[]},o)};
+const putL=o=>{o.seen=(o.seen||[]).slice(-60);try{localStorage.setItem(KL,JSON.stringify(o))}catch(e){}};
+const LN=()=>{const C=window.Capacitor;return(C&&C.Plugins&&C.Plugins.LocalNotifications)||null};
+const td=()=>new Date().toDateString();
+const mins=v=>{const m=/^(\d\d):(\d\d)$/.exec(v||'');return m?+m[1]*60+ +m[2]:0};
+function quiet(){const o=get(),n=new Date(),c=n.getHours()*60+n.getMinutes(),a=mins(o.qs),b=mins(o.qe);if(a===b)return false;return a<b?(c>=a&&c<b):(c>=a||c<b)}
+const norm=r=>r==='default'||r==='prompt-with-rationale'?'prompt':r;
+async function perm(){const l=LN();if(l){try{return norm((await l.checkPermissions()).display)}catch(e){return 'denied'}}
+ if('Notification' in window)return norm(Notification.permission);return 'unsupported'}
+async function ask(){const l=LN();if(l){try{return norm((await l.requestPermissions()).display)}catch(e){return 'denied'}}
+ if('Notification' in window){try{return norm(await Notification.requestPermission())}catch(e){}}return 'unsupported'}
+async function send(title,body,tag){const l=LN();
+ if(l){try{await l.schedule({notifications:[{id:2000+Math.floor(Math.random()*1e6),title,body,schedule:{at:new Date(Date.now()+700)},extra:{tag:tag||''}}]});return true}catch(e){}}
+ if('Notification' in window&&Notification.permission==='granted'){try{new Notification(title,{body,tag:tag||''});return true}catch(e){}}
+ return false}
+/* app au premier plan : toast ; app en arrière-plan : notification système */
+function out(title,body,tag){if(document.hidden)send(title,body,tag);else toast(title+(body?' · '+body:''))}
+
+/* rappels programmés (APK seulement) */
+const IDS=[1001,1002,1003];
+const at=(d,h,m)=>{const x=new Date(d);x.setHours(h,m,0,0);return x};
+async function resched(){const l=LN();if(!l||!U||!DB.users[U])return;const o=get();
+ try{await l.cancel({notifications:IDS.map(id=>({id}))})}catch(e){}
+ if(!o.on||(await perm())!=='granted')return;
+ const list=[],now=new Date(),tom=new Date(now.getTime()+864e5),sh=S.shop||{};
+ if(o.roue){let w=at(now,18,0);if(S.wd===td()||w<=now)w=at(tom,10,0);
+  list.push({id:1001,title:'🎡 Roue de la chance',body:'Ta roue du jour t’attend.',schedule:{at:w,allowWhileIdle:true}})}
+ if(o.serie){let w=at(now,20,0);if(sh.last===td()||w<=now)w=at(tom,20,0);const n=sh.streak||0;
+  list.push({id:1002,title:'🔥 Ta série',body:n>1?'Ta série de '+n+' jours est en danger : passe sur GameTrack.':'Passe sur GameTrack pour lancer ta série.',schedule:{at:w,allowWhileIdle:true}})}
+ if(o.daily){const m=/^(\d\d):(\d\d)$/.exec(o.dt)||[0,'19','00'];
+  list.push({id:1003,title:'🎮 GameTrack',body:'C’est l’heure de ta session.',schedule:{on:{hour:+m[1],minute:+m[2]},allowWhileIdle:true}})}
+ if(list.length){try{await l.schedule({notifications:list})}catch(e){}}}
+
+/* événements entre joueurs */
+let busy=0;
+const chatOpen=()=>{const e=$('#t-chat');return!!(e&&e.classList.contains('on'))&&!document.hidden};
+async function poll(){if(busy||!U||!DB.users[U]||!cloudBase())return;const o=get();
+ if(!o.on||!(o.msg||o.ech||o.clip)||quiet())return;busy=1;
+ try{const L=getL(),n=Date.now();if(!L.m)L.m=n;if(!L.e)L.e=n;if(!L.c)L.c=n;
+  if(o.msg){const r=await cloud('GET','/chat.json');if(r){const a=Object.values(r).filter(c=>c&&c.by!==U&&c.at>L.m).sort((x,y)=>x.at-y.at);
+   if(a.length){L.m=a[a.length-1].at;if(!chatOpen()){const c=a[a.length-1];out('💬 '+(a.length>1?a.length+' nouveaux messages':'Nouveau message'),a.length>1?'':(c.n||c.by)+' : '+String(c.t||'').slice(0,80),'msg')}}}}
+  if(o.ech){const r=await cloud('GET','/trades.json');if(r){const all=Object.values(r).filter(Boolean);
+   const fr=all.filter(t=>t.from!==U&&t.st==='open'&&t.at>L.e&&!L.seen.includes('t'+t.id)),dn=all.filter(t=>t.from===U&&t.st==='done'&&!L.seen.includes('d'+t.id));
+   if(fr.length){L.e=Math.max.apply(null,fr.map(t=>t.at));fr.forEach(t=>L.seen.push('t'+t.id));out('🔄 '+(fr.length>1?fr.length+' nouvelles offres d’échange':'Nouvelle offre d’échange'),fr.length>1?'':(fr[0].fn||'Un joueur')+' a publié une offre.','ech')}
+   if(dn.length){dn.forEach(t=>L.seen.push('d'+t.id));out('🔄 Échange accepté',(dn[0].bn||'Un joueur')+' a accepté ton offre.','ech')}}}
+  if(o.clip){const r=await cloud('GET','/clips.json');if(r){const a=Object.values(r).filter(c=>c&&c.by!==U&&c.at>L.c).sort((x,y)=>x.at-y.at);
+   if(a.length){L.c=a[a.length-1].at;const c=a[a.length-1];out('🎬 '+(a.length>1?a.length+' nouveaux clips':'Nouveau clip'),a.length>1?'':(c.n||c.by)+' : '+(c.t||'Clip'),'clip')}}}
+  putL(L)}catch(e){}
+ busy=0}
+
+let lastU=null;
+function tick(){if(U&&U!==lastU){lastU=U;resched()}poll()}
+setTimeout(tick,3000);setInterval(tick,EVERY);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)resched();else tick()});
+
+/* réglages */
+const SW=[['roue','Roue de la chance'],['serie','Série de connexion'],['daily','Rappel quotidien'],['msg','Nouveaux messages'],['ech','Échanges'],['clip','Nouveaux clips']];
+async function ui(){const box=$('#ntl');if(!box)return;const o=get(),p=await perm(),sw=(k,l,x)=>`<div class="ntq"><span>${l}</span>${x||''}<button class="sxs" data-nk="${k}" role="switch" aria-checked="${o[k]?'true':'false'}" aria-label="${l}"></button></div>`;
+ let h=`<small class="mut nts" style="display:block">${p==='granted'?'Autorisées sur cet appareil.':p==='denied'?'Refusées : autorise-les dans les réglages Android de l’appli.':p==='unsupported'?'Non prises en charge ici.':'Pas encore autorisées.'}</small>`+sw('on','Notifications');
+ if(o.on){h+=SW.map(a=>sw(a[0],a[1],a[0]==='daily'?`<input type="time" data-nt="dt" value="${esc(o.dt)}" aria-label="Heure du rappel quotidien">`:'')).join('')+
+  `<div class="ntq"><span>Silence</span><input type="time" data-nt="qs" value="${esc(o.qs)}" aria-label="Début du silence"><input type="time" data-nt="qe" value="${esc(o.qe)}" aria-label="Fin du silence"></div>`+
+  `<div class="row"><button class="btn alt sm" id="ntt" type="button">Tester</button></div>`+
+  `<small class="mut" style="display:block;margin-top:6px">Le silence concerne les alertes messages, échanges et clips.${LN()?'':' Les rappels programmés demandent l’APK ; ici, les alertes ne partent que si l’appli est ouverte.'}</small>`}
+ box.innerHTML=h}
+$('#ntl').addEventListener('click',async e=>{
+ const t=e.target.closest('#ntt');if(t){const ok=await send('🔔 GameTrack','Les notifications fonctionnent.','test');if(!ok)toast('Autorise d’abord les notifications');return}
+ const b=e.target.closest('[data-nk]');if(!b)return;const k=b.dataset.nk,o=get();
+ if(k==='on'&&!o.on){const r=await ask();if(r!=='granted'){toast('Notifications refusées : autorise-les dans les réglages Android');await ui();return}o.on=1;put(o);const n=Date.now();putL({m:n,e:n,c:n,seen:[]})}
+ else{o[k]=o[k]?0:1;put(o)}
+ await resched();await ui()});
+$('#ntl').addEventListener('change',async e=>{const i=e.target.closest('[data-nt]');if(!i||!/^\d\d:\d\d$/.test(i.value))return;const o=get();o[i.dataset.nt]=i.value;put(o);await resched()});
+$('#burger').addEventListener('click',ui);
+ui();
 })();
 </script>
 </body>

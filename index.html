@@ -96,12 +96,12 @@ button.tile{cursor:pointer}button.tile:active{transform:scale(.97)}
 <div id="drawer" class="ov"><aside class="dr">
   <div class="row"><b class="grow" style="font-size:1.1rem">⚙️ Paramètres</b><button class="btn alt sm" id="dclose" aria-label="Fermer">✕</button></div>
   <h2>Apparence</h2><div class="row"><span class="grow">Thème clair / sombre</span><button class="tg" id="tg" aria-label="Basculer entre thème clair et sombre"></button></div><div class="row" id="sws" style="margin-top:10px"></div>
-  <h2>🔄 Mise à jour</h2><div class="card"><small>Version installée : <b id="vcur"></b></small><div style="height:8px"></div><input id="ghr" placeholder="Dépôt GitHub (ex. pseudo/GameTrack)" aria-label="Dépôt GitHub"><div class="row" style="margin-top:8px"><button class="btn" id="upb" type="button">Vérifier les mises à jour</button><button class="btn alt" id="upr" type="button">Recharger</button></div><div id="upm" style="margin-top:8px"></div></div>
   <h2>🕵️ Code secret</h2><form id="codeF" autocomplete="off"><input id="cdi" placeholder="Entre un code…" aria-label="Code secret" autocapitalize="off"><div id="cder" class="err"></div><button class="btn" type="submit">Valider</button></form>
   <h2>Mon mot de passe</h2><form id="pwF" autocomplete="off"><input id="po" type="password" placeholder="Mot de passe actuel" aria-label="Mot de passe actuel"><div style="height:8px"></div><input id="pn" type="password" placeholder="Nouveau mot de passe (4 min.)" aria-label="Nouveau mot de passe"><div id="perr" class="err"></div><button class="btn" type="submit">Changer mon mot de passe</button></form>
+  <h2>🔐 Double authentification</h2><small id="tfs"></small><div class="row" style="margin-top:8px"><button class="btn" id="tfb" type="button">Activer la 2FA</button><button class="btn alt" id="tfb2" type="button" style="display:none">Nouvelle clé</button></div>
   <div class="sec-c"><small id="cst"></small>
   <h2>Créer un compte</h2>
-  <form id="newU" autocomplete="off"><input id="nu" placeholder="Pseudo (3 caractères min.)" aria-label="Pseudo du nouveau compte"><div style="height:8px"></div><input id="np" placeholder="Mot de passe (4 min.)" aria-label="Mot de passe du nouveau compte"><div style="height:8px"></div><select id="nrole" aria-label="Type de compte"><option value="ro">Lecture seule (saisie de données, sans paramètres admin)</option><option value="full">Complet (peut créer des comptes et gérer la sauvegarde)</option></select><div id="nerr" class="err"></div><button class="btn" type="submit">Créer le compte</button></form>
+  <form id="newU" autocomplete="off"><input id="nu" placeholder="Pseudo (3 caractères min.)" aria-label="Pseudo du nouveau compte"><div style="height:8px"></div><input id="np" placeholder="Mot de passe (4 min.)" aria-label="Mot de passe du nouveau compte"><div style="height:8px"></div><select id="nrole" aria-label="Type de compte"><option value="ro">Lecture seule (saisie de données, sans paramètres admin)</option><option value="full">Complet (peut créer des comptes et gérer la sauvegarde)</option></select><label class="row" style="margin-top:10px;gap:8px;align-items:center"><input type="checkbox" id="n2fa" style="width:auto;flex:none"><span>Activer la double authentification (2FA) pour ce compte</span></label><div id="nerr" class="err"></div><button class="btn" type="submit">Créer le compte</button></form>
   </div>
   <div class="sec-a"><h2>Comptes</h2><button class="btn alt sm" id="vall" style="margin-bottom:8px">🔑 Voir tous les mots de passe</button><div id="ulist"></div></div>
   <div class="sec-c"><h2>Sauvegarde en ligne (JSONBin)</h2><small>ID du bin et clé d'accès avec les droits Read + Update.</small>
@@ -122,6 +122,7 @@ button.tile{cursor:pointer}button.tile:active{transform:scale(.97)}
   </form>
   <details style="margin-top:10px"><summary class="mut" style="cursor:pointer;font-size:.85rem">Sauvegarde en ligne (autre appareil)</summary><input id="lbin" placeholder="ID du bin JSONBin" aria-label="ID du bin JSONBin" style="margin-top:8px"><input id="lkey" type="password" placeholder="Clé d'accès JSONBin" aria-label="Clé d'accès JSONBin" style="margin-top:8px"></details>
   <small>Les comptes sont créés par l'administrateur.</small>
+  <small style="display:block;opacity:.6;margin-top:6px">Clé intégrée ✓ : pas besoin de remplir les cases ci-dessus.</small>
 </div></div>
 
 <div id="modal" class="ov"><div class="box card">
@@ -156,7 +157,7 @@ button.tile{cursor:pointer}button.tile:active{transform:scale(.97)}
 </section>
 <section id="t-clips">
   <h2>🎬 Clips &amp; moments forts</h2>
-  <small>Colle un lien (visible par tous) ou choisis une vidéo de ta galerie (gardée sur cet appareil seulement).</small>
+  <small id="cloudst" class="mut" style="display:block;margin:2px 0 6px"></small><small>Colle un lien (visible par tous) ou choisis une vidéo de ta galerie (gardée sur cet appareil seulement).</small>
   <form id="addClip" class="card" autocomplete="off">
     <input id="cu" placeholder="Lien de la vidéo" aria-label="Lien de la vidéo">
     <div class="row" style="margin-top:8px"><input id="ct" class="grow" placeholder="Titre (ex. Ace 1v5)" aria-label="Titre"><input id="cg" class="grow" placeholder="Jeu" aria-label="Jeu" list="known"></div>
@@ -216,6 +217,7 @@ button.tile{cursor:pointer}button.tile:active{transform:scale(.97)}
   <button data-t="top"><b>🥇</b>Top</button>
 </nav>
 
+<script>window.addEventListener("error",function(e){var a=document.getElementById("aerr");if(a)a.textContent="Erreur JS : "+e.message});window.addEventListener("unhandledrejection",function(e){var a=document.getElementById("aerr");if(a)a.textContent="Erreur : "+(e.reason&&e.reason.message||e.reason)});</script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const PLAT=[
@@ -244,6 +246,7 @@ $('#authForm').onsubmit=async e=>{e.preventDefault();
  const hh=await hsh(p);er.textContent='Connexion…';await pullUser(k);seedAdmin();
  if(!DB.users[k]){er.textContent=cloudBase()&&cloudState==='err'?'Sauvegarde en ligne injoignable : vérifie l\'ID du bin et la clé.':'Compte introuvable. Seul l\'administrateur (Matteo) peut créer des comptes, depuis le menu ☰.';return}
  if(DB.users[k].hash!==hh){er.textContent='Mot de passe incorrect.';return}
+ if(!await tfaGate(k))return;
  await pullMeta();if(k==='matteo'){adminPass=p;try{localStorage.setItem('gt_ap',p)}catch(x){}try{await ensureKeys(p);await checkKeys(p)}catch(x){}}try{const u=DB.users[k];if(DB.meta&&DB.meta.pub&&u.pk!==kid()){const e=await encPw(p);if(e){u.pwe=e;u.pk=kid();lsave();await cloud('PATCH','/users/'+k+'.json',{pwe:e,pk:u.pk})}}}catch(x){}
  er.textContent='';DB.session=k;$('#ap').value='';start();
 };
@@ -252,7 +255,7 @@ function start(){
  U=DB.session;S=normS(DB.users[U].data);
  S.ctr.visits++;save();$('#auth').classList.remove('show');$('#who').textContent='Joueur : '+DB.users[U].name;$('#burger').style.display='';if(S.pref){try{localStorage.setItem('gt_theme',JSON.stringify(S.pref))}catch(e){}}applyTheme();
  renderAcc();renderGames();renderAch();$('#cc').textContent=S.ctr.clicks;check();renderHome();
- if(location.hash==='#lab')show('lab');if(location.hash==='#arcade')show('arcade');if(location.hash==='#secret')secret();
+ route();
  if(Math.random()<.07)setTimeout(()=>toast('📢 Rappel : bois de l\'eau, gamer.'),1800);
 }
 
@@ -388,7 +391,7 @@ $('#b-camp').onclick=()=>{fx('<div><div style="font-size:64px">⛺</div><h2>Mode
 $('#clk').onclick=()=>{S.ctr.clicks++;$('#cc').textContent=S.ctr.clicks;if(S.ctr.clicks%10===0){save();check()}if(S.ctr.clicks===500)toast('500 ! Ta souris demande une pause 🖱️')};
 
 /* Sauvegarde en ligne (JSONBin) + administration */
-const CLOUD_BIN='',CLOUD_KEY='';
+const CLOUD_BIN='6adc8c6fffd5d16053880a12',CLOUD_KEY='$2a$10$pdcKN4Y05Gle3OaPJj9.WupiCxU36ZpNHux7hekySOUf16TTB.sJq';
 const slug=s=>s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,20);
 const ADMIN_HASH='5d444185b501f2f9efc273aa8c17878ea8468e4674ef5d9b8167d40113b7fa55';
 const cfgv=()=>{let c={};try{c=JSON.parse(localStorage.getItem('gt_cloud')||'{}')||{}}catch(e){}return{bin:CLOUD_BIN||c.bin||'',key:CLOUD_KEY||c.key||''}};
@@ -400,12 +403,12 @@ const canCreate=()=>isAdmin()||!!(U&&DB.users[U]&&DB.users[U].role==='full');
 const lsave=()=>{try{localStorage.setItem('gametrack2',JSON.stringify(DB))}catch(e){}};
 function normS(d){const s=Object.assign(base(),d||{});s.ctr=Object.assign(base().ctr,s.ctr||{});s.ctr.pr=s.ctr.pr||{};if(!Array.isArray(s.games))s.games=Object.values(s.games||{});s.acc=s.acc||{};s.ach=s.ach||{};return s}
 /* JSONBin stocke un seul document {users:{...}} : chaque opération lit, modifie puis réécrit le bin, en file d'attente */
-let kh='X-Access-Key',cq=Promise.resolve();
+let kh='X-Access-Key',cq=Promise.resolve(),jbErr='';
 async function jbFetch(method,body){const c=cfgv(),url='https://api.jsonbin.io/v3/b/'+encodeURIComponent(c.bin)+(method==='GET'?'/latest':'');
  for(const h of [kh,kh==='X-Access-Key'?'X-Master-Key':'X-Access-Key']){
   const ac=new AbortController(),t=setTimeout(()=>ac.abort(),8000);
-  try{const r=await fetch(url,{method,headers:{'Content-Type':'application/json',[h]:c.key},body:body===undefined?undefined:JSON.stringify(body),signal:ac.signal});
-   if(r.status===401||r.status===403)continue;if(!r.ok)return undefined;kh=h;return await r.json()}catch(e){return undefined}finally{clearTimeout(t)}}
+  try{const r=await fetch(url,{method,headers:{'Content-Type':'application/json',[h]:c.key},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',signal:ac.signal});
+   if(r.status===401||r.status===403){jbErr='clé refusée ('+r.status+')';continue}if(!r.ok){jbErr='erreur '+r.status+(r.status===429?' : trop de requêtes / quota JSONBin atteint':'');return undefined}kh=h;jbErr='';return await r.json()}catch(e){jbErr='réseau injoignable';return undefined}finally{clearTimeout(t)}}
  return undefined}
 function cloud(m,path,body){if(!cloudBase())return Promise.resolve(undefined);const run=()=>jbOp(m,path,body);cq=cq.then(run,run);return cq}
 async function jbOp(m,path,body){
@@ -446,10 +449,14 @@ function renderAdmin(){if(!canCreate())return;
  {const c=cfgv();if(document.activeElement!==$('#cbin')&&document.activeElement!==$('#ckey')){$('#cbin').value=c.bin;$('#ckey').value=c.key}}
  $('#ulist').innerHTML=Object.keys(DB.users).sort().map(k=>{const u=DB.users[k],d=k===U?S:normS(u.data),a=d.acc;
   const accs=Object.keys(a).filter(i=>a[i]&&a[i].pseudo).map(i=>`<div class="row" style="margin-top:6px"><small class="grow">${PN[i]||esc(i)} : ${esc(a[i].pseudo)}</small><button class="btn alt sm" data-rm="${k}|${i}">Retirer</button></div>`).join('');
-  return `<div class="card"><div class="row"><div class="avatar" style="background:#4f46e5">${esc((u.name||k)[0].toUpperCase())}</div><div class="grow"><b>${esc(u.name||k)}</b>${k==='matteo'?' <span class="pill">Admin</span>':u.role==='full'?' <span class="pill">Complet</span>':' <span class="pill">Lecture seule</span>'}<br><small>${d.games.length} jeu(x) · ${Object.keys(d.ach).length} succès</small></div></div>${accs||'<small>Aucun compte connecté</small>'}${pwl(k)}<div class="row" style="margin-top:10px">${k==='matteo'?'':`<button class="btn alt sm" data-pw="${k}">Changer mdp</button><button class="btn alt sm" data-vp="${k}">Voir mdp</button><button class="btn alt sm" data-rl="${k}">${u.role==='full'?'Passer en lecture seule':'Passer en complet'}</button><button class="btn alt sm" data-del="${k}">Supprimer</button>`}</div></div>`}).join('');
+  return `<div class="card"><div class="row"><div class="avatar" style="background:#4f46e5">${esc((u.name||k)[0].toUpperCase())}</div><div class="grow"><b>${esc(u.name||k)}</b>${k==='matteo'?' <span class="pill">Admin</span>':u.role==='full'?' <span class="pill">Complet</span>':' <span class="pill">Lecture seule</span>'}<br><small>${u.totp?'🔐 2FA active':'🔓 sans 2FA'} · ${d.games.length} jeu(x) · ${Object.keys(d.ach).length} succès</small></div></div>${accs||'<small>Aucun compte connecté</small>'}${pwl(k)}<div class="row" style="margin-top:10px">${k==='matteo'?'':`<button class="btn alt sm" data-pw="${k}">Changer mdp</button><button class="btn alt sm" data-vp="${k}">Voir mdp</button><button class="btn alt sm" data-rl="${k}">${u.role==='full'?'Passer en lecture seule':'Passer en complet'}</button><button class="btn alt sm" data-tf="${k}">${u.totp?'Désactiver 2FA':'Activer 2FA'}</button><button class="btn alt sm" data-del="${k}">Supprimer</button>`}</div></div>`}).join('');
  $$('#ulist [data-pw]').forEach(b=>b.onclick=async()=>{const k=b.dataset.pw,v=await ask('Nouveau mot de passe pour '+(DB.users[k].name||k)+' (4 caractères minimum)',1);if(!v||v.length<4){if(v!==null)toast('4 caractères minimum');return}await setPass(k,v);delete PWC[k];toast('Mot de passe modifié');renderAdmin()});
  $$('#ulist [data-vp]').forEach(b=>b.onclick=()=>revealPw([b.dataset.vp]));
  $$('#ulist [data-rl]').forEach(b=>b.onclick=async()=>{const k=b.dataset.rl,u=DB.users[k];u.role=u.role==='full'?'ro':'full';lsave();await cloud('PATCH','/users/'+k+'.json',{role:u.role});renderAdmin()});
+ $$('#ulist [data-tf]').forEach(b=>b.onclick=async()=>{const k=b.dataset.tf,u=DB.users[k],nm=u.name||k;
+  if(u.totp){if(!await ask('Désactiver la double authentification de '+nm+' ?'))return;u.totp=null;lsave();await cloud('PATCH','/users/'+k+'.json',{totp:null});toast('2FA désactivée pour '+nm)}
+  else{if(!(window.crypto&&crypto.subtle)){toast('Navigateur trop ancien pour la 2FA');return}u.totp=newSecret();lsave();await cloud('PATCH','/users/'+k+'.json',{totp:u.totp});tfBox({title:'Double authentification de '+nm,msg:'Donne cette clé à '+esc(nm)+' : il doit l\'ajouter dans une appli d\'authentification. Ensuite, un code à 6 chiffres lui sera demandé à chaque connexion.',secret:u.totp,user:nm})}
+  renderAdmin()});
  $$('#ulist [data-del]').forEach(b=>b.onclick=async()=>{const k=b.dataset.del;if(!await ask('Supprimer le compte '+(DB.users[k].name||k)+' ?'))return;delete DB.users[k];lsave();await cloud('DELETE','/users/'+k+'.json');{const bd=await cloud('GET','/board.json');if(bd){delete bd[k];await cloud('PUT','/board.json',bd)}}toast('Compte supprimé');renderAdmin()});
  $$('#ulist [data-rm]').forEach(b=>b.onclick=async()=>{const [k,i]=b.dataset.rm.split('|');if(k===U){delete S.acc[i];save();renderAcc()}else{const d=normS(DB.users[k].data);delete d.acc[i];DB.users[k].data=d;lsave();await cloud('PUT','/users/'+k+'.json',DB.users[k])}renderAdmin()})}
 $('#newU').onsubmit=async e=>{e.preventDefault();const er=$('#nerr');er.textContent='';
@@ -458,9 +465,9 @@ $('#newU').onsubmit=async e=>{e.preventDefault();const er=$('#nerr');er.textCont
  if(k.length<3){er.textContent='Pseudo : 3 caractères minimum.';return}
  if(p.length<4){er.textContent='Mot de passe : 4 caractères minimum.';return}
  await pullUser(k);if(DB.users[k]){er.textContent='Ce pseudo existe déjà.';return}
- DB.users[k]={name:n,hash:await hsh(p),role:$('#nrole').value,pwe:(await encPw(p))||undefined,pk:kid(),data:base()};lsave();
+ DB.users[k]={name:n,hash:await hsh(p),role:$('#nrole').value,pwe:(await encPw(p))||undefined,pk:kid(),totp:$('#n2fa').checked?newSecret():null,data:base()};lsave();
  const ok=await cloud('PUT','/users/'+k+'.json',DB.users[k]);await cloud('PATCH','/board.json',{[k]:{n:n,p:0,a:0}});
- $('#nu').value='';$('#np').value='';toast(cloudBase()&&ok===undefined?'Compte créé sur cet appareil seulement : sauvegarde en ligne injoignable':'Compte créé : '+n+(k!==n.toLowerCase()?' (identifiant : '+k+')':''));renderAdmin()}
+ $('#nu').value='';$('#np').value='';$('#n2fa').checked=false;if(DB.users[k].totp)tfBox({title:'Double authentification de '+n,msg:'Donne cette clé à '+esc(n)+' : il doit l\'ajouter dans une appli d\'authentification (Google Authenticator, Microsoft Authenticator, Aegis…). Ensuite, à chaque connexion, il devra entrer le code à 6 chiffres.',secret:DB.users[k].totp,user:n});toast(cloudBase()&&ok===undefined?'Compte créé sur cet appareil seulement : sauvegarde en ligne injoignable':'Compte créé : '+n+(k!==n.toLowerCase()?' (identifiant : '+k+')':''));renderAdmin()}
  catch(x){er.textContent='Erreur : '+(x&&x.message||x)}};
 $('#burger').onclick=async()=>{$$('.sec-c').forEach(e=>e.style.display=canCreate()?'':'none');$$('.sec-a').forEach(e=>e.style.display=isAdmin()?'':'none');buildSw();$('#drawer').classList.add('show');renderAdmin();if(canCreate()){await pullAll();renderAdmin()}};
 $('#dclose').onclick=()=>$('#drawer').classList.remove('show');
@@ -510,44 +517,30 @@ function clipEmbed(u){let m;if(!/^https?:\/\//i.test(u))return '';
  if(/\.(mp4|webm|mov)(\?|$)/i.test(u))return `<video src="${esc(u)}" controls preload="metadata" playsinline style="width:100%;border-radius:10px"></video>`;
  return `<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">▶ Ouvrir la vidéo</a>`}
 async function loadClips(){if(cloudBase()){const r=await cloud('GET','/clips.json');if(r!==undefined){CL=r||{};DB.clips=CL;lsave();return}}CL=DB.clips||{}}
-async function clipOp(fn){if(!cloudBase())return;const r=await cloud('GET','/clips.json');if(r===undefined){toast('Sauvegarde en ligne injoignable : clip gardé sur cet appareil');return}const o=r||{};fn(o);await cloud('PUT','/clips.json',o)}
+async function clipOp(fn,chk){if(!cloudBase())return false;
+ for(let i=0;i<3;i++){const r=await cloud('GET','/clips.json');if(r===undefined)break;const o=r||{};fn(o);if(await cloud('PUT','/clips.json',o)===undefined)break;
+  const v=await cloud('GET','/clips.json');if(v!==undefined&&chk(v||{}))return true}
+ return false}
 let OU=[];
-async function renderClips(){await loadClips();OU.forEach(x=>URL.revokeObjectURL(x));OU=[];
+function clipStatus(){const e=$('#cloudst');if(!e)return;e.textContent=!cloudBase()?'⚠️ Cet appareil n\'est pas relié à la sauvegarde en ligne : les clips restent ici.':cloudState==='err'?'❌ Sauvegarde en ligne en erreur : '+(jbErr||'inconnue'):'☁️ En ligne · '+Object.keys(CL).length+' clip(s) partagé(s)'}
+async function renderClips(){await loadClips();clipStatus();OU.forEach(x=>URL.revokeObjectURL(x));OU=[];
  const loc=(await vall()).filter(c=>c.by===U).map(c=>{const u=URL.createObjectURL(c.blob);OU.push(u);return Object.assign({},c,{loc:1,u})});
  const a=Object.values(CL).concat(loc).sort((x,y)=>y.at-x.at);
  $('#clips').innerHTML=a.length?a.map(c=>`<div class="card">${c.loc?`<video src="${c.u}" controls preload="metadata" playsinline style="width:100%;border-radius:10px"></video>`:clipEmbed(c.u)}<div class="row" style="margin-top:8px"><div class="grow"><b>${esc(c.t||'Clip')}</b>${c.loc?' <span class="pill">📱 Cet appareil</span>':''}<br><small>${c.g?esc(c.g)+' · ':''}par ${esc(c.n||c.by)} · ${new Date(c.at).toLocaleDateString('fr-FR')}</small></div>${c.by===U||isAdmin()&&!c.loc?`<button class="btn alt sm" data-cd="${esc(c.id)}" data-l="${c.loc?1:''}" aria-label="Supprimer">✕</button>`:''}</div></div>`).join(''):'<div class="card mut">Aucun clip pour le moment. Sois le premier !</div>';
- $$('[data-cd]').forEach(b=>b.onclick=async()=>{if(!await ask('Supprimer ce clip ?'))return;const id=b.dataset.cd;if(b.dataset.l)await vdel(id);else{delete CL[id];DB.clips=CL;lsave();await clipOp(o=>{delete o[id]})}renderClips()})}
-$('#addClip').onsubmit=async e=>{e.preventDefault();const er=$('#cerr'),u=$('#cu').value.trim(),f=$('#cf').files[0];er.textContent='';
+ $$('[data-cd]').forEach(b=>b.onclick=async()=>{if(!await ask('Supprimer ce clip ?'))return;const id=b.dataset.cd;if(b.dataset.l)await vdel(id);else{delete CL[id];DB.clips=CL;lsave();await clipOp(o=>{delete o[id]},o=>!o[id])}renderClips()})}
+$('#addClip').onsubmit=async e=>{e.preventDefault();const er=$('#cerr'),u=$('#cu').value.trim(),f=$('#cf').files[0];er.textContent='';let okc=true;
  if(!f&&!/^https?:\/\/\S+$/i.test(u)){er.textContent='Choisis une vidéo ou colle un lien.';return}
  const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5),c={id,u:f?'':u,t:($('#ct').value.trim()||(f?f.name.replace(/\.[^.]+$/,''):'')).slice(0,60),g:$('#cg').value.trim().slice(0,30),by:U,n:DB.users[U].name,at:Date.now()};
  if(f){if(!/^video\//.test(f.type)){er.textContent='Fichier vidéo uniquement.';return}
   try{await vsave(id,Object.assign({blob:f},c))}catch(x){er.textContent='Enregistrement impossible sur cet appareil (espace insuffisant ?).';return}}
- else{CL[id]=c;DB.clips=CL;lsave();await clipOp(o=>{o[id]=c})}
- $('#cu').value='';$('#ct').value='';$('#cg').value='';$('#cf').value='';$('#cfn').textContent='';toast('Clip publié 🎬');S.ctr.clipN=(S.ctr.clipN||0)+1;save();renderClips();check()};
+ else{CL[id]=c;DB.clips=CL;lsave();okc=await clipOp(o=>{o[id]=c},o=>!!o[id])}
+ $('#cu').value='';$('#ct').value='';$('#cg').value='';$('#cf').value='';$('#cfn').textContent='';if(!okc)er.textContent=cloudBase()?'Pas encore en ligne ('+(jbErr||'erreur')+'), réessaie dans un instant.':'Cet appareil n\'est pas relié à la sauvegarde en ligne : clip gardé ici seulement.';toast(f?'Vidéo gardée sur cet appareil seulement. Colle un lien pour la partager 🔗':okc?'Clip publié 🎬':'Clip gardé ici, pas encore en ligne');S.ctr.clipN=(S.ctr.clipN||0)+1;save();renderClips();check()};
 $('#cf').onchange=()=>{const f=$('#cf').files[0];$('#cfn').textContent=f?f.name:''};
 
 async function getBoard(){let b=(cloudBase()&&await cloud('GET','/board.json'))||{};b=Object.assign({},b,{[U]:myBoard()});Object.keys(DB.users).forEach(k=>{if(!b[k])b[k]={n:DB.users[k].name||k,p:0,a:0}});return b}
 async function homeBoard(){const el=$('#hb');if(!el||!U||!DB.users[U])return;const b=await getBoard();
  const rows=Object.keys(b).map(k=>Object.assign({k},b[k])).sort((x,y)=>y.p-x.p||y.a-x.a);
  el.innerHTML=`<div class="row"><b class="grow">🥇 Classement</b><button class="btn alt sm" data-go="top">Détails</button></div>`+rows.map((r,i)=>`<div class="row" style="margin-top:10px"><span style="width:28px;text-align:center">${['🥇','🥈','🥉'][i]||i+1}</span><span class="grow">${esc(r.n||r.k)}${r.k===U?' <span class="pill">Toi</span>':''}<br><small>${titleOf(r.p)}</small></span><b>${r.p} 🪙</b></div>`).join('')+(cloudBase()?'':'<small style="display:block;margin-top:10px">Active la sauvegarde en ligne pour voir les autres comptes.</small>')}
-/* Mise à jour (GitHub Releases) */
-const APP_VERSION='1.0.0',GH_REPO='';
-const ghRepo=()=>{try{return localStorage.getItem('gt_repo')||GH_REPO}catch(e){return GH_REPO}};
-const vnum=v=>String(v).replace(/^v/i,'').split('.').map(x=>parseInt(x)||0);
-const newer=(a,b)=>{const x=vnum(a),y=vnum(b);for(let i=0;i<3;i++){if((x[i]||0)!==(y[i]||0))return(x[i]||0)>(y[i]||0)}return false};
-let CUR=APP_VERSION;try{const c=JSON.parse(window.GameTrackApp.getConfig());if(c.versionName)CUR=c.versionName}catch(e){}
-$('#vcur').textContent=CUR;$('#ghr').value=ghRepo();
-$('#upr').onclick=()=>{location.href=location.pathname+'?v='+Date.now()};
-$('#upb').onclick=async()=>{const m=$('#upm'),repo=$('#ghr').value.trim();
- if(!/^[\w.-]+\/[\w.-]+$/.test(repo)){m.textContent='Entre le dépôt sous la forme pseudo/nom.';return}
- try{localStorage.setItem('gt_repo',repo)}catch(e){}
- m.textContent='Recherche…';
- try{const r=await fetch('https://api.github.com/repos/'+repo+'/releases/latest');if(!r.ok)throw 0;const j=await r.json(),tag=j.tag_name||'';
-  if(!newer(tag,CUR)){m.textContent='✅ Tu as la dernière version ('+CUR+').';return}
-  const apk=(j.assets||[]).find(a=>/\.apk$/i.test(a.name)),url=apk?apk.browser_download_url:j.html_url;
-  m.innerHTML='🆕 Version <b>'+esc(tag)+'</b> disponible.<br><button class="btn" id="upi" type="button" style="margin-top:8px">'+(apk?'Télécharger et installer':'Voir la mise à jour')+'</button>';
-  $('#upi').onclick=()=>{location.href=url}
- }catch(e){m.textContent='Impossible de vérifier (réseau, ou dépôt introuvable ou privé).'}};
 /* Pages secrètes en plus + champ code */
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const PROPH=['Tu gagneras ta prochaine partie… sauf si tu campes.','Un ragequit approche. Respire.','Ton prochain headshot sera légendaire.','Le lag te guette ce soir.','Un joueur va bientôt te dire GG.','Un clip incroyable t’attend dans ta prochaine partie.','Ne fais pas confiance au bouton interdit.'];
@@ -579,7 +572,8 @@ $('#codeF').onsubmit=e=>{e.preventDefault();const v=norm($('#cdi').value).replac
 /* Accueil */
 const TIPS=['Certains succès sont secrets… à toi de les trouver 🕵️','Renseigne ton rang dans chaque jeu pour grimper dans le classement 🧗','Publie un clip de ton meilleur moment 🎬','Les pièces 🪙 débloquent de nouveaux titres','Bois de l\'eau, gamer 💧'];
 document.addEventListener('click',e=>{const x=e.target.closest('[data-go]');if(x)show(x.dataset.go)});
-function renderHome(){if(!U||!DB.users[U])return;setTimeout(homeBoard,0);
+async function clipTile(){try{await loadClips();const l=(await vall()).filter(c=>c.by===U).length,n=Object.keys(CL).length+l,b=$('#ncb'),t=$('#ncs');if(b)b.textContent=n;if(t)t.textContent='clip'+(n>1?'s':'')+(l?' · dont '+l+' sur cet appareil':' partagé'+(n>1?'s':''))}catch(e){}}
+function renderHome(){if(!U||!DB.users[U])return;setTimeout(homeBoard,0);setTimeout(clipTile,0);
  const g=S.games,k=sum('kills'),w=sum('wins'),t=tot(),pc=score(),ti=titleOf(pc),got=ACH.filter(a=>S.ach[a[0]]).length,nx=ACH.find(a=>!S.ach[a[0]]&&!a[5]),
  best=g.slice().sort((a,b)=>(b.wins||0)-(a.wins||0))[0],nc=Object.keys(DB.clips||{}).length,h=new Date().getHours();
  $('#home').innerHTML=`<div class="hero"><small>${h<5||h>=18?'Bonsoir':'Bonjour'}</small><h2>${esc(DB.users[U].name)} 👋</h2><div style="margin-top:6px">${ti} · ${pc} 🪙</div></div>
@@ -589,7 +583,7 @@ function renderHome(){if(!U||!DB.users[U])return;setTimeout(homeBoard,0);
   <button class="tile" data-go="succes"><span class="ti">🏆</span><b>${got}/${ACH.length}</b><small>succès débloqués</small></button>
   <div class="tile"><span class="ti">🎯</span><b>${k}</b><small>kills au total</small></div>
   <div class="tile"><span class="ti">📈</span><b>${t?Math.round(w/t*100)+' %':'—'}</b><small>taux de victoire</small></div>
-  <button class="tile" data-go="clips"><span class="ti">🎬</span><b>${nc}</b><small>clip${nc>1?'s':''} partagé${nc>1?'s':''}</small></button>
+  <button class="tile" data-go="clips"><span class="ti">🎬</span><b id="ncb">${nc}</b><small id="ncs">clip${nc>1?'s':''} partagé${nc>1?'s':''}</small></button>
   <button class="tile" data-go="top"><span class="ti">🥇</span><b>${ti}</b><small>voir le classement</small></button>
   ${best&&best.wins?`<div class="tile wide"><span class="ti">⭐</span><small>Ton jeu le plus gagnant</small><b>${esc(best.name)}</b><small>${best.wins} victoire${best.wins>1?'s':''}</small></div>`:''}
   ${nx?`<div class="tile wide"><span class="ti">🎯</span><small>Prochain défi</small><b style="font-size:1.05rem">${esc(nx[1])}</b><small>${esc(nx[2])} · +${ap(nx)} 🪙</small></div>`:''}
@@ -625,6 +619,1318 @@ function setTheme(ch){const p=Object.assign(tget(),ch);try{localStorage.setItem(
 function buildSw(){const c=$('#sws');if(!c)return;const cur=tget().acc||'indigo';c.innerHTML=Object.keys(ACC).map(k=>`<button class="sw ${k===cur?'on':''}" data-a="${k}" aria-label="Couleur ${k}" style="background:linear-gradient(135deg,${ACC[k][0]},${ACC[k][4]})"></button>`).join('');$$('#sws .sw').forEach(b=>b.onclick=()=>setTheme({acc:b.dataset.a}))}
 $('#tg').onclick=()=>setTheme({mode:tget().mode==='light'?'dark':'light'});
 applyTheme();
+
+
+/* QR code : bibliothèque qrcode-generator de Kazuhiko Arase (licence MIT, © 2009) */
+const QRLIB=(function(){const mods={},defs={};
+function req(n){n=n.replace('./','');if(!mods[n]){const m={exports:{}};mods[n]=m;defs[n](m,m.exports,req)}return mods[n].exports}
+defs['QRMode']=function(module,exports,require){
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+};
+defs['QRMath']=function(module,exports,require){
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+
+};
+defs['QRPolynomial']=function(module,exports,require){
+var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+
+};
+defs['QRMaskPattern']=function(module,exports,require){
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+};
+defs['QRUtil']=function(module,exports,require){
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+
+};
+defs['QRErrorCorrectLevel']=function(module,exports,require){
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+};
+defs['QRRSBlock']=function(module,exports,require){
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+
+};
+defs['QRBitBuffer']=function(module,exports,require){
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+
+};
+defs['QR8bitByte']=function(module,exports,require){
+var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+
+};
+defs['index']=function(module,exports,require){
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+
+};
+return{QRCode:req('index'),EC:req('QRErrorCorrectLevel')}})();
+function qrSvg(t){try{const q=new QRLIB.QRCode(-1,QRLIB.EC.M);q.addData(t);q.make();const n=q.getModuleCount(),m=4;let p='';
+ for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))p+='M'+(c+m)+' '+(r+m)+'h1v1h-1z';
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+(n+2*m)+' '+(n+2*m)+'" shape-rendering="crispEdges" style="width:210px;height:210px;max-width:100%;background:#fff;border-radius:10px"><rect width="100%" height="100%" fill="#fff"/><path d="'+p+'" fill="#000"/></svg>'}catch(e){return''}}
+
+/* Double authentification (TOTP, compatible Google/Microsoft Authenticator, Aegis…) */
+const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+function b32e(u){let b='',o='';for(const x of u)b+=x.toString(2).padStart(8,'0');for(let i=0;i<b.length;i+=5)o+=B32[parseInt(b.slice(i,i+5).padEnd(5,'0'),2)];return o}
+function b32d(t){let b='';for(const c of String(t).replace(/[\s=]/g,'').toUpperCase()){const v=B32.indexOf(c);if(v>=0)b+=v.toString(2).padStart(5,'0')}const a=[];for(let i=0;i+8<=b.length;i+=8)a.push(parseInt(b.slice(i,i+8),2));return new Uint8Array(a)}
+const newSecret=()=>b32e(crypto.getRandomValues(new Uint8Array(20)));
+async function totp(sec,t){let x=Math.floor(t/30000);const m=new Uint8Array(8);for(let i=7;i>=0;i--){m[i]=x&255;x=Math.floor(x/256)}
+ const k=await crypto.subtle.importKey('raw',b32d(sec),{name:'HMAC',hash:'SHA-1'},false,['sign']),h=new Uint8Array(await crypto.subtle.sign('HMAC',k,m)),o=h[19]&15;
+ return String((((h[o]&127)<<24)|(h[o+1]<<16)|(h[o+2]<<8)|h[o+3])%1000000).padStart(6,'0')}
+async function totpOk(sec,code){code=String(code||'').replace(/\D/g,'');if(code.length!==6||!sec)return false;const n=Date.now();for(const d of [0,-30000,30000])if(await totp(sec,n+d)===code)return true;return false}
+function tfBox(o){return new Promise(res=>{const d=document.createElement('div');d.className='ov show';d.style.cssText='z-index:96;background:rgba(7,7,26,.88)';
+ const link=o.secret?'otpauth://totp/GameTrack:'+encodeURIComponent(o.user)+'?secret='+o.secret+'&issuer=GameTrack&digits=6&period=30':'';
+ d.innerHTML='<div class="box card" style="max-height:92vh;overflow:auto"><b>'+esc(o.title)+'</b><p style="margin:8px 0;font-size:.9rem">'+o.msg+'</p>'+(o.secret?'<div style="text-align:center;margin:10px 0">'+qrSvg(link)+'<br><small>Scanne ce QR code avec ton appli d\'authentification</small></div><div style="margin:8px 0"><small>Ou tape la clé secrète :</small><div style="font-family:monospace;font-size:1.05rem;word-break:break-all;margin:6px 0"><b>'+o.secret.replace(/(.{4})/g,'$1 ').trim()+'</b></div><a class="btn alt sm" href="'+link+'">Ouvrir dans l\'appli d\'authentification</a></div>':'')+(o.check?'<input id="tfc" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Code à 6 chiffres" style="margin-top:8px"><div id="tfe" class="err"></div>':'')+'<div class="row" style="margin-top:12px"><button class="btn" id="tfok" type="button">'+(o.check?'Valider':'OK')+'</button>'+(o.check?'<button class="btn alt" id="tfno" type="button">Annuler</button>':'')+'</div></div>';
+ document.body.appendChild(d);const end=v=>{d.remove();res(v)};let tries=0;const inp=d.querySelector('#tfc');
+ if(inp)setTimeout(()=>inp.focus(),50);
+ d.querySelector('#tfok').onclick=async()=>{if(!o.check)return end(true);let ok=false;try{ok=await o.check(inp.value)}catch(e){}
+  if(ok)return end(true);tries++;inp.value='';d.querySelector('#tfe').textContent=tries>=5?'Trop d\'essais.':'Code incorrect.';if(tries>=5)setTimeout(()=>end(null),900)};
+ const no=d.querySelector('#tfno');if(no)no.onclick=()=>end(null);if(inp)inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();d.querySelector('#tfok').click()}}})}
+async function tfaGate(k){const u=DB.users[k],er=$('#aerr');
+ if(!u.totp)return true;
+ if(!(window.crypto&&crypto.subtle)){er.textContent='Double authentification impossible : navigateur trop ancien.';return false}
+ try{
+  if(!u.totp)return true;
+  const ok=await tfBox({title:'Vérification en deux étapes',msg:'Entre le code à 6 chiffres de ton appli d\'authentification.',check:c=>totpOk(u.totp,c)});
+  if(!ok){er.textContent='Connexion annulée : code non validé.';return false}
+  return true}
+ catch(x){er.textContent='Erreur 2FA : '+(x&&x.message||x);return false}}
+
+
+async function tfSave(u,v){u.totp=v;lsave();let r=await cloud('PATCH','/users/'+U+'.json',{totp:v});if(r===null)r=await cloud('PUT','/users/'+U+'.json',u);return !(cloudBase()&&r===undefined)}
+async function tfaEnroll(u,titre){const sec=newSecret();
+ const ok=await tfBox({title:titre,msg:'Scanne le QR code (ou tape la clé) dans ton appli d\'authentification, puis entre le code à 6 chiffres qu\'elle affiche.',secret:sec,user:u.name||U,check:c=>totpOk(sec,c)});
+ if(!ok)return false;const sync=await tfSave(u,sec);toast(sync?'Double authentification activée ✅':'2FA activée sur cet appareil seulement : sauvegarde en ligne injoignable');return true}
+async function tfaManage(which){const u=DB.users[U];if(!u)return;
+ if(!(window.crypto&&crypto.subtle)){toast('Navigateur trop ancien pour la 2FA');return}
+ if(!u.totp){await tfaEnroll(u,'Active la double authentification')}
+ else{const v=await tfBox({title:'Vérification',msg:which==='new'?'Entre ton code actuel pour générer une nouvelle clé.':'Entre ton code actuel pour désactiver la double authentification.',check:c=>totpOk(u.totp,c)});if(!v)return;
+  if(which==='new')await tfaEnroll(u,'Nouvelle clé 2FA');else{await tfSave(u,null);toast('Double authentification désactivée')}}
+ tfStatus();if(canCreate())renderAdmin()}
+function tfStatus(){const u=DB.users[U];if(!u)return;$('#tfs').textContent=u.totp?'🔐 Activée sur ton compte : un code à 6 chiffres est demandé à chaque connexion.':'🔓 Désactivée : seul ton mot de passe est demandé. Tu peux l\'activer quand tu veux.';$('#tfb').textContent=u.totp?'Désactiver ma 2FA':'Activer la 2FA';$('#tfb2').style.display=u.totp?'':'none'}
+$('#tfb').onclick=()=>tfaManage('main');$('#tfb2').onclick=()=>tfaManage('new');$('#burger').addEventListener('click',tfStatus);
+
+/* Pages ouvertes par l'adresse : …/Squadly/oracle (via 404.html) ou …/Squadly/#oracle */
+const ROUTES={labo:'lab',salle:'secret',sallesecrete:'secret',secrete:'secret',pfc:'shifumi',pierrefeuilleciseaux:'shifumi',jeuarcade:'arcade'};
+const NAVR={home:1,accueil:'home',comptes:1,parties:1,clips:1,top:1,classement:'top',succes:1};
+function route(){const h=decodeURIComponent((location.hash||'').slice(1)).toLowerCase().replace(/\.html?$/,'').replace(/[^a-z0-9]/g,'');if(!h)return false;
+ const n=NAVR[h];if(n){show(n===1?h:n);return true}const f=CODES[ROUTES[h]||h];if(f){f();return true}return false}
+addEventListener('hashchange',()=>{if(U)route()});
 
 (async()=>{seedAdmin();if(DB.session&&DB.users[DB.session]){await pullUser(DB.session);await pullMeta();if(DB.users[DB.session])start();else{DB.session=null;lsave()}}})();
 </script>

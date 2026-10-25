@@ -432,8 +432,8 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 <section id="t-roue"><h2>🎡 Roue de la chance</h2><div id="rwl"></div></section>
 <section id="t-trade"><h2>🔄 Échanges</h2><div id="trc"></div></section>
 <section id="t-modifs"><button class="btn alt sm" data-go="home">← Accueil</button><h2>📝 Journal des modifs</h2><div id="mdf"></div></section>
-<section id="t-maj"><h2>⬇️ Mise à jour</h2><div class="card" style="text-align:center"><div style="font-size:3rem">📲</div><p style="margin:8px 0">Pour récupérer la dernière version de l’appli, ouvre la page de téléchargement puis choisis la version la plus récente.</p><a class="btn" href="https://github.com/Ak3no-exe/Squadly/actions" target="_blank" rel="noopener noreferrer">Mise à jour</a><br><small class="mut">Version actuelle : v1.3.2</small></div></section>
-<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.2</p>
+<section id="t-maj"><h2>⬇️ Mise à jour</h2><div class="card" style="text-align:center"><div style="font-size:3rem">📲</div><p style="margin:8px 0">Pour récupérer la dernière version de l’appli, ouvre la page de téléchargement puis choisis la version la plus récente.</p><a class="btn" href="https://github.com/Ak3no-exe/Squadly/actions" target="_blank" rel="noopener noreferrer">Mise à jour</a><br><small class="mut">Version actuelle : v1.3.3</small></div></section>
+<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.3</p>
 <p style="text-align:center;margin:6px 0 0"><button class="btn alt sm" data-go="modifs">📝 Journal des modifs</button></p>
 </main>
 <nav>
@@ -2714,12 +2714,18 @@ document.addEventListener('click',e=>{
  if(e.target.closest('[data-gomaj]')){show('maj');return}
  if(e.target.closest('#t-maj a.btn')){const m=DB.cfg&&DB.cfg.maint;if(m&&m.end&&!m.on){try{localStorage.setItem('gt_maj_seen',m.end)}catch(x){}}updUI()}});
 setTimeout(updUI,300);
+/* Attente de la fin de la mise à jour : vérifie toutes les 5 s et recharge tout seul */
+let wb=0;
+setInterval(async()=>{const m0=DB.cfg&&DB.cfg.maint;if(!(m0&&m0.on)||document.hidden||wb||U==='matteo')return;wb=1;
+ try{await pullCfg();const m=DB.cfg&&DB.cfg.maint;if(!(m&&m.on)){toast('✅ Appli à jour, rechargement…');setTimeout(()=>location.reload(),900)}else{maintCheck();updUI()}}catch(e){}wb=0},5000);
 })();
 
 /* ===== Sons, vibrations et journal des modifs ===== */
 (function(){
-const VER='1.3.2';
+const VER='1.3.3';
 const LOG=[
+ {v:'1.3.3',d:'25 octobre 2026',t:[
+  'Pendant une mise à jour, l’appli vérifie toute seule toutes les 5 secondes et se recharge dès que c’est terminé.']},
  {v:'1.3.2',d:'25 octobre 2026',t:[
   'Quand l’admin lance une mise à jour, un message s’affiche sur l’accueil.',
   'Quand elle se termine : message « Appli à jour » et pastille rouge clignotante sur l’onglet Mise à jour, jusqu’au clic sur le bouton de téléchargement.']},

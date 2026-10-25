@@ -136,10 +136,10 @@ input,select{border-radius:14px;padding:11px 12px}
 .ach .badge{background:rgba(var(--g1),.2)}
 .slot{background:linear-gradient(180deg,rgba(var(--g1),.4),var(--base))}
 .reel{background:linear-gradient(180deg,var(--base),rgba(var(--g1),.4) 50%,var(--base))}
-nav{background:var(--hdr);border-top:1px solid var(--line);-webkit-backdrop-filter:none;backdrop-filter:none;padding:6px 2px calc(6px + env(safe-area-inset-bottom))}
-nav button{background:none!important;color:var(--mut);font-size:.72rem;padding:6px 2px}
-nav button b{font-size:0;line-height:0;margin-bottom:4px}
-nav button svg{width:26px;height:26px;display:block;margin:0 auto;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav{background:var(--hdr);border-top:1px solid var(--line);-webkit-backdrop-filter:none;backdrop-filter:none;padding:3px 2px calc(3px + env(safe-area-inset-bottom))}
+nav button{background:none!important;color:var(--mut);font-size:.62rem;padding:3px 1px;white-space:nowrap}
+nav button b{font-size:0;line-height:0;margin-bottom:2px}
+nav button svg{width:20px;height:20px;display:block;margin:0 auto;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--ac2)}
 
 #t-shop .card{margin:10px 0}
@@ -186,6 +186,7 @@ html[data-mode=retro] .card,html[data-mode=retro] .tile{border-radius:6px}
 .bof{position:absolute;inset:0;pointer-events:none;opacity:0}.bof.f1{background:rgba(56,189,248,.3);animation:k-fx .6s}.bof.f2{background:radial-gradient(circle,rgba(167,139,250,.6),transparent 70%);animation:k-fx .9s}.bof.f3{background:radial-gradient(circle,rgba(251,191,36,.85),transparent 70%);animation:k-fx 1.2s}.bof.f4{background:linear-gradient(120deg,#f472b6,#fbbf24,#34d399,#38bdf8,#a78bfa);animation:k-fx 1.6s}
 @keyframes k-fx{0%{opacity:.95}100%{opacity:0}}@keyframes k-sk{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}@keyframes k-rv{0%{transform:scale(.72) translateY(16px);opacity:0;filter:brightness(2.4) blur(5px)}60%{transform:scale(1.05);opacity:1;filter:brightness(1.35)}100%{transform:none;opacity:1;filter:none}}
 .shk{animation:k-sk .5s}.bs.rv{animation:k-rv .7s cubic-bezier(.2,.9,.3,1.15)}
+nav button.mdot b{position:relative}nav button.mdot b::after{content:"";position:absolute;top:-4px;right:-6px;width:11px;height:11px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;animation:mblink 1s ease-in-out infinite}@keyframes mblink{50%{opacity:.15;transform:scale(.7)}}
 .xcl{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;font-size:1.1rem;line-height:1;cursor:pointer;z-index:6;display:grid;place-items:center;padding:0}.xcl:hover{background:rgba(0,0,0,.8)}
 .pr{position:fixed;inset:0;z-index:130;background:rgba(7,7,26,.92);display:grid;place-items:center;color:#fff;text-align:center}.pr.bsod{background:#0078d7;display:block;text-align:left}
 .pc{display:flex;flex-direction:column;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;max-width:300px}
@@ -348,7 +349,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
   <button class="btn alt sm" id="out" aria-label="Déconnexion" title="Déconnexion"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button>
 </header>
 <main>
-<section id="t-home" class="on"><div id="home"></div></section>
+<section id="t-home" class="on"><div id="updbn"></div><div id="home"></div></section>
 <section id="t-comptes">
   <button class="btn alt sm" data-go="home">← Accueil</button><h2>Mes comptes</h2>
   <small>Le bouton ouvre le site officiel dans un nouvel onglet. Reviens ensuite ici pour afficher ton compte.</small>
@@ -431,8 +432,8 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 <section id="t-roue"><h2>🎡 Roue de la chance</h2><div id="rwl"></div></section>
 <section id="t-trade"><h2>🔄 Échanges</h2><div id="trc"></div></section>
 <section id="t-modifs"><button class="btn alt sm" data-go="home">← Accueil</button><h2>📝 Journal des modifs</h2><div id="mdf"></div></section>
-<section id="t-maj"><h2>⬇️ Mise à jour</h2><div class="card" style="text-align:center"><div style="font-size:3rem">📲</div><p style="margin:8px 0">Pour récupérer la dernière version de l’appli, ouvre la page de téléchargement puis choisis la version la plus récente.</p><a class="btn" href="https://github.com/Ak3no-exe/Squadly/actions" target="_blank" rel="noopener noreferrer">Mise à jour</a><br><small class="mut">Version actuelle : v1.3.1</small></div></section>
-<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.1</p>
+<section id="t-maj"><h2>⬇️ Mise à jour</h2><div class="card" style="text-align:center"><div style="font-size:3rem">📲</div><p style="margin:8px 0">Pour récupérer la dernière version de l’appli, ouvre la page de téléchargement puis choisis la version la plus récente.</p><a class="btn" href="https://github.com/Ak3no-exe/Squadly/actions" target="_blank" rel="noopener noreferrer">Mise à jour</a><br><small class="mut">Version actuelle : v1.3.2</small></div></section>
+<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.2</p>
 <p style="text-align:center;margin:6px 0 0"><button class="btn alt sm" data-go="modifs">📝 Journal des modifs</button></p>
 </main>
 <nav>
@@ -2290,7 +2291,7 @@ $('#shopc').onclick=e=>{const s=S_(),g=e.target.closest('[data-gift]'),qb=e.targ
 $('#coinb').onclick=()=>show('shop');
 const bye=u=>{try{sessionStorage.setItem('gt_ban','🚫 Compte gelé par l\'administrateur'+(u.ban&&u.ban.r?' : '+u.ban.r:''))}catch(x){}DB.session=null;lsave();location.reload()};
 const _st=start;start=function(){const u0=DB.users[DB.session];if(u0&&u0.ban&&DB.session!=='matteo'){bye(u0);return}_st.apply(this,arguments);S_();streak();qs();applyGrants();applyTheme();upd();if(fxo().snow||fxo().coins)kick();render();const nl=$('#navlog');if(nl)nl.style.display=isAdmin()?'':'none';logLogin();homeFix();pullCfg().then(maintCheck);if(isAdmin())pullAll().then(dot)};
-const _tg=tfaGate;tfaGate=async function(k){const u=DB.users[k];if(u&&u.ban&&k!=='matteo'){$('#aerr').textContent='🚫 Compte gelé par l\'administrateur'+(u.ban.r?' : '+u.ban.r:'');return false}await pullCfg();if(k!=='matteo'&&DB.cfg&&DB.cfg.maint&&DB.cfg.maint.on){$('#aerr').textContent='🔧 Maintenance en cours'+(DB.cfg.maint.msg?' : '+DB.cfg.maint.msg:'');return false}return _tg.apply(this,arguments)};
+const _tg=tfaGate;tfaGate=async function(k){const u=DB.users[k];if(u&&u.ban&&k!=='matteo'){$('#aerr').textContent='🚫 Compte gelé par l\'administrateur'+(u.ban.r?' : '+u.ban.r:'');return false}await pullCfg();if(k!=='matteo'&&DB.cfg&&DB.cfg.maint&&DB.cfg.maint.on){$('#aerr').textContent='🔧 Mise à jour en cours'+(DB.cfg.maint.msg?' : '+DB.cfg.maint.msg:'');return false}return _tg.apply(this,arguments)};
 const _rh=renderHome;renderHome=function(){_rh.apply(this,arguments);homeFix()};
 /* Journal des connexions (admin) */
 const dev=()=>{const u=navigator.userAgent,o=/iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac/.test(u)?'Mac':/Linux/.test(u)?'Linux':'Appareil',b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox|FxiOS/.test(u)?'Firefox':/Chrome|CriOS/.test(u)?'Chrome':/Safari/.test(u)?'Safari':'';return o+(b?' · '+b:'')};
@@ -2332,7 +2333,7 @@ $('#admu').onclick=async e=>{const b=e.target.closest('button');if(!b)return;con
 /* Config partagée : maintenance et codes promo */
 async function pullCfg(){if(!cloudBase())return;const r=await cloud('GET','/cfg.json');if(r!==undefined){DB.cfg=r||{};lsave()}}
 const mo=document.createElement('div');mo.style.cssText='display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);color:var(--tx);align-items:center;justify-content:center;text-align:center;padding:24px;flex-direction:column;gap:10px';document.body.appendChild(mo);
-function maintCheck(){const m=DB.cfg&&DB.cfg.maint,on=!!(m&&m.on)&&U&&U!=='matteo';mo.style.display=on?'flex':'none';if(on){const h='<div style="font-size:3rem">🔧</div><h2>Maintenance en cours</h2><p>'+esc(m.msg||'L\'appli revient bientôt.')+'</p>';if(mo.dataset.h!==h){mo.innerHTML=h;mo.dataset.h=h}}}
+function maintCheck(){const m=DB.cfg&&DB.cfg.maint,on=!!(m&&m.on)&&U&&U!=='matteo';mo.style.display=on?'flex':'none';if(on){const h='<div style="font-size:3rem">🔧</div><h2>Mise à jour en cours</h2><p>'+esc(m.msg||'Je mets l\'appli à jour, elle revient bientôt.')+'</p>';if(mo.dataset.h!==h){mo.innerHTML=h;mo.dataset.h=h}}window.updUI&&updUI()}
 function dot(){const nl=$('#navlog');if(nl)nl.classList.toggle('dot',Object.values(DB.users).some(u=>u&&u.req))}
 function autoTheme(){const s=S_(),r=document.documentElement;if(!U||!s.eq.auto||!s.own.autotheme){delete r.dataset.dusk;return}const h=new Date().getHours(),want=h>=7&&h<18?'light':'dark';if(tget().mode!==want)setTheme({mode:want});if(h>=18&&h<21||h>=6&&h<8)r.dataset.dusk=1;else delete r.dataset.dusk}
 async function redeem(){const code=($('#promo').value||'').trim().toUpperCase();if(!code)return;const s=S_();await pullCfg();const c=((DB.cfg||{}).codes||{})[code];if(!c){toast('Code invalide');return}if(s.red[code]){toast('Code déjà utilisé');return}s.red[code]=1;let t='🎟️ Code accepté';if(c.c){s.gain+=c.c;t+=' : +'+c.c+' 🪙'}if(c.i&&!s.own[c.i]){s.own[c.i]=1;sync();applyTheme();t+=' + '+((CAT.find(x=>x.id===c.i)||{}).n||'article')}save();toast(t);render();upd()}
@@ -2340,7 +2341,7 @@ async function renderCfg(){const m=$('#admm'),c=$('#admc');if(!m||!isAdmin())ret
  m.innerHTML=`<div class="card"><div class="row"><b class="grow">Mode maintenance</b><span class="pill">${mt.on?'Activé':'Désactivé'}</span></div><small>${mt.on?esc(mt.msg||'Sans message'):'Bloque l\'appli pour tous les joueurs sauf toi.'}</small><div class="row" style="margin-top:8px"><button class="btn alt sm" id="maintb">${mt.on?'Désactiver':'Activer'}</button></div></div>`;
  const opts=CAT.filter(x=>x.id!=='coffre').map(x=>`<option value="${x.id}">${x.n}</option>`).join('');
  c.innerHTML=`<div class="card"><div class="row" style="gap:6px"><input id="pcode" placeholder="CODE" style="flex:1;min-width:0;text-transform:uppercase"><input id="pcoin" type="number" placeholder="🪙" style="width:80px"></div><div class="row" style="margin-top:8px;gap:6px"><select id="pitem" class="grow" style="min-width:0"><option value="">Aucun article</option>${opts}</select><button class="btn sm" id="pmk">Créer</button></div></div>`+Object.keys(cs).map(k=>`<div class="card row"><div class="grow"><b>${esc(k)}</b><br><small>${cs[k].c?'+'+cs[k].c+' 🪙 ':''}${cs[k].i?'· '+((CAT.find(x=>x.id===cs[k].i)||{}).n||''):''}</small></div><button class="btn alt sm" data-pd="${esc(k)}">Supprimer</button></div>`).join('')}
-$('#admm').onclick=async e=>{if(!e.target.closest('#maintb'))return;const cf=DB.cfg=DB.cfg||{},on=!(cf.maint&&cf.maint.on);let msg='';if(on){const r=await ask('Message affiché aux joueurs (facultatif)',1);if(r===null)return;msg=r.trim().slice(0,100)}cf.maint={on,msg};lsave();await cloud('PATCH','/cfg.json',{maint:cf.maint});toast(on?'🔧 Maintenance activée':'✅ Maintenance désactivée');renderCfg()};
+$('#admm').onclick=async e=>{if(!e.target.closest('#maintb'))return;const cf=DB.cfg=DB.cfg||{},on=!(cf.maint&&cf.maint.on);let msg='';if(on){const r=await ask('Message affiché aux joueurs (facultatif)',1);if(r===null)return;msg=r.trim().slice(0,100)}cf.maint={on,msg,end:on?((cf.maint&&cf.maint.end)||0):Date.now()};lsave();await cloud('PATCH','/cfg.json',{maint:cf.maint});toast(on?'🔧 Mise à jour en cours affichée':'✅ Appli à jour : pastille envoyée');renderCfg();window.updUI&&updUI()};
 $('#admc').onclick=async e=>{const cf=DB.cfg=DB.cfg||{};cf.codes=cf.codes||{};
  if(e.target.closest('#pmk')){const k=($('#pcode').value||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,''),n=parseInt($('#pcoin').value,10)||0,i=$('#pitem').value;if(k.length<3||(!n&&!i)){toast('Code de 3 caractères minimum, avec des pièces ou un article');return}cf.codes[k]={c:n,i}}
  else{const d=e.target.closest('[data-pd]');if(!d)return;delete cf.codes[d.dataset.pd]}
@@ -2699,10 +2700,29 @@ const _st5=start;start=function(){const r=_st5.apply(this,arguments);
 (async()=>{seedAdmin();if(DB.session&&DB.users[DB.session]){await pullUser(DB.session);await pullMeta();if(DB.users[DB.session])start();else{DB.session=null;lsave();$('#auth').classList.add('show')}}})();
 </script>
 <script>
+/* ===== Message de mise à jour + pastille ===== */
+(function(){
+const seen=()=>{try{return +localStorage.getItem('gt_maj_seen')||0}catch(e){return 0}};
+window.updUI=function(){const m=DB.cfg&&DB.cfg.maint,bn=$('#updbn'),nb=$('nav button[data-t="maj"]');if(!bn||!nb)return;
+ const on=!!(m&&m.on),fresh=!!(m&&!m.on&&m.end&&m.end>seen());
+ nb.classList.toggle('mdot',fresh);
+ let h='';
+ if(on)h='<div class="card" style="border-color:#f59e0b"><b>🔧 Mise à jour en cours</b><br><small>Je suis en train de mettre l’appli à jour.'+(m.msg?' '+esc(m.msg):'')+'</small></div>';
+ else if(fresh)h='<div class="card" style="border-color:#34d399"><b>✅ Appli à jour !</b><br><small>Une nouvelle version est prête : va dans l’onglet Mise à jour pour l’installer.</small><br><button class="btn sm" data-gomaj style="margin-top:8px">Installer la mise à jour</button></div>';
+ if(bn.dataset.h!==h){bn.innerHTML=h;bn.dataset.h=h}};
+document.addEventListener('click',e=>{
+ if(e.target.closest('[data-gomaj]')){show('maj');return}
+ if(e.target.closest('#t-maj a.btn')){const m=DB.cfg&&DB.cfg.maint;if(m&&m.end&&!m.on){try{localStorage.setItem('gt_maj_seen',m.end)}catch(x){}}updUI()}});
+setTimeout(updUI,300);
+})();
+
 /* ===== Sons, vibrations et journal des modifs ===== */
 (function(){
-const VER='1.3.1';
+const VER='1.3.2';
 const LOG=[
+ {v:'1.3.2',d:'25 octobre 2026',t:[
+  'Quand l’admin lance une mise à jour, un message s’affiche sur l’accueil.',
+  'Quand elle se termine : message « Appli à jour » et pastille rouge clignotante sur l’onglet Mise à jour, jusqu’au clic sur le bouton de téléchargement.']},
  {v:'1.3.1',d:'25 octobre 2026',t:[
   'Un bouton ✕ (ou la touche Échap) permet de quitter l’ouverture d’une carte ou d’un booster.',
   'Nouvel onglet Mise à jour : un bouton ouvre la page de téléchargement de la dernière version.']},

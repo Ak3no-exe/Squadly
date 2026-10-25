@@ -423,7 +423,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
     <button id="clk" aria-label="Cliquer">🎯</button>
     <p><b id="cc">0</b> clics</p></div>
 </section>
-<section id="t-logins"><h2>🕵️ Connexions</h2><small>Qui s'est connecté, quand et sur quel appareil (réservé à Matteo).</small><div class="row" style="margin:8px 0"><button class="btn alt sm" id="logr">Actualiser</button><button class="btn alt sm" id="logx">Vider</button></div><div id="logc"></div><h2>🔧 Maintenance</h2><div id="admm"></div><h2>🎟️ Codes promo</h2><div id="admc"></div><h2>👥 Gestion des joueurs</h2><div id="admu"></div></section>
+<section id="t-logins"><div data-perm="log"><h2>🕵️ Connexions</h2><small>Qui s'est connecté, quand et sur quel appareil.</small><div class="row" style="margin:8px 0"><button class="btn alt sm" id="logr">Actualiser</button><button class="btn alt sm" id="logx">Vider</button></div><div id="logc"></div></div><div data-perm="maint"><h2>🔧 Maintenance</h2><div id="admm"></div></div><div data-perm="promo"><h2>🎟️ Codes promo</h2><div id="admc"></div></div><div data-perm="coins ban"><h2>👥 Gestion des joueurs</h2><div id="admu"></div></div></section>
 <section id="t-shop"><h2>🛍️ Boutique</h2><div id="shopc"></div></section>
 <section id="t-chat"><h2>💬 Mur de messages</h2><div id="chm" style="max-height:55vh;overflow:auto"></div><form id="chf" class="card row" style="gap:8px"><input id="cht" class="grow" maxlength="200" placeholder="Écris un message…" autocomplete="off"><button class="btn sm">Envoyer</button></form><small id="chs" class="mut"></small></section>
 <section id="t-pass"><h2>🎟️ Pass de saison</h2><div id="pss"></div></section>
@@ -432,8 +432,8 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 <section id="t-roue"><h2>🎡 Roue de la chance</h2><div id="rwl"></div></section>
 <section id="t-trade"><h2>🔄 Échanges</h2><div id="trc"></div></section>
 <section id="t-modifs"><button class="btn alt sm" data-go="home">← Accueil</button><h2>📝 Journal des modifs</h2><div id="mdf"></div></section>
-<section id="t-maj"><h2>⬇️ Mise à jour</h2><div class="card" style="text-align:center"><div style="font-size:3rem">📲</div><p style="margin:8px 0">Pour récupérer la dernière version de l’appli, ouvre la page de téléchargement puis choisis la version la plus récente.</p><a class="btn" href="https://github.com/Ak3no-exe/Squadly/actions" target="_blank" rel="noopener noreferrer">Mise à jour</a><br><small class="mut">Version actuelle : v1.3.3</small></div></section>
-<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.3</p>
+<section id="t-maj"><h2>⬇️ Mise à jour</h2><div class="card" style="text-align:center"><div style="font-size:3rem">📲</div><p style="margin:8px 0">Pour récupérer la dernière version de l’appli, ouvre la page de téléchargement puis choisis la version la plus récente.</p><a class="btn" href="https://github.com/Ak3no-exe/Squadly/actions" target="_blank" rel="noopener noreferrer">Mise à jour</a><br><small class="mut">Version actuelle : v1.3.4</small></div></section>
+<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.4</p>
 <p style="text-align:center;margin:6px 0 0"><button class="btn alt sm" data-go="modifs">📝 Journal des modifs</button></p>
 </main>
 <nav>
@@ -650,6 +650,17 @@ const cloudBase=()=>{const c=cfgv();return c.bin&&c.key?c.bin:''};
 let cloudState=cloudBase()?'?':'off',pt;
 const isAdmin=()=>U==='matteo';
 const canCreate=()=>isAdmin()||!!(U&&DB.users[U]&&DB.users[U].role==='full');
+/* Droits délégués par l'admin */
+const PERMS=[['acc','👥 Créer des comptes et régler la sauvegarde en ligne'],['log','🕵️ Voir les connexions'],['maint','🔧 Mode maintenance'],['promo','🎟️ Codes promo'],['coins','🪙 Donner / retirer des pièces et offrir des articles'],['ban','🚫 Geler et dégeler des comptes'],['reset','♻️ Réinitialiser la progression et retirer des comptes liés'],['pw','🔑 Changer les mots de passe et la 2FA'],['del','🗑️ Supprimer des comptes'],['prank','🎭 Envoyer des farces']];
+const hasPerm=u=>!!(u&&u.perm&&Object.values(u.perm).some(Boolean));
+const can=p=>isAdmin()||!!(U&&DB.users[U]&&DB.users[U].perm&&DB.users[U].perm[p]);
+const hasAdm=()=>isAdmin()||hasPerm(DB.users[U]);
+function applyPerm(){$$('[data-perm]').forEach(e=>e.style.display=e.dataset.perm.split(' ').some(p=>can(p))?'':'none')}
+function permDlg(nm,cur,rolefull){return new Promise(res=>{const o=document.createElement('div');o.className='cdm';o.style.zIndex=9000;
+ o.innerHTML='<div class="card" style="max-width:360px;width:100%;max-height:85vh;overflow:auto;text-align:left"><b>🛡️ Droits de '+esc(nm)+'</b><br><small class="mut">Coche ce que ce compte pourra faire. Sans aucune case cochée, il reste un joueur normal.</small><div style="margin:10px 0">'+PERMS.map(p=>'<label style="display:flex;gap:10px;align-items:center;padding:7px 0"><input type="checkbox" data-pk="'+p[0]+'" style="width:20px;height:20px;flex:none;margin:0" '+((p[0]==='acc'?rolefull:cur&&cur[p[0]])?'checked':'')+'><span>'+p[1]+'</span></label>').join('')+'</div><div class="row" style="justify-content:center;gap:8px"><button class="btn sm" data-ok>Valider</button><button class="btn alt sm" data-no>Annuler</button></div></div>';
+ o.onclick=e=>{if(e.target.closest('[data-ok]')){const r={};o.querySelectorAll('[data-pk]').forEach(c=>{if(c.checked)r[c.dataset.pk]=1});o.remove();res(r)}else if(e.target.closest('[data-no]')||e.target===o){o.remove();res(null)}};
+ document.body.appendChild(o)})}
+async function applyPerms(k,r){const u=DB.users[k],pm={};PERMS.forEach(p=>{if(p[0]!=='acc'&&r[p[0]])pm[p[0]]=1});u.perm=Object.keys(pm).length?pm:null;u.role=r.acc?'full':'ro';u.req=null;lsave();await cloud('PATCH','/users/'+k+'.json',{perm:u.perm,role:u.role,req:null})}
 const lsave=()=>{try{localStorage.setItem('gametrack2',JSON.stringify(DB))}catch(e){}};
 function normS(d){const s=Object.assign(base(),d||{});s.ctr=Object.assign(base().ctr,s.ctr||{});s.ctr.pr=s.ctr.pr||{};if(!Array.isArray(s.games))s.games=Object.values(s.games||{});s.acc=s.acc||{};s.ach=s.ach||{};return s}
 /* JSONBin stocke un seul document {users:{...}} : chaque opération lit, modifie puis réécrit le bin, en file d'attente */
@@ -683,7 +694,7 @@ async function jbOp(m,path,body){
 function seedAdmin(){const u=DB.users.matteo;if(!u){DB.users.matteo={name:'Matteo',hash:ADMIN_HASH,adm:1,data:base()};return true}if(!u.adm){u.hash=ADMIN_HASH;u.adm=1;u.name='Matteo';return true}return false}
 async function pullUser(k){const r=await cloud('GET','/users/'+k+'.json');if(r===undefined)return false;
  if(r&&r.hash)DB.users[k]=r;else{delete DB.users[k];if(k==='matteo'){seedAdmin();await cloud('PUT','/users/matteo.json',DB.users.matteo)}}lsave();return true}
-async function pullAll(){if(!isAdmin())return pullUser(U);const r=await cloud('GET','/users.json');if(r===undefined)return false;
+async function pullAll(){if(!hasAdm())return pullUser(U);const r=await cloud('GET','/users.json');if(r===undefined)return false;
  if(r===null){for(const k in DB.users)await cloud('PUT','/users/'+k+'.json',DB.users[k]);if(DB.meta)await cloud('PUT','/meta.json',DB.meta)}else{const o={};for(const k in r)if(r[k]&&r[k].hash)o[k]=r[k];DB.users=o}
  if(seedAdmin())await cloud('PUT','/users/matteo.json',DB.users.matteo);lsave();return true}
 function pushSoon(){clearTimeout(pt);pt=setTimeout(flush,3000)}
@@ -695,12 +706,12 @@ async function refresh(){if(!U||!cloudBase())return;await flush();if(!await pull
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
 
 const PN={riot:'Riot Games',epic:'Epic Games',xbox:'Xbox'};
-function renderAdmin(){if(!canCreate())return;
+function renderAdmin(){if(!canCreate()&&!hasAdm())return;
  $('#cst').textContent='Sauvegarde en ligne : '+({off:'non configurée',ok:'active',err:'erreur de connexion','?':'test en cours'}[cloudState]);
  {const c=cfgv();if(document.activeElement!==$('#cbin')&&document.activeElement!==$('#ckey')){$('#cbin').value=c.bin;$('#ckey').value=c.key}}
  $('#ulist').innerHTML=Object.keys(DB.users).sort().map(k=>{const u=DB.users[k],d=k===U?S:normS(u.data),a=d.acc;
-  const accs=Object.keys(a).filter(i=>a[i]&&a[i].pseudo).map(i=>`<div class="row" style="margin-top:6px"><small class="grow">${PN[i]||esc(i)} : ${esc(a[i].pseudo)}</small><button class="btn alt sm" data-rm="${k}|${i}">Retirer</button></div>`).join('');
-  return `<div class="card"><div class="row"><div class="avatar" style="background:#4f46e5">${esc((u.name||k)[0].toUpperCase())}</div><div class="grow"><b>${esc(u.name||k)}</b>${k==='matteo'?' <span class="pill">Admin</span>':u.role==='full'?' <span class="pill">Complet</span>':' <span class="pill">Lecture seule</span>'}<br><small>${u.totp?'🔐 2FA active':'🔓 sans 2FA'} · ${d.games.length} jeu(x) · ${Object.keys(d.ach).length} succès</small></div></div>${accs||'<small>Aucun compte connecté</small>'}${pwl(k)}<div class="row" style="margin-top:10px">${k==='matteo'?'':`<button class="btn alt sm" data-pw="${k}">Changer mdp</button><button class="btn alt sm" data-vp="${k}">Voir mdp</button><button class="btn alt sm" data-rl="${k}">${u.role==='full'?'Passer en lecture seule':'Passer en complet'}</button><button class="btn alt sm" data-tf="${k}">${u.totp?'Désactiver 2FA':'Activer 2FA'}</button><button class="btn alt sm" data-rs="${k}">Réinitialiser la progression</button><button class="btn alt sm" data-del="${k}">Supprimer</button>`}</div></div>`}).join('');
+  const accs=Object.keys(a).filter(i=>a[i]&&a[i].pseudo).map(i=>`<div class="row" style="margin-top:6px"><small class="grow">${PN[i]||esc(i)} : ${esc(a[i].pseudo)}</small>${can('reset')?`<button class="btn alt sm" data-rm="${k}|${i}">Retirer</button>`:''}</div>`).join('');
+  return `<div class="card"><div class="row"><div class="avatar" style="background:#4f46e5">${esc((u.name||k)[0].toUpperCase())}</div><div class="grow"><b>${esc(u.name||k)}</b>${k==='matteo'?' <span class="pill">Admin</span>':u.role==='full'?' <span class="pill">Complet</span>':' <span class="pill">Lecture seule</span>'}<br><small>${u.totp?'🔐 2FA active':'🔓 sans 2FA'} · ${d.games.length} jeu(x) · ${Object.keys(d.ach).length} succès</small></div></div>${accs||'<small>Aucun compte connecté</small>'}${pwl(k)}<div class="row" style="margin-top:10px">${k==='matteo'||(!isAdmin()&&(k===U||hasPerm(u)))?'':`${can('pw')?`<button class="btn alt sm" data-pw="${k}">Changer mdp</button>`:''}${isAdmin()?`<button class="btn alt sm" data-vp="${k}">Voir mdp</button><button class="btn alt sm" data-rl="${k}">${u.role==='full'?'Passer en lecture seule':'Passer en complet'}</button>`:''}${can('pw')?`<button class="btn alt sm" data-tf="${k}">${u.totp?'Désactiver 2FA':'Activer 2FA'}</button>`:''}${can('reset')?`<button class="btn alt sm" data-rs="${k}">Réinitialiser la progression</button>`:''}${can('del')?`<button class="btn alt sm" data-del="${k}">Supprimer</button>`:''}`}</div></div>`}).join('');
  $$('#ulist [data-pw]').forEach(b=>b.onclick=async()=>{const k=b.dataset.pw,v=await ask('Nouveau mot de passe pour '+(DB.users[k].name||k)+' (4 caractères minimum)',1);if(!v||v.length<4){if(v!==null)toast('4 caractères minimum');return}await setPass(k,v);delete PWC[k];toast('Mot de passe modifié');renderAdmin()});
  $$('#ulist [data-vp]').forEach(b=>b.onclick=()=>revealPw([b.dataset.vp]));
  $$('#ulist [data-rl]').forEach(b=>b.onclick=async()=>{const k=b.dataset.rl,u=DB.users[k];u.role=u.role==='full'?'ro':'full';lsave();await cloud('PATCH','/users/'+k+'.json',{role:u.role});renderAdmin()});
@@ -728,7 +739,7 @@ $('#newU').onsubmit=async e=>{e.preventDefault();const er=$('#nerr');er.textCont
  const ok=await cloud('PUT','/users/'+k+'.json',DB.users[k]);await cloud('PATCH','/board.json',{[k]:{n:n,p:0,a:0}});
  $('#nu').value='';$('#np').value='';$('#n2fa').checked=false;if(DB.users[k].totp)tfBox({title:'Double authentification de '+n,msg:'Donne cette clé à '+esc(n)+' : il doit l\'ajouter dans une appli d\'authentification (Google Authenticator, Microsoft Authenticator, Aegis…). Ensuite, à chaque connexion, il devra entrer le code à 6 chiffres.',secret:DB.users[k].totp,user:n});toast(cloudBase()&&ok===undefined?'Compte créé sur cet appareil seulement : sauvegarde en ligne injoignable':'Compte créé : '+n+(k!==n.toLowerCase()?' (identifiant : '+k+')':''));renderAdmin()}
  catch(x){er.textContent='Erreur : '+(x&&x.message||x)}};
-$('#burger').onclick=async()=>{$$('.sec-c').forEach(e=>e.style.display=canCreate()?'':'none');$$('.sec-a').forEach(e=>e.style.display=isAdmin()?'':'none');buildSw();$('#drawer').classList.add('show');renderAdmin();if(canCreate()){await pullAll();renderAdmin()}};
+$('#burger').onclick=async()=>{$$('.sec-c').forEach(e=>e.style.display=canCreate()?'':'none');$$('.sec-a').forEach(e=>e.style.display=hasAdm()?'':'none');const va=$('#vall');if(va)va.style.display=isAdmin()?'':'none';buildSw();$('#drawer').classList.add('show');renderAdmin();if(canCreate()||hasAdm()){await pullAll();renderAdmin()}};
 $('#dclose').onclick=()=>$('#drawer').classList.remove('show');
 $('#drawer').onclick=e=>{if(e.target.id==='drawer')$('#drawer').classList.remove('show')};
 $('#csave').onclick=async()=>{const b=$('#cbin').value.trim(),k=$('#ckey').value.trim();setCfg(b,k);cloudState=b&&k?'?':'off';renderAdmin();if(b&&k){const ok=await pullAll();toast(ok?'Sauvegarde en ligne active':'Connexion impossible : vérifie l\'ID du bin et la clé (droits Read + Update)')}renderAdmin()};
@@ -2228,7 +2239,7 @@ let CC='#818cf8';
 function upd(){if(!U||!DB.users[U])return;const c=$('#coinb');if(c)c.textContent='🪙 '+bal();const e=S_().eq;if(e.badge||e.titre||e.clock)$('#who').textContent=(e.badge?e.badge+' ':'')+(e.titre||'Joueur : '+DB.users[U].name)+(e.clock?' · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'')}
 /* Effets de changement d'onglet */
 function tabFx(t){const e=S_().eq.tab;if(!e||!S_().own[e]||RM)return;if(e==='confettis'){confetti();return}const el=$('#t-'+t);if(!el)return;const c='tx-'+e;el.classList.remove(c);void el.offsetWidth;el.classList.add(c);setTimeout(()=>el.classList.remove(c),700)}
-const _sh=show;show=function(t){if(t==='logins'&&!isAdmin())t='home';_sh(t);if(U){const s=S_();qs();if(!s.q.tabs.includes(t)){s.q.tabs.push(t);save()}}if(t==='shop')render();if(t==='logins'){renderLogs();renderTools();renderCfg()}upd();tabFx(t)};
+const _sh=show;show=function(t){if(t==='logins'&&!hasAdm())t='home';_sh(t);if(U){const s=S_();qs();if(!s.q.tabs.includes(t)){s.q.tabs.push(t);save()}}if(t==='shop')render();if(t==='logins'){applyPerm();renderLogs();renderTools();renderCfg()}upd();tabFx(t)};
 /* Effets spéciaux (canvas) */
 const fc=document.createElement('canvas');fc.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50';document.body.appendChild(fc);
 const rs=()=>{fc.width=innerWidth;fc.height=innerHeight};addEventListener('resize',rs);rs();
@@ -2257,7 +2268,7 @@ const lab=(i,o)=>{const s=S_();if(i.id==='coffre')return 'Ouvrir · '+i.p+' 🪙
  return {x2:'Actif ✓',titre:'Modifier',badge:'Modifier',horloge:s.eq.clock?'Activée ✓':'Activer',autotheme:s.eq.auto?'Activé ✓':'Activer',fete:'🎉 Lancer'}[i.id]};
 function render(){const s=S_(),box=$('#shopc');if(!box)return;const can=s.day!==new Date().toDateString(),g=gift(),ng=(25+Math.min(s.streak||1,6)*5)*(s.own.x2?2:1);
  let h=`<div class="card" style="text-align:center"><div style="font-size:2rem;font-weight:700">${bal()} 🪙</div><small>Succès débloqués + cadeaux − achats</small></div><div class="card row"><div class="badge">🎁</div><div class="grow"><b>Cadeau du jour</b><br><small>🔥 Série de ${s.streak||1} jour(s) · ${can?'+'+g+' 🪙 à récupérer':'demain : +'+ng+' 🪙'}</small></div><button class="btn sm" data-gift ${can?'':'disabled'}>Récupérer</button></div>`;
- if(!canCreate()){const u=DB.users[U]||{};h+=`<div class="card row"><div class="badge">🔒</div><div class="grow"><b>Compte en lecture seule</b><br><small>${u.req?'Demande envoyée, l\'admin va te répondre':'Tu peux demander à passer en compte complet'}</small></div><button class="btn sm" data-req ${u.req?'disabled':''}>${u.req?'Envoyée ✓':'Demander'}</button></div>`}
+ if(!canCreate()&&!hasAdm()){const u=DB.users[U]||{};h+=`<div class="card row"><div class="badge">🔒</div><div class="grow"><b>Compte en lecture seule</b><br><small>${u.req?'Demande envoyée, l\'admin va te répondre':'Tu peux demander des droits à l\'admin'}</small></div><button class="btn sm" data-req ${u.req?'disabled':''}>${u.req?'Envoyée ✓':'Demander'}</button></div>`}
  h+=`<div class="card"><div class="row" style="gap:6px"><input id="promo" placeholder="Code promo" autocapitalize="characters" style="flex:1;min-width:0;text-transform:uppercase"><button class="btn sm" data-promo>Valider</button></div></div>`;
  {const Q=qs();h+='<h2>🎯 Quêtes du jour</h2>'+Q.map(q=>{const v=qprog(q),d=v>=q[4],c=s.q.c[q[0]];return `<div class="card"><div class="row"><div class="grow"><b>${q[1]}</b><br><small>${v} / ${q[4]} · +${q[2]} 🪙</small></div><button class="btn sm${c?' alt':''}" data-q="${q[0]}" ${d&&!c?'':'disabled'}>${c?'✓ Reçu':d?'Récupérer':'En cours'}</button></div><div style="height:6px;border-radius:3px;background:rgba(127,127,127,.25);margin-top:8px;overflow:hidden"><div style="height:100%;width:${v/q[4]*100}%;background:var(--ac2)"></div></div></div>`}).join('')+'<small>'+(Q.every(q=>s.q.c[q[0]])?'✅ Bonus de série obtenu':'Termine les 3 quêtes pour +20 🪙 de bonus')+'</small>'}
  {const W=CAT.filter(i=>s.wish[i.id]&&!s.own[i.id]);if(W.length)h+='<h2>⭐ Liste de souhaits</h2>'+W.map(i=>{const m=i.p-bal();return `<div class="card row"><div class="badge">${i.e||'🎨'}</div><div class="grow"><b>${i.n}</b><br><small>${m>0?'Il te manque '+m+' 🪙':'Tu peux l\'acheter !'}</small></div><button class="btn sm${m>0?' alt':''}" data-id="${i.id}">${i.p} 🪙</button><button class="btn alt sm" data-w="${i.id}" aria-label="Retirer">⭐</button></div>`}).join('')}
@@ -2290,7 +2301,7 @@ $('#shopc').onclick=e=>{const s=S_(),g=e.target.closest('[data-gift]'),qb=e.targ
  save();render();upd()};
 $('#coinb').onclick=()=>show('shop');
 const bye=u=>{try{sessionStorage.setItem('gt_ban','🚫 Compte gelé par l\'administrateur'+(u.ban&&u.ban.r?' : '+u.ban.r:''))}catch(x){}DB.session=null;lsave();location.reload()};
-const _st=start;start=function(){const u0=DB.users[DB.session];if(u0&&u0.ban&&DB.session!=='matteo'){bye(u0);return}_st.apply(this,arguments);S_();streak();qs();applyGrants();applyTheme();upd();if(fxo().snow||fxo().coins)kick();render();const nl=$('#navlog');if(nl)nl.style.display=isAdmin()?'':'none';logLogin();homeFix();pullCfg().then(maintCheck);if(isAdmin())pullAll().then(dot)};
+const _st=start;start=function(){const u0=DB.users[DB.session];if(u0&&u0.ban&&DB.session!=='matteo'){bye(u0);return}_st.apply(this,arguments);S_();streak();qs();applyGrants();applyTheme();upd();if(fxo().snow||fxo().coins)kick();render();const nl=$('#navlog');if(nl)nl.style.display=hasAdm()?'':'none';logLogin();homeFix();pullCfg().then(maintCheck);if(isAdmin())pullAll().then(dot)};
 const _tg=tfaGate;tfaGate=async function(k){const u=DB.users[k];if(u&&u.ban&&k!=='matteo'){$('#aerr').textContent='🚫 Compte gelé par l\'administrateur'+(u.ban.r?' : '+u.ban.r:'');return false}await pullCfg();if(k!=='matteo'&&DB.cfg&&DB.cfg.maint&&DB.cfg.maint.on){$('#aerr').textContent='🔧 Mise à jour en cours'+(DB.cfg.maint.msg?' : '+DB.cfg.maint.msg:'');return false}return _tg.apply(this,arguments)};
 const _rh=renderHome;renderHome=function(){_rh.apply(this,arguments);homeFix()};
 /* Journal des connexions (admin) */
@@ -2300,7 +2311,7 @@ const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);if(m<1)return "à l'instant
 async function renderLogs(){const box=$('#logc');if(!box)return;box.innerHTML='<div class="card mut">Chargement…</div>';const c=cloudBase()?await cloud('GET','/logins.json'):null,all=Object.assign({},DB.logins||{},c||{}),ks=Object.keys(all).sort().reverse().slice(0,60);
  box.innerHTML=(cloudBase()?'':'<div class="card mut">Sauvegarde en ligne non reliée : seules les connexions de cet appareil sont listées.</div>')+(ks.length?ks.map(k=>{const e=all[k];return `<div class="card row"><div class="avatar" style="background:var(--ac)">${esc((e.u||'?')[0].toUpperCase())}</div><div class="grow"><b>${esc(e.u||'?')}</b><br><small>${ago(e.t)} · ${esc(e.d||'')}</small></div></div>`}).join(''):'<div class="card mut">Aucune connexion enregistrée pour le moment.</div>')}
 $('#logr').onclick=renderLogs;
-$('#logx').onclick=async()=>{if(!await ask('Vider tout l\'historique des connexions ?'))return;DB.logins={};lsave();await cloud('PUT','/logins.json',{});renderLogs()};
+$('#logx').onclick=async()=>{if(!can('log'))return;if(!await ask('Vider tout l\'historique des connexions ?'))return;DB.logins={};lsave();await cloud('PUT','/logins.json',{});renderLogs()};
 /* Quêtes, série, titres */
 const dn=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5),today=()=>new Date().toDateString();
 const MET=()=>({t:tot(),w:sum('wins'),k:sum('kills'),c:S.ctr.clicks||0,a:Object.keys(S.ach).length});
@@ -2319,30 +2330,30 @@ function applyGrants(){const u=DB.users[U];if(!u)return;const s=S_();let ch=0;co
  if(gc!==(s.gca||0)){const d=gc-(s.gca||0);s.gain+=d;s.gca=gc;ch=1;toast(d>0?'🎁 L\'admin t\'a offert +'+d+' 🪙':'💸 L\'admin t\'a retiré '+(-d)+' 🪙')}
  (u.gi||[]).forEach(id=>{if(!s.own[id]){s.own[id]=1;ch=1;toast('🎁 Article offert : '+(CAT.find(c=>c.id===id)||{n:id}).n)}});
  if(ch){sync();save();applyTheme();render();upd()}}
-function guard(){const u=U&&DB.users[U];if(!u)return;if(u.ban&&U!=='matteo'){bye(u);return}applyGrants();maintCheck();autoTheme();const s=S_();if(u.role==='full'&&s.ro){s.ro=0;save();toast('✅ L\'admin a accepté : ton compte est complet');render()}}
-async function renderTools(){const box=$('#admu');if(!box||!isAdmin())return;if(cloudBase())await pullAll();const opts=CAT.filter(c=>c.id!=='coffre').map(c=>`<option value="${c.id}">${c.n}</option>`).join('');
- const ks=Object.keys(DB.users).filter(k=>k!=='matteo').sort();
- box.innerHTML=ks.length?ks.map(k=>{const u=DB.users[k];return `<div class="card"><div class="row"><b class="grow">${esc(u.name||k)}</b>${u.req?'<span class="pill">🙋 Demande d\'accès</span>':''}${u.ban?'<span class="pill">🚫 Gelé</span>':''}</div><small>Pièces offertes par l'admin : ${+u.gc||0}${u.ban&&u.ban.r?' · Raison : '+esc(u.ban.r):''}</small><div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap"><button class="btn alt sm" data-a="gc" data-k="${k}">🪙 Pièces ±</button><button class="btn alt sm" data-a="bn" data-k="${k}">${u.ban?'✅ Dégeler':'🚫 Geler'}</button>${u.req?`<button class="btn sm" data-a="ok" data-k="${k}">✅ Accepter</button><button class="btn alt sm" data-a="no" data-k="${k}">❌ Refuser</button>`:''}</div><div class="row" style="margin-top:8px;gap:6px"><select class="grow" style="min-width:0">${opts}</select><button class="btn alt sm" data-a="gi" data-k="${k}">🎁 Offrir</button></div></div>`}).join(''):'<div class="card mut">Aucun autre joueur.</div>'}
-$('#admu').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,u=DB.users[k];if(!u)return;
+function guard(){const u=U&&DB.users[U];if(!u)return;if(u.ban&&U!=='matteo'){bye(u);return}applyGrants();maintCheck();autoTheme();const s=S_();if((u.role==='full'||hasPerm(u))&&s.ro){s.ro=0;save();toast('✅ L\'admin a accepté ta demande');render()}}
+async function renderTools(){const box=$('#admu');if(!box||!hasAdm())return;if(cloudBase())await pullAll();const opts=CAT.filter(c=>c.id!=='coffre').map(c=>`<option value="${c.id}">${c.n}</option>`).join('');
+ const ks=Object.keys(DB.users).filter(k=>k!=='matteo'&&(isAdmin()||(k!==U&&!hasPerm(DB.users[k])))).sort();
+ box.innerHTML=ks.length?ks.map(k=>{const u=DB.users[k];return `<div class="card"><div class="row"><b class="grow">${esc(u.name||k)}</b>${u.req&&isAdmin()?'<span class="pill">🙋 Demande d\'accès</span>':''}${hasPerm(u)?'<span class="pill">🛡️ Droits</span>':''}${u.ban?'<span class="pill">🚫 Gelé</span>':''}</div><small>Pièces offertes par l'admin : ${+u.gc||0}${u.ban&&u.ban.r?' · Raison : '+esc(u.ban.r):''}</small><div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap">${can('coins')?`<button class="btn alt sm" data-a="gc" data-k="${k}">🪙 Pièces ±</button>`:''}${can('ban')?`<button class="btn alt sm" data-a="bn" data-k="${k}">${u.ban?'✅ Dégeler':'🚫 Geler'}</button>`:''}${isAdmin()?`<button class="btn alt sm" data-a="pm" data-k="${k}">🛡️ Droits</button>`:''}${u.req&&isAdmin()?`<button class="btn sm" data-a="ok" data-k="${k}">✅ Accepter</button><button class="btn alt sm" data-a="no" data-k="${k}">❌ Refuser</button>`:''}</div>${can('coins')?`<div class="row" style="margin-top:8px;gap:6px"><select class="grow" style="min-width:0">${opts}</select><button class="btn alt sm" data-a="gi" data-k="${k}">🎁 Offrir</button></div>`:''}</div>`}).join(''):'<div class="card mut">Aucun autre joueur.</div>'}
+$('#admu').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,u=DB.users[k];if(!u)return;const need={gc:'coins',gi:'coins',bn:'ban'}[b.dataset.a];if(need&&!can(need))return;if(['ok','no','pm'].includes(b.dataset.a)&&!isAdmin())return;if(!isAdmin()&&(k===U||hasPerm(u)))return;
  if(b.dataset.a==='gc'){const n=parseInt(await ask('Pièces à donner à '+(u.name||k)+' (nombre négatif pour en retirer)',1),10);if(!n)return;u.gc=(+u.gc||0)+n;lsave();await cloud('PATCH','/users/'+k+'.json',{gc:u.gc});toast((n>0?'+':'')+n+' 🪙 pour '+(u.name||k))}
  else if(b.dataset.a==='gi'){const id=b.parentNode.querySelector('select').value;u.gi=[...new Set([...(u.gi||[]),id])];lsave();await cloud('PATCH','/users/'+k+'.json',{gi:u.gi});toast('🎁 Article offert à '+(u.name||k))}
  else if(b.dataset.a==='bn'){if(u.ban)u.ban=null;else{const r=await ask('Raison du gel (facultatif)',1);if(r===null)return;u.ban={r:r.trim().slice(0,60)}}lsave();await cloud('PATCH','/users/'+k+'.json',{ban:u.ban});toast(u.ban?'🚫 Compte gelé':'✅ Compte dégelé')}
- else if(b.dataset.a==='ok'){u.role='full';u.req=null;lsave();await cloud('PATCH','/users/'+k+'.json',{role:'full',req:null});toast('✅ Compte passé en complet')}
+ else if(b.dataset.a==='ok'||b.dataset.a==='pm'){const r=await permDlg(u.name||k,u.perm,u.role==='full');if(!r)return;await applyPerms(k,r);toast(Object.keys(r).length?'✅ Droits enregistrés pour '+(u.name||k):'✅ Demande traitée : aucun droit donné')}
  else if(b.dataset.a==='no'){u.req=null;lsave();await cloud('PATCH','/users/'+k+'.json',{req:null});toast('❌ Demande refusée')}
  renderTools();dot()};
 /* Config partagée : maintenance et codes promo */
 async function pullCfg(){if(!cloudBase())return;const r=await cloud('GET','/cfg.json');if(r!==undefined){DB.cfg=r||{};lsave()}}
 const mo=document.createElement('div');mo.style.cssText='display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);color:var(--tx);align-items:center;justify-content:center;text-align:center;padding:24px;flex-direction:column;gap:10px';document.body.appendChild(mo);
 function maintCheck(){const m=DB.cfg&&DB.cfg.maint,on=!!(m&&m.on)&&U&&U!=='matteo';mo.style.display=on?'flex':'none';if(on){const h='<div style="font-size:3rem">🔧</div><h2>Mise à jour en cours</h2><p>'+esc(m.msg||'Je mets l\'appli à jour, elle revient bientôt.')+'</p>';if(mo.dataset.h!==h){mo.innerHTML=h;mo.dataset.h=h}}window.updUI&&updUI()}
-function dot(){const nl=$('#navlog');if(nl)nl.classList.toggle('dot',Object.values(DB.users).some(u=>u&&u.req))}
+function dot(){const nl=$('#navlog');if(nl)nl.classList.toggle('dot',isAdmin()&&Object.values(DB.users).some(u=>u&&u.req))}
 function autoTheme(){const s=S_(),r=document.documentElement;if(!U||!s.eq.auto||!s.own.autotheme){delete r.dataset.dusk;return}const h=new Date().getHours(),want=h>=7&&h<18?'light':'dark';if(tget().mode!==want)setTheme({mode:want});if(h>=18&&h<21||h>=6&&h<8)r.dataset.dusk=1;else delete r.dataset.dusk}
 async function redeem(){const code=($('#promo').value||'').trim().toUpperCase();if(!code)return;const s=S_();await pullCfg();const c=((DB.cfg||{}).codes||{})[code];if(!c){toast('Code invalide');return}if(s.red[code]){toast('Code déjà utilisé');return}s.red[code]=1;let t='🎟️ Code accepté';if(c.c){s.gain+=c.c;t+=' : +'+c.c+' 🪙'}if(c.i&&!s.own[c.i]){s.own[c.i]=1;sync();applyTheme();t+=' + '+((CAT.find(x=>x.id===c.i)||{}).n||'article')}save();toast(t);render();upd()}
-async function renderCfg(){const m=$('#admm'),c=$('#admc');if(!m||!isAdmin())return;await pullCfg();const cf=DB.cfg||{},mt=cf.maint||{},cs=cf.codes||{};
+async function renderCfg(){const m=$('#admm'),c=$('#admc');if(!m||!hasAdm())return;await pullCfg();const cf=DB.cfg||{},mt=cf.maint||{},cs=cf.codes||{};
  m.innerHTML=`<div class="card"><div class="row"><b class="grow">Mode maintenance</b><span class="pill">${mt.on?'Activé':'Désactivé'}</span></div><small>${mt.on?esc(mt.msg||'Sans message'):'Bloque l\'appli pour tous les joueurs sauf toi.'}</small><div class="row" style="margin-top:8px"><button class="btn alt sm" id="maintb">${mt.on?'Désactiver':'Activer'}</button></div></div>`;
  const opts=CAT.filter(x=>x.id!=='coffre').map(x=>`<option value="${x.id}">${x.n}</option>`).join('');
  c.innerHTML=`<div class="card"><div class="row" style="gap:6px"><input id="pcode" placeholder="CODE" style="flex:1;min-width:0;text-transform:uppercase"><input id="pcoin" type="number" placeholder="🪙" style="width:80px"></div><div class="row" style="margin-top:8px;gap:6px"><select id="pitem" class="grow" style="min-width:0"><option value="">Aucun article</option>${opts}</select><button class="btn sm" id="pmk">Créer</button></div></div>`+Object.keys(cs).map(k=>`<div class="card row"><div class="grow"><b>${esc(k)}</b><br><small>${cs[k].c?'+'+cs[k].c+' 🪙 ':''}${cs[k].i?'· '+((CAT.find(x=>x.id===cs[k].i)||{}).n||''):''}</small></div><button class="btn alt sm" data-pd="${esc(k)}">Supprimer</button></div>`).join('')}
-$('#admm').onclick=async e=>{if(!e.target.closest('#maintb'))return;const cf=DB.cfg=DB.cfg||{},on=!(cf.maint&&cf.maint.on);let msg='';if(on){const r=await ask('Message affiché aux joueurs (facultatif)',1);if(r===null)return;msg=r.trim().slice(0,100)}cf.maint={on,msg,end:on?((cf.maint&&cf.maint.end)||0):Date.now()};lsave();await cloud('PATCH','/cfg.json',{maint:cf.maint});toast(on?'🔧 Mise à jour en cours affichée':'✅ Appli à jour : pastille envoyée');renderCfg();window.updUI&&updUI()};
-$('#admc').onclick=async e=>{const cf=DB.cfg=DB.cfg||{};cf.codes=cf.codes||{};
+$('#admm').onclick=async e=>{if(!e.target.closest('#maintb')||!can('maint'))return;const cf=DB.cfg=DB.cfg||{},on=!(cf.maint&&cf.maint.on);let msg='';if(on){const r=await ask('Message affiché aux joueurs (facultatif)',1);if(r===null)return;msg=r.trim().slice(0,100)}cf.maint={on,msg,end:on?((cf.maint&&cf.maint.end)||0):Date.now()};lsave();await cloud('PATCH','/cfg.json',{maint:cf.maint});toast(on?'🔧 Mise à jour en cours affichée':'✅ Appli à jour : pastille envoyée');renderCfg();window.updUI&&updUI()};
+$('#admc').onclick=async e=>{if(!can('promo'))return;const cf=DB.cfg=DB.cfg||{};cf.codes=cf.codes||{};
  if(e.target.closest('#pmk')){const k=($('#pcode').value||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,''),n=parseInt($('#pcoin').value,10)||0,i=$('#pitem').value;if(k.length<3||(!n&&!i)){toast('Code de 3 caractères minimum, avec des pièces ou un article');return}cf.codes[k]={c:n,i}}
  else{const d=e.target.closest('[data-pd]');if(!d)return;delete cf.codes[d.dataset.pd]}
  lsave();await cloud('PATCH','/cfg.json',{codes:cf.codes});renderCfg()};
@@ -2637,8 +2648,8 @@ function fire(p){try{localStorage.setItem('gt_prt',Date.now())}catch(x){}S.pk=(S
 function prankRoll(){if(S.prOff)return;let last=0;try{last=+localStorage.getItem('gt_prt')||0}catch(x){}if(Date.now()-last<6e5)return;
  let r=Math.random()*100;for(const p of PR){if(r<p.ch){fire(p);return}r-=p.ch}}
 document.addEventListener('click',e=>{if(e.target.closest('#prt')){S.prOff=!S.prOff;save();renderHome()}});
-async function prankAdmin(){const sec=$('#t-logins');if(!sec||!isAdmin())return;if(cloudBase()&&typeof pullAll==='function')await pullAll();
- let b=$('#prk');if(!b){sec.insertAdjacentHTML('beforeend','<div id="prk"></div>');b=$('#prk')}const ks=Object.keys(DB.users).filter(k=>k!==U);
+async function prankAdmin(){const sec=$('#t-logins');if(!sec||!can('prank'))return;if(cloudBase()&&typeof pullAll==='function')await pullAll();
+ let b=$('#prk');if(!b){sec.insertAdjacentHTML('beforeend','<div id="prk" data-perm="prank"></div>');b=$('#prk')}const ks=Object.keys(DB.users).filter(k=>k!==U);
  b.innerHTML=`<h2>🎭 Envoyer une farce</h2><div class="card"><div class="grid" style="grid-template-columns:1fr 1fr"><div><label>Compte</label><select id="pku">${ks.map(k=>`<option value="${k}">${esc(DB.users[k].name||k)}</option>`).join('')}</select></div><div><label>Farce</label><select id="pkp">${PR.map(p=>`<option value="${p.id}">${p.n}</option>`).join('')}</select></div></div><button class="btn sm" data-ps style="margin-top:10px">Envoyer</button><br><small class="mut">Elle se déclenche à sa prochaine ouverture de l’appli.</small></div>`;
  b.onclick=async e=>{if(!e.target.closest('[data-ps]'))return;const k=$('#pku').value,p=$('#pkp').value,u=DB.users[k];if(!u)return;u.pr=p+'.'+Date.now();lsave();await cloud('PATCH','/users/'+k+'.json',{pr:u.pr});toast('🎭 Farce envoyée à '+(u.name||k))}}
 
@@ -2714,6 +2725,7 @@ document.addEventListener('click',e=>{
  if(e.target.closest('[data-gomaj]')){show('maj');return}
  if(e.target.closest('#t-maj a.btn')){const m=DB.cfg&&DB.cfg.maint;if(m&&m.end&&!m.on){try{localStorage.setItem('gt_maj_seen',m.end)}catch(x){}}updUI()}});
 setTimeout(updUI,300);
+setInterval(()=>{const nl=$('#navlog');if(nl&&U)nl.style.display=hasAdm()?'':'none'},1500);
 /* Attente de la fin de la mise à jour : vérifie toutes les 5 s et recharge tout seul */
 let wb=0;
 setInterval(async()=>{const m0=DB.cfg&&DB.cfg.maint;if(!(m0&&m0.on)||document.hidden||wb||U==='matteo')return;wb=1;
@@ -2722,8 +2734,11 @@ setInterval(async()=>{const m0=DB.cfg&&DB.cfg.maint;if(!(m0&&m0.on)||document.hi
 
 /* ===== Sons, vibrations et journal des modifs ===== */
 (function(){
-const VER='1.3.3';
+const VER='1.3.4';
 const LOG=[
+ {v:'1.3.4',d:'25 octobre 2026',t:[
+  'Quand l’admin accepte une demande, il coche les droits que le compte aura (connexions, maintenance, codes promo, pièces, gel, farces…).',
+  'Bouton 🛡️ Droits sur chaque joueur pour modifier ou retirer ces droits à tout moment.']},
  {v:'1.3.3',d:'25 octobre 2026',t:[
   'Pendant une mise à jour, l’appli vérifie toute seule toutes les 5 secondes et se recharge dès que c’est terminé.']},
  {v:'1.3.2',d:'25 octobre 2026',t:[

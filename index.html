@@ -186,6 +186,7 @@ html[data-mode=retro] .card,html[data-mode=retro] .tile{border-radius:6px}
 .bof{position:absolute;inset:0;pointer-events:none;opacity:0}.bof.f1{background:rgba(56,189,248,.3);animation:k-fx .6s}.bof.f2{background:radial-gradient(circle,rgba(167,139,250,.6),transparent 70%);animation:k-fx .9s}.bof.f3{background:radial-gradient(circle,rgba(251,191,36,.85),transparent 70%);animation:k-fx 1.2s}.bof.f4{background:linear-gradient(120deg,#f472b6,#fbbf24,#34d399,#38bdf8,#a78bfa);animation:k-fx 1.6s}
 @keyframes k-fx{0%{opacity:.95}100%{opacity:0}}@keyframes k-sk{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}@keyframes k-rv{0%{transform:scale(.72) translateY(16px);opacity:0;filter:brightness(2.4) blur(5px)}60%{transform:scale(1.05);opacity:1;filter:brightness(1.35)}100%{transform:none;opacity:1;filter:none}}
 .shk{animation:k-sk .5s}.bs.rv{animation:k-rv .7s cubic-bezier(.2,.9,.3,1.15)}
+.xcl{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;font-size:1.1rem;line-height:1;cursor:pointer;z-index:6;display:grid;place-items:center;padding:0}.xcl:hover{background:rgba(0,0,0,.8)}
 .pr{position:fixed;inset:0;z-index:130;background:rgba(7,7,26,.92);display:grid;place-items:center;color:#fff;text-align:center}.pr.bsod{background:#0078d7;display:block;text-align:left}
 .pc{display:flex;flex-direction:column;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;max-width:300px}
 .spn{width:42px;height:42px;border:4px solid var(--line);border-top-color:var(--ac2);border-radius:50%;animation:k-spn 1s linear infinite}@keyframes k-spn{to{transform:rotate(360deg)}}
@@ -430,7 +431,8 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 <section id="t-roue"><h2>🎡 Roue de la chance</h2><div id="rwl"></div></section>
 <section id="t-trade"><h2>🔄 Échanges</h2><div id="trc"></div></section>
 <section id="t-modifs"><button class="btn alt sm" data-go="home">← Accueil</button><h2>📝 Journal des modifs</h2><div id="mdf"></div></section>
-<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.0</p>
+<section id="t-maj"><h2>⬇️ Mise à jour</h2><div class="card" style="text-align:center"><div style="font-size:3rem">📲</div><p style="margin:8px 0">Pour récupérer la dernière version de l’appli, ouvre la page de téléchargement puis choisis la version la plus récente.</p><a class="btn" href="https://github.com/Ak3no-exe/Squadly/actions" target="_blank" rel="noopener noreferrer">Mise à jour</a><br><small class="mut">Version actuelle : v1.3.1</small></div></section>
+<p id="ver" class="mut" style="text-align:center;font-size:.75rem;margin:24px 0 0">GameTrack v1.3.1</p>
 <p style="text-align:center;margin:6px 0 0"><button class="btn alt sm" data-go="modifs">📝 Journal des modifs</button></p>
 </main>
 <nav>
@@ -440,6 +442,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
 <button data-t="rewards"><b><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M8 21h8M10 17h4"/></svg></b>Récompenses</button>
 <button data-t="cards"><b><svg viewBox="0 0 24 24"><rect x="5" y="3" width="11" height="16" rx="2"/><path d="M9 21h8a2 2 0 0 0 2-2V8"/></svg></b>Cartes</button>
 <button data-t="logins" id="navlog" style="display:none"><b><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></b>Connexions</button>
+<button data-t="maj"><b><svg viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg></b>Mise à jour</button>
 </nav>
 
 <script>window.addEventListener("error",function(e){var a=document.getElementById("aerr");if(a)a.textContent="Erreur JS : "+e.message});window.addEventListener("unhandledrejection",function(e){var a=document.getElementById("aerr");if(a)a.textContent="Erreur : "+(e.reason&&e.reason.message||e.reason)});</script>
@@ -2534,11 +2537,12 @@ function renderVitrine(){if(!U)return;S.cards=S.cards||{};const own=CARDS.filter
  h+='<h2>📚 Toutes les cartes</h2><div class="cgrid">'+CARDS.slice().sort((a,b)=>b[3]-a[3]).map(c=>cnt(c[0])?`<div data-cv="${c[0]}" class="cw">${cardHtml(c)}${cnt(c[0])>1?`<i class="cx">x${cnt(c[0])}</i>`:''}</div>`:`<div class="cw">${lockHtml(c)}</div>`).join('')+'</div>';
  $('#vtr').innerHTML=h}
 function cardView(id){const c=CI[id];if(!c||!cnt(id))return;const o=document.createElement('div');o.className='cdm';const fv=(S.cf||[]).includes(id);
- o.innerHTML=`<div class="cdb">${cardHtml(c,1)}<h2 style="margin:14px 0 2px;color:${RAR[c[3]].c}">${c[2]}</h2><small>${RAR[c[3]].n} · ${cnt(id)} exemplaire(s)</small><p style="margin:8px 0">${c[5]}</p><div class="row" style="justify-content:center"><button class="btn sm" data-x="f">${fv?'Retirer de la vitrine':'⭐ Exposer'}</button><button class="btn alt sm" data-x="c">Fermer</button></div></div>`;
+ o.innerHTML=`<button class="xcl" data-x="c" aria-label="Fermer" title="Fermer">✕</button><div class="cdb">${cardHtml(c,1)}<h2 style="margin:14px 0 2px;color:${RAR[c[3]].c}">${c[2]}</h2><small>${RAR[c[3]].n} · ${cnt(id)} exemplaire(s)</small><p style="margin:8px 0">${c[5]}</p><div class="row" style="justify-content:center"><button class="btn sm" data-x="f">${fv?'Retirer de la vitrine':'⭐ Exposer'}</button><button class="btn alt sm" data-x="c">Fermer</button></div></div>`;
  o.onclick=e=>{if(e.target===o){o.remove();return}const b=e.target.closest('[data-x]');if(!b)return;
   if(b.dataset.x==='f'){const a=S.cf=S.cf||[];if(fv)S.cf=a.filter(x=>x!==id);else{if(a.length>=3)a.shift();a.push(id)}save();renderVitrine()}o.remove()};
  document.body.appendChild(o)}
 $('#vtr').onclick=e=>{const b=e.target.closest('[data-cv]');if(b)cardView(b.dataset.cv)};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.cdm').forEach(x=>x.remove())});
 
 /* Boosters */
 const PK2=[{id:'std',n:'Pack Aventure',e:'📦',p:60,k:3,w:[55,28,12,4,1]},{id:'pre',n:'Pack Premium',e:'🎁',p:150,k:3,w:[25,40,22,10,3]}];
@@ -2555,12 +2559,13 @@ $('#bst').onclick=e=>{if(e.target.closest('[data-fr]')){if(S.cdDay===td())return
 function fxR(r,o){const f=o.querySelector('.bof');f.className='bof';void f.offsetWidth;if(r>=1)f.classList.add('f'+r);
  if(r>=2){o.classList.remove('shk');void o.offsetWidth;o.classList.add('shk')}if(r>=3)confetti();if(r===4)setTimeout(confetti,400)}
 function openBooster(list,nw){const o=document.createElement('div');o.className='bo';
- o.innerHTML=`<div style="text-align:center"><b style="font-size:1.2rem">Ouvre tes cartes !</b><br><small class="mut">Touche chaque carte pour la révéler</small></div><div class="bos">${list.map((c,i)=>`<div class="bs" data-i="${i}"><div class="cd back"><span class="em">❓</span></div></div>`).join('')}</div><div class="row" style="justify-content:center"><button class="btn alt sm" data-all>Tout révéler</button><button class="btn sm" data-done disabled>Terminer</button></div><div class="bof"></div>`;
+ o.innerHTML=`<div style="text-align:center"><b style="font-size:1.2rem">Ouvre tes cartes !</b><br><small class="mut">Touche chaque carte pour la révéler</small></div><button class="xcl" data-quit aria-label="Fermer" title="Fermer">✕</button><div class="bos">${list.map((c,i)=>`<div class="bs" data-i="${i}"><div class="cd back"><span class="em">❓</span></div></div>`).join('')}</div><div class="row" style="justify-content:center"><button class="btn alt sm" data-all>Tout révéler</button><button class="btn sm" data-done disabled>Terminer</button></div><div class="bof"></div>`;
  document.body.appendChild(o);let n=0;
+ const kd=e=>{if(e.key==='Escape')cl()},cl=()=>{document.removeEventListener('keydown',kd);o.remove();renderBoost();renderVitrine()};document.addEventListener('keydown',kd);
  const rev=i=>{const s=o.querySelector('[data-i="'+i+'"]');if(!s||s.dataset.r)return;s.dataset.r=1;const c=list[i];s.innerHTML=cardHtml(c)+(nw[i]?'<i class="nw">NOUVEAU</i>':'');s.classList.add('rv');fxR(c[3],o);if(++n===list.length)o.querySelector('[data-done]').disabled=false};
- o.onclick=e=>{const s=e.target.closest('[data-i]');if(s){rev(+s.dataset.i);return}
+ o.onclick=e=>{if(e.target.closest('[data-quit]')){cl();return}const s=e.target.closest('[data-i]');if(s){rev(+s.dataset.i);return}
   if(e.target.closest('[data-all]'))list.forEach((_,i)=>setTimeout(()=>rev(i),i*450));
-  if(e.target.closest('[data-done]')){o.remove();renderBoost();renderVitrine()}}}
+  if(e.target.closest('[data-done]'))cl()}}
 
 /* Echanges entre comptes (la carte offerte est mise de cote jusqu'a l'acceptation) */
 let CT={};
@@ -2696,8 +2701,11 @@ const _st5=start;start=function(){const r=_st5.apply(this,arguments);
 <script>
 /* ===== Sons, vibrations et journal des modifs ===== */
 (function(){
-const VER='1.3.0';
+const VER='1.3.1';
 const LOG=[
+ {v:'1.3.1',d:'25 octobre 2026',t:[
+  'Un bouton ✕ (ou la touche Échap) permet de quitter l’ouverture d’une carte ou d’un booster.',
+  'Nouvel onglet Mise à jour : un bouton ouvre la page de téléchargement de la dernière version.']},
  {v:'1.3.0',d:'25 octobre 2026',t:[
   'Série de connexion : +1 chaque jour, affichée sur l’accueil avec une flamme.',
   'La flamme change d’aspect et d’animation tous les 10 jours (11 paliers, jusqu’à 100 jours).',

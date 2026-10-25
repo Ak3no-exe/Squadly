@@ -1,18 +1,13 @@
-name: Build GameTrack APK
+name: build
 
 on:
   push:
     branches: [main, master]
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-
     steps:
       - name: Récupérer le code
         uses: actions/checkout@v4
@@ -20,7 +15,7 @@ jobs:
       - name: Installer Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
 
       - name: Installer Java 21
         uses: actions/setup-java@v4
@@ -28,66 +23,35 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Préparer le projet Capacitor
+      - name: Installer les dépendances
+        run: npm install --no-audit --no-fund
+
+      - name: Préparer le dossier web
         run: |
           mkdir -p www
-          if [ -f index.html ]; then cp index.html www/index.html; fi
-          if [ ! -f www/index.html ]; then
-            echo "ERREUR : index.html introuvable (mets-le à la racine du dépôt)"
-            exit 1
-          fi
+          cp index.html www/index.html
 
-          if [ ! -f package.json ]; then
-            echo '{"name":"gametrack","version":"1.0.0","private":true}' > package.json
-          fi
-
-          npm install --save @capacitor/core@7 @capacitor/android@7
-          npm install --save-dev @capacitor/cli@7 @capacitor/assets@3
-
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.ak3no.gametrack",
-            "appName": "GameTrack",
-            "webDir": "www",
-            "android": {
-              "backgroundColor": "#0d0c1e"
-            }
-          }
-          EOF
-
-      - name: Ajouter la plateforme Android
+      - name: Configurer Capacitor si besoin
         run: |
+          if [ ! -f capacitor.config.json ] && [ ! -f capacitor.config.ts ]; then
+            npx cap init GameTrack com.gametrack.app --web-dir=www
+          fi
           if [ ! -d android ]; then
             npx cap add android
           fi
 
-      - name: Générer l'icône de l'appli
-        run: |
-          if [ -f assets/icon-only.png ]; then
-            npx capacitor-assets generate --android
-          else
-            echo "Pas de dossier assets/ : icône par défaut conservée"
-          fi
-
-      - name: Synchroniser le contenu web
+      - name: Synchroniser Capacitor
         run: npx cap sync android
-
-      - name: Configurer Gradle
-        uses: gradle/actions/setup-gradle@v4
 
       - name: Compiler l'APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
-
-      - name: Renommer l'APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk GameTrack.apk
+          ./gradlew assembleDebug
 
       - name: Publier l'APK
         uses: actions/upload-artifact@v4
         with:
-          name: GameTrack-APK
-          path: GameTrack.apk
-          if-no-files-found: error
+          name: GameTrack-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           

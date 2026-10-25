@@ -43,6 +43,15 @@ jobs:
       - name: Synchroniser Capacitor
         run: npx cap sync android
 
+      - name: Générer le logo depuis le dossier assets
+        run: |
+          if [ -d assets ]; then
+            npm install --no-save @capacitor/assets
+            npx capacitor-assets generate --android
+          else
+            echo "Pas de dossier assets : le logo par défaut sera utilisé"
+          fi
+
       - name: Compiler l'APK
         working-directory: android
         run: |

@@ -5,6 +5,9 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   # IMPORTANT : doit être le même identifiant que ton appli déjà installée
   APP_ID: com.gametrack.app
@@ -28,6 +31,7 @@ jobs:
       - name: Préparer les fichiers web
         run: |
           mkdir -p www
+          echo '{"build": ${{ github.run_number }}}' > www/version.json
           cp index.html www/
           for f in sw.js manifest.json manifest.webmanifest icon.png favicon.ico; do
             [ -f "$f" ] && cp "$f" www/ || true
@@ -135,4 +139,11 @@ jobs:
         with:
           name: GameTrack-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publier l'APK (pour la mise à jour depuis l'appli)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk GameTrack.apk
+          gh release create "build-${{ github.run_number }}" GameTrack.apk --title "GameTrack build ${{ github.run_number }}" --notes "Version automatique" --latest
           

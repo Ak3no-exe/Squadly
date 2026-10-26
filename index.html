@@ -312,6 +312,7 @@ html.crazy *{text-transform:uppercase!important;font-family:"Comic Sans MS","Cha
   <div class="row"><button class="btn alt sm" id="sxt" type="button">Tester</button><small id="sxn" class="mut"></small></div>
   <h2>🔔 Notifications</h2><div id="ntl"></div>
   <h2>📝 Nouveautés</h2><button class="btn alt" id="chlg" type="button">Journal des modifs</button>
+  <h2>📲 Mise à jour de l'appli</h2><small id="updst" class="mut"></small><div style="height:8px"></div><button class="btn alt" id="updBtn" type="button">Vérifier les mises à jour</button>
   <h2>🎓 Tutoriel</h2><button class="btn alt" id="tutoBtn" type="button">Revoir le tutoriel</button>
   <h2>🕵️ Code secret</h2><form id="codeF" autocomplete="off"><input id="cdi" placeholder="Entre un code…" aria-label="Code secret" autocapitalize="off"><div id="cder" class="err"></div><button class="btn" type="submit">Valider</button></form>
   <h2>Mon mot de passe</h2><form id="pwF" autocomplete="off"><input id="po" type="password" placeholder="Mot de passe actuel" aria-label="Mot de passe actuel"><div style="height:8px"></div><input id="pn" type="password" placeholder="Nouveau mot de passe (4 min.)" aria-label="Nouveau mot de passe"><div id="perr" class="err"></div><button class="btn" type="submit">Changer mon mot de passe</button></form>
@@ -3189,6 +3190,33 @@ box.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX},{passive:t
 box.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>60)go(d<0?1:-1)},{passive:true});
 window.openTuto=function(){i=0;o.classList.add('show');document.addEventListener('keydown',key);draw()};
 $('#tutoBtn').onclick=()=>{$('#drawer').classList.remove('show');openTuto()};
+})();
+
+/* ===== Mise à jour de l'appli (Android) ===== */
+(function(){
+const REPO='Ak3no-exe/Squadly',APK='https://github.com/'+REPO+'/releases/latest/download/GameTrack.apk';
+const isApp=()=>{const C=window.Capacitor;return !!(C&&C.isNativePlatform&&C.isNativePlatform())};
+const st=$('#updst'),btn=$('#updBtn');
+if(!st||!btn)return;
+async function curBuild(){try{const r=await fetch('version.json?'+Date.now());const j=await r.json();return +j.build||0}catch(e){return 0}}
+async function check(){
+  if(!isApp()){st.textContent='Disponible uniquement dans l\'appli Android.';btn.style.display='none';return}
+  btn.disabled=true;st.textContent='Vérification…';
+  try{
+    const [c,r]=await Promise.all([curBuild(),fetch('https://api.github.com/repos/'+REPO+'/releases/latest',{headers:{Accept:'application/vnd.github+json'}})]);
+    if(!r.ok)throw new Error(r.status);
+    const j=await r.json();
+    const n=parseInt(String(j.tag_name||'').replace(/\D/g,''),10)||0;
+    if(n>c){st.textContent='Nouvelle version disponible (version '+n+', tu as la version '+c+').';btn.textContent='⬇️ Télécharger la mise à jour';btn.dataset.go='1'}
+    else{st.textContent='Tu as la dernière version ✓ (version '+c+').';btn.textContent='Vérifier les mises à jour';delete btn.dataset.go}
+  }catch(e){st.textContent='Impossible de vérifier (pas de connexion ?).';btn.textContent='Réessayer';delete btn.dataset.go}
+  btn.disabled=false;
+}
+btn.onclick=()=>{
+  if(btn.dataset.go){toast('Téléchargement… ouvre le fichier puis appuie sur Installer');window.location.href=APK}
+  else check();
+};
+$('#burger').addEventListener('click',check);
 })();
 </script>
 </body>

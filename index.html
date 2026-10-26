@@ -2454,9 +2454,9 @@ function applyGrants(){const u=DB.users[U];if(!u)return;const s=S_();let ch=0;co
  if(ch){sync();save();applyTheme();render();upd()}}
 function guard(){const u=U&&DB.users[U];if(!u)return;if(u.ban&&U!=='matteo'){bye(u);return}applyGrants();maintCheck();autoTheme();const s=S_();if((u.role==='full'||hasPerm(u))&&s.ro){s.ro=0;save();toast('✅ L\'admin a accepté ta demande');render()}}
 async function renderTools(){const box=$('#admu');if(!box||!hasAdm())return;if(cloudBase())await pullAll();const opts=CAT.filter(c=>c.id!=='coffre').map(c=>`<option value="${c.id}">${c.n}</option>`).join('');
- const ks=Object.keys(DB.users).filter(k=>k!=='matteo'&&(isAdmin()||(k!==U&&!hasPerm(DB.users[k])))).sort();
- box.innerHTML=ks.length?ks.map(k=>{const u=DB.users[k];return `<div class="card"><div class="row"><b class="grow">${esc(u.name||k)}</b>${u.req&&isAdmin()?'<span class="pill">🙋 Demande d\'accès</span>':''}${hasPerm(u)?'<span class="pill">🛡️ Droits</span>':''}${u.ban?'<span class="pill">🚫 Gelé</span>':''}</div><small>Pièces offertes par l'admin : ${+u.gc||0}${u.ban&&u.ban.r?' · Raison : '+esc(u.ban.r):''}</small><div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap">${can('coins')?`<button class="btn alt sm" data-a="gc" data-k="${k}">🪙 Pièces ±</button>`:''}${can('ban')?`<button class="btn alt sm" data-a="bn" data-k="${k}">${u.ban?'✅ Dégeler':'🚫 Geler'}</button>`:''}${isAdmin()?`<button class="btn alt sm" data-a="pm" data-k="${k}">🛡️ Droits</button>`:''}${u.req&&isAdmin()?`<button class="btn sm" data-a="ok" data-k="${k}">✅ Accepter</button><button class="btn alt sm" data-a="no" data-k="${k}">❌ Refuser</button>`:''}</div>${can('coins')?`<div class="row" style="margin-top:8px;gap:6px"><select class="grow" style="min-width:0">${opts}</select><button class="btn alt sm" data-a="gi" data-k="${k}">🎁 Offrir</button></div>`:''}</div>`}).join(''):'<div class="card mut">Aucun autre joueur.</div>'}
-$('#admu').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,u=DB.users[k];if(!u)return;const need={gc:'coins',gi:'coins',bn:'ban'}[b.dataset.a];if(need&&!can(need))return;if(['ok','no','pm'].includes(b.dataset.a)&&!isAdmin())return;if(!isAdmin()&&(k===U||hasPerm(u)))return;
+ const ks=Object.keys(DB.users).filter(k=>k==='matteo'?isAdmin():(isAdmin()||(k!==U&&!hasPerm(DB.users[k])))).sort((a,b)=>a==='matteo'?-1:b==='matteo'?1:a<b?-1:1);
+ box.innerHTML=ks.length?ks.map(k=>{const u=DB.users[k];return `<div class="card"><div class="row"><b class="grow">${esc(u.name||k)}</b>${u.req&&isAdmin()?'<span class="pill">🙋 Demande d\'accès</span>':''}${hasPerm(u)?'<span class="pill">🛡️ Droits</span>':''}${u.ban?'<span class="pill">🚫 Gelé</span>':''}</div><small>Pièces offertes par l'admin : ${+u.gc||0}${u.ban&&u.ban.r?' · Raison : '+esc(u.ban.r):''}</small><div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap">${can('coins')?`<button class="btn alt sm" data-a="gc" data-k="${k}">🪙 Pièces ±</button>`:''}${can('ban')&&k!=='matteo'?`<button class="btn alt sm" data-a="bn" data-k="${k}">${u.ban?'✅ Dégeler':'🚫 Geler'}</button>`:''}${isAdmin()&&k!=='matteo'?`<button class="btn alt sm" data-a="pm" data-k="${k}">🛡️ Droits</button>`:''}${u.req&&isAdmin()?`<button class="btn sm" data-a="ok" data-k="${k}">✅ Accepter</button><button class="btn alt sm" data-a="no" data-k="${k}">❌ Refuser</button>`:''}</div>${can('coins')?`<div class="row" style="margin-top:8px;gap:6px"><select class="grow" style="min-width:0">${opts}</select><button class="btn alt sm" data-a="gi" data-k="${k}">🎁 Offrir</button></div>`:''}</div>`}).join(''):'<div class="card mut">Aucun autre joueur.</div>'}
+$('#admu').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,u=DB.users[k];if(!u)return;const need={gc:'coins',gi:'coins',bn:'ban'}[b.dataset.a];if(need&&!can(need))return;if(['ok','no','pm'].includes(b.dataset.a)&&!isAdmin())return;if(k==='matteo'&&!['gc','gi'].includes(b.dataset.a))return;if(!isAdmin()&&(k===U||hasPerm(u)))return;
  if(b.dataset.a==='gc'){const n=parseInt(await ask('Pièces à donner à '+(u.name||k)+' (nombre négatif pour en retirer)',1),10);if(!n)return;u.gc=(+u.gc||0)+n;lsave();await cloud('PATCH','/users/'+k+'.json',{gc:u.gc});toast((n>0?'+':'')+n+' 🪙 pour '+(u.name||k))}
  else if(b.dataset.a==='gi'){const id=b.parentNode.querySelector('select').value;u.gi=[...new Set([...(u.gi||[]),id])];lsave();await cloud('PATCH','/users/'+k+'.json',{gi:u.gi});toast('🎁 Article offert à '+(u.name||k))}
  else if(b.dataset.a==='bn'){if(u.ban)u.ban=null;else{const r=await ask('Raison du gel (facultatif)',1);if(r===null)return;u.ban={r:r.trim().slice(0,60)}}lsave();await cloud('PATCH','/users/'+k+'.json',{ban:u.ban});toast(u.ban?'🚫 Compte gelé':'✅ Compte dégelé')}
@@ -2483,6 +2483,8 @@ $('#admc').onclick=async e=>{if(!can('promo'))return;const cf=DB.cfg=DB.cfg||{};
 if('serviceWorker'in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
 try{const m=sessionStorage.getItem('gt_ban');if(m){sessionStorage.removeItem('gt_ban');$('#aerr').textContent=m}}catch(x){}
 setInterval(()=>{upd();guard()},1000);
+let cpb=0;setInterval(()=>{if(!U||U==='matteo'||document.hidden||cpb||!cloudBase())return;cpb=1;pullCfg().finally(()=>{cpb=0})},15000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&U&&U!=='matteo')pullCfg()});
 setInterval(()=>{if(U&&!document.hidden){refresh();pullCfg();window.giftPoll&&giftPoll()}},60000);
 setInterval(()=>{if(isAdmin()&&!document.hidden)pullAll().then(dot)},90000);
 })();
@@ -2935,8 +2937,11 @@ setInterval(async()=>{const m0=DB.cfg&&DB.cfg.maint;if(!(m0&&m0.on)||document.hi
 
 /* ===== Sons, vibrations et journal des modifs ===== */
 (function(){
-const VER='1.3.7';
+const VER='1.3.8';
 const LOG=[
+ {v:'1.3.8',d:'26 octobre 2026',t:[
+  'Matteo peut maintenant se donner des pièces ou des articles depuis l’onglet Connexions, comme pour les autres joueurs.',
+  'L’appli vérifie la maintenance toutes les 15 secondes : l’écran « Mise à jour en cours » s’affiche vite chez tous les joueurs.']},
  {v:'1.3.7',d:'26 octobre 2026',t:[
   'Cadeaux : touche un objet de ton inventaire puis « Offrir » pour le donner à un autre joueur, avec un petit message.',
   'Matteo peut créer de nouveaux articles (objet de collection, titre, cadre de couleur) depuis Récompenses → Prix.',

@@ -1,56 +1,112 @@
-name: build
+name: Build APK
 
 on:
   push:
     branches: [main, master]
   workflow_dispatch:
 
+env:
+  # IMPORTANT : doit être le même identifiant que ton appli déjà installée
+  APP_ID: com.gametrack.app
+  APP_NAME: GameTrack
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Récupérer le code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Installer Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Installer Java 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
-      - name: Installer les dépendances
-        run: npm install --no-audit --no-fund
-
-      - name: Préparer le dossier web
+      - name: Préparer les fichiers web
         run: |
           mkdir -p www
-          cp index.html www/index.html
+          cp index.html www/
+          for f in sw.js manifest.json manifest.webmanifest icon.png favicon.ico; do
+            [ -f "$f" ] && cp "$f" www/ || true
+          done
 
-      - name: Configurer Capacitor si besoin
+      - name: Créer le projet Android (Capacitor)
         run: |
-          if [ ! -f capacitor.config.json ] && [ ! -f capacitor.config.ts ]; then
-            npx cap init GameTrack com.gametrack.app --web-dir=www
-          fi
-          if [ ! -d android ]; then
-            npx cap add android
-          fi
+          [ -f package.json ] || npm init -y
+          npm install --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          cat > capacitor.config.json <<EOF
+          {
+            "appId": "$APP_ID",
+            "appName": "$APP_NAME",
+            "webDir": "www"
+          }
+          EOF
+          npx cap add android
+          npx cap sync android
 
-      - name: Synchroniser Capacitor
-        run: npx cap sync android
-
-      - name: Générer le logo depuis le dossier assets
+      - name: Même clé de signature à chaque build
         run: |
-          if [ -d assets ]; then
-            npm install --no-save @capacitor/assets
-            npx capacitor-assets generate --android
-          else
-            echo "Pas de dossier assets : le logo par défaut sera utilisé"
-          fi
+          base64 -d > android/app/debug.keystore <<'KEY'
+          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
+          KEY
+          cat >> android/app/build.gradle <<'GRADLE'
+
+          android {
+              signingConfigs {
+                  debug {
+                      storeFile file('debug.keystore')
+                      storePassword 'android'
+                      keyAlias 'androiddebugkey'
+                      keyPassword 'android'
+                  }
+              }
+              buildTypes {
+                  debug {
+                      signingConfig signingConfigs.debug
+                  }
+              }
+          }
+          GRADLE
 
       - name: Compiler l'APK
         working-directory: android
@@ -58,8 +114,7 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Publier l'APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: GameTrack-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk

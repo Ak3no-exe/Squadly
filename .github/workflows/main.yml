@@ -49,12 +49,16 @@ jobs:
             [ -d android/app/src/main/res ] && cp -r android/app/src/main/res /tmp/res_backup || true
             rm -rf android
             npx cap add android
-            if [ -d /tmp/res_backup ]; then
-              for d in /tmp/res_backup/mipmap-*; do
-                [ -d "$d" ] && cp -r "$d" android/app/src/main/res/ || true
+            if [ -d /tmp/res_backup ] && [ -n "$(cd /tmp/res_backup && find . -name 'ic_launcher*' -type f)" ]; then
+              rm -f android/app/src/main/res/mipmap-*/ic_launcher*
+              (cd /tmp/res_backup && find . -name 'ic_launcher*' -type f) | while read -r f; do
+                mkdir -p "android/app/src/main/res/$(dirname "$f")"
+                cp "/tmp/res_backup/$f" "android/app/src/main/res/$f"
               done
-              [ -f /tmp/res_backup/values/ic_launcher_background.xml ] && cp /tmp/res_backup/values/ic_launcher_background.xml android/app/src/main/res/values/ || true
             fi
+          fi
+          if ls assets/icon*.png >/dev/null 2>&1; then
+            npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#000000' --iconBackgroundColorDark '#000000' || true
           fi
           npx cap sync android
 

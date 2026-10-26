@@ -36,7 +36,7 @@ jobs:
       - name: Créer le projet Android (Capacitor)
         run: |
           [ -f package.json ] || npm init -y
-          npm install --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npm install --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/local-notifications@6
           cat > capacitor.config.json <<EOF
           {
             "appId": "$APP_ID",
@@ -44,7 +44,7 @@ jobs:
             "webDir": "www"
           }
           EOF
-          npx cap add android
+          [ -d android ] || npx cap add android
           npx cap sync android
 
       - name: Même clé de signature à chaque build
@@ -89,24 +89,26 @@ jobs:
           uo1TAKpDaLBAs6K1LpPzQaPTvrV48C5P4XKIFIf94E6qR+/Q0dW5Y/x0nBPNCr6g9NvQkHoNFsS7
           gxlfWIOT17FaEHw96rx1u5g1WKB4TA5xPw7zZg0FMAzetDncVEUeskgAiVj7Y22IWS/d
           KEY
-          cat >> android/app/build.gradle <<'GRADLE'
+          if ! grep -q "debug.keystore" android/app/build.gradle; then
+            cat >> android/app/build.gradle <<'GRADLE'
 
-          android {
-              signingConfigs {
-                  debug {
-                      storeFile file('debug.keystore')
-                      storePassword 'android'
-                      keyAlias 'androiddebugkey'
-                      keyPassword 'android'
-                  }
-              }
-              buildTypes {
-                  debug {
-                      signingConfig signingConfigs.debug
-                  }
-              }
-          }
+            android {
+                signingConfigs {
+                    debug {
+                        storeFile file('debug.keystore')
+                        storePassword 'android'
+                        keyAlias 'androiddebugkey'
+                        keyPassword 'android'
+                    }
+                }
+                buildTypes {
+                    debug {
+                        signingConfig signingConfigs.debug
+                    }
+                }
+            }
           GRADLE
+          fi
 
       - name: Compiler l'APK
         working-directory: android

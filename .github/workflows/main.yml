@@ -44,7 +44,7 @@ jobs:
             "webDir": "www"
           }
           EOF
-          [ -d android ] || npx cap add android
+          [ -f android/gradlew ] || { rm -rf android; npx cap add android; }
           npx cap sync android
 
       - name: Même clé de signature à chaque build

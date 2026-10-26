@@ -44,7 +44,18 @@ jobs:
             "webDir": "www"
           }
           EOF
-          [ -f android/gradlew ] || { rm -rf android; npx cap add android; }
+          if [ ! -f android/gradlew ]; then
+            # garder tes icônes (et la couleur de fond) avant de recréer le projet
+            [ -d android/app/src/main/res ] && cp -r android/app/src/main/res /tmp/res_backup || true
+            rm -rf android
+            npx cap add android
+            if [ -d /tmp/res_backup ]; then
+              for d in /tmp/res_backup/mipmap-*; do
+                [ -d "$d" ] && cp -r "$d" android/app/src/main/res/ || true
+              done
+              [ -f /tmp/res_backup/values/ic_launcher_background.xml ] && cp /tmp/res_backup/values/ic_launcher_background.xml android/app/src/main/res/values/ || true
+            fi
+          fi
           npx cap sync android
 
       - name: Même clé de signature à chaque build

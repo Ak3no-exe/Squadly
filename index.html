@@ -2653,7 +2653,7 @@ function homeFix(){const p=$('#home .hero p'),e=S_().eq;if(!p||!U)return;const c
 let AC;const tone=(f,d,t)=>{try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(.08,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(x){}};
 /* Cadeaux et gel de compte par l'admin */
 function applyGrants(){const u=DB.users[U];if(!u)return;const s=S_();let ch=0;const gc=+u.gc||0;
- {const nk=String(u.name||U).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),v=U==='matteo'?5:nk==='leo'?4:0;if(v&&!S.sk2){S.sk2=1;ch=1;if((s.streak||0)<v){s.streak=v;s.last=today();toast('🔥 Série de connexion : '+v+' jours')}}}
+ {const nk=String(u.name||U).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),v=U==='matteo'?5:nk==='leo'?4:0,fk=U==='matteo'?'sk3':'sk2';if(v&&!S[fk]){S[fk]=1;ch=1;if((s.streak||0)<v){s.streak=v;s.last=today();toast('🔥 Série de connexion : '+v+' jours')}}}
  if(gc!==(s.gca||0)){const d=gc-(s.gca||0);s.gain+=d;s.gca=gc;ch=1;toast(d>0?'🎁 L\'admin t\'a offert +'+d+' 🪙':'💸 L\'admin t\'a retiré '+(-d)+' 🪙')}
  (u.gi||[]).forEach(id=>{if(!s.own[id]){s.own[id]=1;ch=1;toast('🎁 Article offert : '+(CAT.find(c=>c.id===id)||{n:id}).n)}});
  (u.gk||[]).forEach(x=>{S.gks=S.gks||{};if(S.gks[x])return;if(S.gks[x.replace(/\./g,'_')]){S.gks[x]=1;return}S.gks[x]=1;const id=x.split('.')[0],c=window.GT_CI&&GT_CI[id];S.cards=S.cards||{};S.cards[id]=(S.cards[id]||0)+1;ch=1;toast('🃏 Carte offerte : '+(c?c[1]+' '+c[2]:id))});
@@ -3413,7 +3413,7 @@ function flame(t){const x=T[t];return `<div class="fb sf${t}" style="--c1:${x[1]
 /* jour suivant si l'appli est restée ouverte après minuit */
 function bump(){const sh=S&&S.shop;if(!sh||!sh.last||sh.last===td())return;const Y=new Date(Date.now()-864e5).toDateString();sh.streak=sh.last===Y?(sh.streak||0)+1:1;sh.last=td();save()}
 function card(){const box=$('#home');if(!box||!U||!DB.users[U]||!S)return;const old=$('#stk');if(old)old.remove();
- try{const u0=DB.users[U]||{},k0=String(u0.name||U).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),v0=U==='matteo'?5:k0==='leo'?4:0,s0=S.shop||(S.shop={});if(v0&&!S.sk2){S.sk2=1;if((s0.streak||0)<v0){s0.streak=v0;s0.last=td()}save()}}catch(e){}
+ try{const u0=DB.users[U]||{},k0=String(u0.name||U).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),v0=U==='matteo'?5:k0==='leo'?4:0,fk0=U==='matteo'?'sk3':'sk2',s0=S.shop||(S.shop={});if(v0&&!S[fk0]){S[fk0]=1;if((s0.streak||0)<v0){s0.streak=v0;s0.last=td()}save()}}catch(e){}
  const sh=S.shop||(S.shop={}),n=Math.max(1,sh.streak||1),t=tier(n),nx=t<10?T[t+1][0]:'',left=t<10?(t+1)*10-n:0,
   from=th(t),to=t<10?(t+1)*10:from,pct=t<10?Math.round((n-(t?t*10:0))/(to-(t?t*10:0))*100):100,
   best=Math.max(sh.sbest||0,n);

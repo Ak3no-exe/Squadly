@@ -836,7 +836,9 @@ function normS(d){const s=Object.assign(base(),d||{});s.ctr=Object.assign(base()
 let cq=Promise.resolve(),jbErr='';
 const jbMsg=()=>{const e=jbErr||'';let h='';if(/401|403|refus/.test(e))h=' → règles Firebase : onglet Règles, mets {"rules":{".read":true,".write":true}} puis Publier';else if(/404/.test(e))h=' → base introuvable : recopie l’URL complète de ta Realtime Database';else if(/429/.test(e))h=' → quota Firebase atteint';else if(/413/.test(e))h=' → données trop grosses';else if(/réseau|CORS/.test(e))h=' → vérifie ta connexion Internet et l’URL de la base';else if(/délai/.test(e))h=' → Firebase met trop de temps à répondre, réessaie';return(e||'URL de la base incorrecte')+h};
 const jbShow=ok=>{const m=document.getElementById('cmsg');if(m)m.textContent=ok?'✅ Sauvegarde en ligne active':'❌ '+jbMsg()};
-const fbClean=v=>{if(Array.isArray(v))return v.map(fbClean);if(v&&typeof v==='object'){const o={};for(const k in v){if(v[k]===undefined)continue;o[k.replace(/[.$#\[\]\/]/g,'_')]=fbClean(v[k])}return o}return v};
+const fbEnc=k=>k.replace(/[%.$#\[\]\/]/g,c=>'%'+c.charCodeAt(0).toString(16).toUpperCase().padStart(2,'0')),fbDk=k=>k.replace(/%(25|2E|24|23|5B|5D|2F)/g,(m,h)=>String.fromCharCode(parseInt(h,16)));
+const fbClean=v=>{if(Array.isArray(v))return v.map(fbClean);if(v&&typeof v==='object'){const o={};for(const k in v){if(v[k]===undefined)continue;o[fbEnc(k)]=fbClean(v[k])}return o}return v};
+const fbDec=v=>{if(Array.isArray(v))return v.map(fbDec);if(v&&typeof v==='object'){const o={};for(const k in v)o[fbDk(k)]=fbDec(v[k]);return o}return v};
 const fbUrl=p=>{const c=cfgv();return c.bin.replace(/\/+$/,'')+p+(c.key?'?auth='+encodeURIComponent(c.key):'')};
 async function fbFetch(method,path,body){
  for(let n=0;n<3;n++){
@@ -845,7 +847,7 @@ async function fbFetch(method,path,body){
    if(!r.ok){let sm='';try{const j=await r.clone().json();sm=String(j.error||j.message||'').slice(0,90)}catch(x){}
     if(r.status===401||r.status===403){jbErr='accès refusé ('+r.status+(sm?' : '+sm:'')+')';return undefined}
     jbErr='erreur '+r.status+(sm?' : '+sm:'')+(r.status===429?' (quota Firebase atteint)':r.status===413?' (données trop grosses)':'');return undefined}
-   jbErr='';return{v:await r.json()}}
+   jbErr='';return{v:fbDec(await r.json())}}
   catch(e){const ab=e&&e.name==='AbortError';jbErr=ab?'délai dépassé (8 s)':'réseau/CORS injoignable ('+method+(body===undefined?'':', '+Math.round(JSON.stringify(body).length/1024)+' Ko envoyés')+(/^https?:$/.test(location.protocol)?'':', page ouverte depuis un fichier')+', essai '+(n+1)+'/3)';if(ab)break;await new Promise(z=>setTimeout(z,n?1500:600))}
   finally{clearTimeout(t)}}
  return undefined}
@@ -2652,7 +2654,7 @@ let AC;const tone=(f,d,t)=>{try{AC=AC||new(window.AudioContext||window.webkitAud
 function applyGrants(){const u=DB.users[U];if(!u)return;const s=S_();let ch=0;const gc=+u.gc||0;
  if(gc!==(s.gca||0)){const d=gc-(s.gca||0);s.gain+=d;s.gca=gc;ch=1;toast(d>0?'🎁 L\'admin t\'a offert +'+d+' 🪙':'💸 L\'admin t\'a retiré '+(-d)+' 🪙')}
  (u.gi||[]).forEach(id=>{if(!s.own[id]){s.own[id]=1;ch=1;toast('🎁 Article offert : '+(CAT.find(c=>c.id===id)||{n:id}).n)}});
- (u.gk||[]).forEach(x=>{S.gks=S.gks||{};if(S.gks[x])return;S.gks[x]=1;const id=x.split('.')[0],c=window.GT_CI&&GT_CI[id];S.cards=S.cards||{};S.cards[id]=(S.cards[id]||0)+1;ch=1;toast('🃏 Carte offerte : '+(c?c[1]+' '+c[2]:id))});
+ (u.gk||[]).forEach(x=>{S.gks=S.gks||{};if(S.gks[x])return;if(S.gks[x.replace(/\./g,'_')]){S.gks[x]=1;return}S.gks[x]=1;const id=x.split('.')[0],c=window.GT_CI&&GT_CI[id];S.cards=S.cards||{};S.cards[id]=(S.cards[id]||0)+1;ch=1;toast('🃏 Carte offerte : '+(c?c[1]+' '+c[2]:id))});
  if(ch){sync();save();applyTheme();render();upd()}}
 function guard(){const u=U&&DB.users[U];if(!u)return;if(u.ban&&U!=='matteo'){bye(u);return}applyGrants();maintCheck();autoTheme();const s=S_();if((u.role==='full'||hasPerm(u))&&s.ro){s.ro=0;save();toast('✅ L\'admin a accepté ta demande');render()}}
 async function renderTools(){const box=$('#admu');if(!box||!hasAdm())return;if(cloudBase())await pullAll();const opts=CAT.filter(c=>c.id!=='coffre').map(c=>`<option value="${c.id}">${c.n}</option>`).join('');

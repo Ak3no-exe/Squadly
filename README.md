@@ -10,8 +10,8 @@ cd gametrack-mcp
 npm install
 ```
 
-Node 18 ou plus. Par défaut le serveur lit le compte `matteo` dans ta base Firebase.
-Variables optionnelles : `GT_USER` (autre compte), `GT_DB_URL`, `GT_FB_KEY`.
+Node 18 ou plus. Comptes lisibles : variable `GT_USERS` (ex. `matteo,leo`, par défaut `matteo,leo`). Seuls ces comptes peuvent être interrogés, le premier est le compte par défaut.
+Autres variables optionnelles : `GT_DB_URL`, `GT_FB_KEY`.
 
 ## A. Claude Desktop (local, le plus simple)
 
@@ -43,6 +43,7 @@ Garde le token secret : quiconque a l'URL peut lire tes données GameTrack.
 
 ## Outils exposés
 
+- `gametrack_comptes` : liste des comptes avec mini-résumé (pour comparer)
 - `gametrack_resume` : totaux, taux de victoire global, succès, visites
 - `gametrack_jeux` : liste avec recherche et tri
 - `gametrack_jeu` : détail d'un jeu
@@ -54,3 +55,6 @@ Garde le token secret : quiconque a l'URL peut lire tes données GameTrack.
 - « Quel est mon meilleur taux de victoire ? »
 - « Combien de victoires sur Valorant ? »
 - « Quels succès me restent ? »
+- « Leo a combien de succès ? »
+
+Tous les outils acceptent un paramètre `compte` (matteo, leo…).

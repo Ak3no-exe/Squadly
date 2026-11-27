@@ -102,5 +102,189 @@
  "plat": {
   "name": "Platine",
   "desc": "Débloque tous les autres succès"
+ },
+ "rare_fidele30": {
+  "name": "Pilier de GameTrack",
+  "desc": "Ouvre GameTrack 30 fois"
+ },
+ "term": {
+  "name": "Hacker du dimanche",
+  "desc": "Ouvre le terminal caché"
+ },
+ "treasure": {
+  "name": "Chasseur de trésor",
+  "desc": "Termine la chasse au trésor"
+ },
+ "bh_hold": {
+  "name": "Horizon des événements",
+  "desc": "Garde le trou noir actif 10 secondes"
+ },
+ "bh_feed": {
+  "name": "Gourmand cosmique",
+  "desc": "Fais avaler 300 particules au trou noir"
+ },
+ "fw_15": {
+  "name": "Pyrotechnicien",
+  "desc": "Lance 15 fusées"
+ },
+ "fw_combo": {
+  "name": "Bouquet final",
+  "desc": "Lance 5 fusées en 2 secondes"
+ },
+ "gl_1": {
+  "name": "Bug volontaire",
+  "desc": "Brise l’écran une première fois"
+ },
+ "gl_5": {
+  "name": "Crash test",
+  "desc": "Brise l’écran 5 fois"
+ },
+ "sy_20": {
+  "name": "Doigts agiles",
+  "desc": "Joue 20 notes au synthé"
+ },
+ "sy_melody": {
+  "name": "Clair de lune",
+  "desc": "Joue la mélodie secrète"
+ },
+ "rx_perfect": {
+  "name": "Sang-froid",
+  "desc": "Relâche le réacteur entre 95 % et 100 %"
+ },
+ "rx_boom": {
+  "name": "Fusion",
+  "desc": "Fais exploser le réacteur"
+ },
+ "pl_all": {
+  "name": "Astronome",
+  "desc": "Touche les 8 planètes"
+ },
+ "pl_sun": {
+  "name": "Supernova",
+  "desc": "Touche le Soleil 10 fois de suite"
+ },
+ "vd_30": {
+  "name": "Zen",
+  "desc": "Ne touche à rien pendant 30 secondes"
+ },
+ "vd_60": {
+  "name": "Moine",
+  "desc": "Ne touche à rien pendant 60 secondes"
+ },
+ "eg_hatch": {
+  "name": "Naissance",
+  "desc": "Fais éclore l’œuf"
+ },
+ "eg_collect": {
+  "name": "Éleveur",
+  "desc": "Fais éclore 3 créatures différentes"
+ },
+ "doors8": {
+  "name": "Maître des portes",
+  "desc": "Découvre les 8 pages cachées"
+ },
+ "g_runner1": {
+  "name": "Coureur de fond",
+  "desc": "Atteins 300 points en une partie"
+ },
+ "g_runner2": {
+  "name": "Éclair du métro",
+  "desc": "Atteins 800 points en une partie"
+ },
+ "g_runner3": {
+  "name": "Abonné du métro",
+  "desc": "Joue 25 parties"
+ },
+ "g_flappy1": {
+  "name": "Bec fin",
+  "desc": "Passe 10 tuyaux en une partie"
+ },
+ "g_flappy2": {
+  "name": "Maître des tuyaux",
+  "desc": "Passe 25 tuyaux en une partie"
+ },
+ "g_flappy3": {
+  "name": "Oiseau de passage",
+  "desc": "Joue 25 parties"
+ },
+ "g_ninja1": {
+  "name": "Lame affûtée",
+  "desc": "Atteins 40 points en une partie"
+ },
+ "g_ninja2": {
+  "name": "Sabre légendaire",
+  "desc": "Atteins 80 points en une partie"
+ },
+ "g_ninja3": {
+  "name": "Dojo fidèle",
+  "desc": "Joue 25 parties"
+ },
+ "g_snake1": {
+  "name": "Serpent affamé",
+  "desc": "Mange 15 pommes en une partie"
+ },
+ "g_snake2": {
+  "name": "Boa géant",
+  "desc": "Mange 30 pommes en une partie"
+ },
+ "g_snake3": {
+  "name": "Charmeur de serpents",
+  "desc": "Joue 25 parties"
+ },
+ "g_memo1": {
+  "name": "Oreille musicale",
+  "desc": "Réussis 6 manches en une partie"
+ },
+ "g_memo2": {
+  "name": "Mémoire d’or",
+  "desc": "Réussis 11 manches en une partie"
+ },
+ "g_memo3": {
+  "name": "Chef d’orchestre",
+  "desc": "Joue 25 parties"
+ },
+ "g_brique1": {
+  "name": "Briseur de murs",
+  "desc": "Atteins 300 points en une partie"
+ },
+ "g_brique2": {
+  "name": "Rasoir à briques",
+  "desc": "Atteins 700 points en une partie"
+ },
+ "g_brique3": {
+  "name": "Maçon du dimanche",
+  "desc": "Joue 25 parties"
+ },
+ "g_dodge1": {
+  "name": "Pilote prudent",
+  "desc": "Atteins 80 points en une partie"
+ },
+ "g_dodge2": {
+  "name": "Légende des étoiles",
+  "desc": "Atteins 180 points en une partie"
+ },
+ "g_dodge3": {
+  "name": "Capitaine",
+  "desc": "Joue 25 parties"
+ },
+ "g_all": {
+  "name": "Touche-à-tout",
+  "desc": "Joue à chacun des mini-jeux"
+ },
+ "g_100": {
+  "name": "Marathonien",
+  "desc": "Joue 100 parties au total"
+ },
+ "g_sk3": {
+  "name": "Fashion",
+  "desc": "Possède 3 skins"
+ },
+ "g_sk10": {
+  "name": "Garde-robe",
+  "desc": "Possède 10 skins"
+ },
+ "g_skall": {
+  "name": "Collection complète",
+  "desc": "Possède tous les skins"
  }
 }

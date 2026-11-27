@@ -1,0 +1,106 @@
+{
+ "first": {
+  "name": "Bienvenue",
+  "desc": "Ouvre l'appli"
+ },
+ "v3": {
+  "name": "Habitué",
+  "desc": "Ouvre l'appli 3 fois"
+ },
+ "v10": {
+  "name": "Fidèle",
+  "desc": "Ouvre l'appli 10 fois"
+ },
+ "clip1": {
+  "name": "Réalisateur",
+  "desc": "Publie ton premier clip"
+ },
+ "sec": {
+  "name": "Espion",
+  "desc": "Trouve la salle secrète"
+ },
+ "lab": {
+  "name": "Savant fou",
+  "desc": "Entre dans le labo"
+ },
+ "arc": {
+  "name": "Joueur d'arcade",
+  "desc": "Trouve la salle d'arcade"
+ },
+ "konami": {
+  "name": "Old school",
+  "desc": "Entre le code Konami"
+ },
+ "ban": {
+  "name": "Fausse alerte",
+  "desc": "Survis au faux bannissement"
+ },
+ "upd": {
+  "name": "Patient",
+  "desc": "Reste devant la mise à jour jusqu'à 99 %"
+ },
+ "flip": {
+  "name": "Tête en bas",
+  "desc": "Retourne l'écran"
+ },
+ "rage": {
+  "name": "Ragequitter",
+  "desc": "Simule un ragequit"
+ },
+ "disco": {
+  "name": "Saturday Night",
+  "desc": "Lance le mode disco"
+ },
+ "matrix": {
+  "name": "L'Élu",
+  "desc": "Lance Matrix"
+ },
+ "lag": {
+  "name": "Ping 999",
+  "desc": "Subis le lag"
+ },
+ "camp": {
+  "name": "Campeur",
+  "desc": "Utilise le campeur"
+ },
+ "gg": {
+  "name": "Bon joueur",
+  "desc": "Dis GG 5 fois"
+ },
+ "pr5": {
+  "name": "Farceur",
+  "desc": "Teste 5 farces différentes"
+ },
+ "c100": {
+  "name": "Doigts de feu",
+  "desc": "100 clics en arcade"
+ },
+ "c1000": {
+  "name": "Souris cassée",
+  "desc": "1 000 clics en arcade"
+ },
+ "night": {
+  "name": "Oiseau de nuit",
+  "desc": "Ouvre l'appli entre minuit et 5 h"
+ },
+ "orc": {
+  "name": "Voyant",
+  "desc": "Consulte l’oracle"
+ },
+ "cas": {
+  "name": "Joueur de casino",
+  "desc": "Lance la machine à sous"
+ },
+ "jack": {
+  "name": "Jackpot",
+  "desc": "Aligne trois symboles identiques"
+ },
+ "shi": {
+  "name": "Chifoumi",
+  "desc": "Joue contre l’ordinateur"
+ },
+ "plat": {
+  "name": "Platine",
+  "desc": "Débloque tous les autres succès"
+ }
+}
